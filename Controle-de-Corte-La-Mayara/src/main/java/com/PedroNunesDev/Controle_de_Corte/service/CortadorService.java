@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -44,6 +45,7 @@ public class CortadorService {
                 .map(cortador -> {
                     return new CortadorDtoResponse(cortador.getId(), cortador.getNome(), cortador.getQuantidadeDeCortesCortados());
                 })
+                .sorted(Comparator.comparing(CortadorDtoResponse::nome))
                 .toList();
     }
 

@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -44,6 +45,7 @@ public class EnfestadorService {
                 .map(enfestador -> {
                     return new EnfestadorDtoResponse(enfestador.getId(), enfestador.getNome(),enfestador.getQuantidadeDeCortesEnfestados());
                 })
+                .sorted(Comparator.comparing(EnfestadorDtoResponse::nome))
                 .toList();
     }
 
