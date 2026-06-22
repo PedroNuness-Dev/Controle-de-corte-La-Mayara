@@ -1,0 +1,15 @@
+<div class="content">
+    <img src="logo.png" alt="" class="logo">
+    <div class="main-sidebar">
+        <button [routerLink]="['/cortes', 'Geral']" routerLinkActive="active" >Geral</button>
+        <button [routerLink]="['/cortes', 'Pendentes']" routerLinkActive="active" >Pendentes</button>
+        <button [routerLink]="['/cortes', 'Enfestados']" routerLinkActive="active" >Enfestados</button>
+        <button [routerLink]="['/cortes','Cortados']" routerLinkActive="active" >Cortados</button>
+        <button routerLink="historico" routerLinkActive="active">Histórico</button>
+        <button routerLink="configuracoes" routerLinkActive="active">Configurações</button>
+    </div>
+    <div class="footer-sidebar">
+        <button routerLink="suporte" class="btn-suporte">Suporte</button>
+        <span>Pedro Nunes 2026</span>
+    </div>
+</div>

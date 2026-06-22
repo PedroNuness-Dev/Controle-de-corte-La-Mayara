@@ -1,0 +1,344 @@
+:host {
+    display: block;
+    min-height: 100vh;
+    background: linear-gradient(
+        135deg,
+        #ffe5ec 0%,
+        #fff5f7 50%,
+        #ffffff 100%
+    );
+
+    main {
+        display: flex;
+        align-items: center;
+        padding: 40px 32px;
+        flex-direction: column;
+        gap: 24px;
+    }
+
+    .hero {
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+
+        background: white;
+        min-width: 60%;
+        padding: 40px;
+        border-radius: 24px;
+
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
+    }
+
+    .header {
+        flex: 1;
+    }
+
+    .header h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #333;
+
+        margin: 0 0 12px 0;
+    }
+
+    .span-style {
+        display: block;
+
+        font-size: 1.5rem;
+        font-weight: 500;
+
+        color: #666;
+
+        margin-bottom: 8px;
+    }
+
+    .content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .content select,
+    .content input[type="text"],
+    .content textarea {
+        width: 100%;
+        min-width: 500px;
+
+        padding: 14px 18px;
+
+        border: 2px solid #f3d2dc;
+        border-radius: 12px;
+
+        font-size: 1rem;
+        font-family: inherit;
+
+        background: #fff;
+
+        outline: none;
+        transition: all 0.25s ease;
+    }
+
+    .content select:hover,
+    .content input[type="text"]:hover,
+    .content textarea:hover {
+        border-color: #ff9fbc;
+    }
+
+    .content select:focus,
+    .content input[type="text"]:focus,
+    .content textarea:focus {
+        border-color: #ff5c8d;
+        box-shadow: 0 0 0 4px rgba(255, 92, 141, 0.15);
+    }
+
+    .content input[type="text"]::placeholder,
+    .content textarea::placeholder {
+        color: #b8b8b8;
+    }
+
+    .content textarea {
+        min-height: 150px;
+        resize: vertical;
+    }
+
+    .content input[type="submit"] {
+        margin-top: 8px;
+
+        padding: 14px 24px;
+
+        border: none;
+        border-radius: 12px;
+
+        background: linear-gradient(
+            135deg,
+            #ff7ca7,
+            #ff5c8d
+        );
+
+        color: white;
+        font-size: 1rem;
+        font-weight: 600;
+
+        cursor: pointer;
+
+        transition: all 0.25s ease;
+    }
+
+    .content input[type="submit"]:hover {
+        transform: translateY(-2px);
+
+        box-shadow: 0 10px 20px rgba(
+            255,
+            92,
+            141,
+            0.3
+        );
+    }
+
+    .content input[type="submit"]:active {
+        transform: translateY(0);
+    }
+
+    .content select,
+    .content input[type="text"],
+    .content textarea {
+        box-sizing: border-box;
+    }
+
+    .erro-message {
+        color: #dc3545;
+        font-size: 1.2rem;
+        font-weight: 500;
+
+        margin-top: -8px;
+
+        display: block;
+    }
+
+    .success-box {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+
+        padding: 16px 20px;
+
+        background: #ecfdf3;
+
+        border: 1px solid #86efac;
+        border-left: 5px solid #22c55e;
+
+        border-radius: 12px;
+
+        animation: fadeIn 0.3s ease;
+    }
+
+    .message-success {
+        color: #15803d;
+
+        font-size: 1rem;
+        font-weight: 600;
+    }
+
+    .message-success-detail {
+        color: #166534;
+
+        font-size: 0.9rem;
+    }
+
+    .failure-box {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+
+        padding: 16px 20px;
+
+        background: #fdecec;
+
+        border: 1px solid #ef8686;
+        border-left: 5px solid #c52222;
+
+        border-radius: 12px;
+
+        animation: fadeIn 0.3s ease;
+    }
+
+    .failure-success {
+        color: #801515;
+
+        font-size: 1rem;
+        font-weight: 600;
+    }
+
+    .failure-success-detail {
+        color: #651616;
+
+        font-size: 0.9rem;
+    }    
+
+     @keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+    @keyframes pulse-text {
+        0%, 100% {
+            opacity: 0.6;
+        }
+        50% {
+            opacity: 1;
+        }
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(-8px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .btn-enviar{
+        margin-top: 8px;
+
+        padding: 14px 24px;
+
+        border: none;
+        border-radius: 12px;
+
+        background: linear-gradient(
+            135deg,
+            #ff7ca7,
+            #ff5c8d
+        );
+
+        color: white;
+
+        font-size: 1rem;
+        font-weight: 600;
+
+        cursor: pointer;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+
+        transition: all .25s ease;
+    }
+
+    .btn-enviar:hover:not(:disabled){
+        transform: translateY(-2px);
+
+        box-shadow: 0 10px 20px rgba(
+            255,
+            92,
+            141,
+            0.3
+        );
+    }
+
+    .btn-enviar:disabled{
+        opacity: .85;
+        cursor: not-allowed;
+
+        background: linear-gradient(
+            135deg,
+            #e27b9d,
+            #d85c84
+        );
+    }
+
+    .spinner-btn{
+        width: 18px;
+        height: 18px;
+
+        border: 3px solid rgba(255,255,255,.3);
+        border-top-color: white;
+
+        border-radius: 50%;
+
+        animation: spin .8s linear infinite;
+
+        flex-shrink: 0;
+    }
+
+    @media (max-width: 1336px) {
+        main {
+            padding: 20px;
+        }
+
+        .hero {
+            width: min(700px, 90%);
+            padding: 24px;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+        }
+
+        .content {
+            width: 100%;
+        }
+
+        .content select,
+        .content input[type="text"],
+        .content textarea {
+            width: 100%;
+            min-width: 0;
+            box-sizing: border-box;
+        }
+
+        .content textarea {
+            min-height: 120px;
+        }
+    }
+}

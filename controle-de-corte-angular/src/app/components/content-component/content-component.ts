@@ -1,0 +1,388 @@
+import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
+import { CorteService } from '../../services/corte-service';
+import { CorteResponse } from '../../interfaces/CorteResponse';
+import { CommonModule } from '@angular/common';
+import { ActivatedRoute } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+import { CorteUpdateRequest } from '../../interfaces/CorteUpdate';
+import { CorteRequest } from '../../interfaces/CorteRequest';
+import { LoteService } from '../../services/lote-service';
+import { finalize } from 'rxjs';
+import { CortadorResponse } from '../../interfaces/CortadorResponse';
+import { EnfestadorResponse } from '../../interfaces/EnfestadorResponse';
+import { EnfestadorService } from '../../services/enfestador-service';
+import { CortadorService } from '../../services/cortador-service';
+
+
+@Component({
+  selector: 'app-content-component',
+  imports: [CommonModule, FormsModule],
+  templateUrl: './content-component.html',
+  styleUrl: './content-component.scss'
+})
+export class ContentComponent implements OnInit{
+
+  route = inject(ActivatedRoute);
+  cdr = inject(ChangeDetectorRef)
+  corteService = inject(CorteService);
+  loteService = inject(LoteService);
+  enfestadorService = inject(EnfestadorService);
+  cortadorService = inject(CortadorService);
+
+  cortesDoMes : CorteResponse[] = [];
+  pageSelected  = 'Geral'
+  anoAtual = new Date().getFullYear();
+  relatorioDeCortes : number = 0;
+  loteAtual !: string;
+  cortesRegistradosNoMes !: number;
+  corteAdicionadoRecentemente !: CorteResponse | null;
+  nomeParaBuscar !: string;
+  telaCarregadandoModal = false;
+
+  cortadores : CortadorResponse[] = [];
+  enfestadores : EnfestadorResponse[] =[];
+
+  meses = [
+    "JANEIRO","FEVEREIRO","MARÇO","ABRIL","MAIO","JUNHO","JULHO","AGOSTO","SETEMBRO","OUTUBRO","NOVEMBRO","DEZEMBRO"
+  ]
+
+  mesAtual = this.meses[new Date().getMonth()];
+
+  corteSelecionado : CorteResponse | null = null;
+  corteEdicao : CorteResponse | null = null ;
+  idEnfestador : number | null = null;
+  idCortador : number | null = null;
+  modoCriacao = false;
+  novoCorte : CorteRequest = {
+      nomeModelo: '',
+      quantidadeTotal: null,
+      dataDeRegistro:  new Date().toISOString().split('T')[0],
+      observacao: ''
+  };
+  tipoLote = 'atual'
+  opcoesCard = false;
+  corteAbertoOpcao !: CorteResponse;
+
+  ngOnInit(){
+    this.route.params.subscribe(params => {
+      this.pageSelected = params['tipo'] || 'Geral';
+      this.buscarCortesDoMesPorStatus();
+      this.nomeParaBuscar = '';
+    })
+
+    this.buscarRelatorioDeCortes();
+    this.buscarLoteAtual();
+    this.buscarCortadores();
+    this.buscarEnfestadores();
+  }
+
+  buscarRelatorioDeCortes(){
+      this.corteService.buscarRelatorio().subscribe({
+        next: (data) => {this.relatorioDeCortes = data; this.cdr.detectChanges()},
+        error: (err) => {console.log(err)}
+      })
+  }
+
+  buscarCortadores(){
+
+    this.cortadorService.buscarCortadores().subscribe({
+      next: (data) => {this.cortadores = data; this.cdr.detectChanges()},
+      error : (err) => {console.log(err)}
+    })
+  }
+
+  buscarEnfestadores(){
+
+    this.enfestadorService.buscarEnfestadores().subscribe({
+      next: (data) => {this.enfestadores = data; this.cdr.detectChanges(); console.log("Enfestadores buscados com sucesso!")},
+      error : (err) => {console.log(err)}
+    })
+  }
+
+  abrirCriacao(){
+    this.modoCriacao = true;
+  }
+
+  fecharCriacao(){
+    this.modoCriacao = false;
+  }
+
+  fecharModalCorte(){
+    this.corteSelecionado = null;
+  }
+
+  buscarCortesDoMesPorStatus(){
+
+    if(this.pageSelected === 'Geral'){
+        this.corteService.buscarCortesDoMes(null,null).subscribe({
+          next: (data) => {
+            this.cortesDoMes = data;
+            this.cdr.detectChanges();},
+          error: (err) => {console.log(err)}
+        })
+      }
+      else{
+        const anoAtual = new Date().getFullYear();
+        const mesAtual = new Date().getMonth() + 1;
+        let statusParaMandar !: string;
+
+        if(this.pageSelected === 'Pendentes'){
+          statusParaMandar = 'pendente';
+        }
+        else if(this.pageSelected === 'Enfestados'){
+          statusParaMandar = 'enfestado';
+        }
+        else if(this.pageSelected === 'Cortados'){
+          statusParaMandar = 'cortado'
+        }
+
+        this.corteService.buscarCortesDoMesPorStatus(statusParaMandar,anoAtual, mesAtual).subscribe({
+          next: (data) => {
+            this.cortesDoMes = data;
+            this.cdr.detectChanges();},
+          error: (err) => {console.log(err)}
+        })
+      }
+  }
+
+  buscarLoteAtual(){
+    this.loteService.buscarLote().subscribe({
+      next: (data) => {this.loteAtual = data.numero_lote; this.cdr.detectChanges()},
+      error: (err) => {console.log(err)}
+    })
+  }
+
+  selecionarCorte(corte:CorteResponse){
+
+    if(this.corteSelecionado == null || this.corteSelecionado.id !== corte.id){
+      this.corteSelecionado = corte;
+
+      if(corte.dataDeCorte == null){
+        this.corteEdicao = {
+          ...corte
+        };
+      }
+      else{
+        this.corteEdicao = {
+        ...corte,
+        dataDeCorte: this.formatarData(corte.dataDeCorte)
+      };
+      }
+
+      this.idEnfestador = corte.enfestador?.id ?? null;
+      this.idCortador = corte.cortador?.id ?? null;
+    }
+    else{
+      this.corteSelecionado = null;
+      this.corteEdicao = null;
+
+      this.idCortador = null;
+      this.idEnfestador = null;
+    }
+  }
+
+  pegarStatusParaEstilo(status:string):string{
+
+    return status.toLowerCase();
+  }
+
+  atualizarCorte(){
+
+   const corteParaAtualizar: CorteUpdateRequest = {
+      dataDeCorte: this.corteEdicao!.dataDeCorte,
+      loteFormatado: this.corteEdicao!.loteFormatado,
+      nomeModelo: this.corteEdicao!.nomeModelo,
+      quantidadeTotal: this.corteEdicao!.quantidadeTotal,
+      observacao: this.corteEdicao!.observacao,
+      idCortador: this.idCortador ?? null,
+      idEnfestador: this.idEnfestador ?? null
+    }
+
+    this.corteService.atualizarCorte(this.corteSelecionado!.id, corteParaAtualizar).subscribe({
+      next: (data) => {
+        console.log("Corte atualizado com sucesso");
+        if(this.corteSelecionado!.id === this.corteAdicionadoRecentemente?.id){
+          this.corteAdicionadoRecentemente = data;
+        }
+
+        const index = this.cortesDoMes.findIndex(
+          corte => corte.id === data.id
+        );
+
+        if(index !== -1){
+          this.cortesDoMes[index] = data;
+        }
+        
+        this.corteSelecionado = null;
+        this.corteEdicao = null;
+        this.idCortador = null;
+        this.idEnfestador = null;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {console.log(err)}
+    })
+  }
+
+  formatarData(data:string):string{
+
+    let dataVetor = data.split("/");
+    return dataVetor[2]+"-"+dataVetor[1]+"-"+dataVetor[0]
+  }
+
+  adicionarCorte(){
+
+    if(this.novoCorte.dataDeRegistro === ''){
+      alert("Data de registro obrigatória!")
+      return
+    }
+
+    if ( this.tipoLote === 'novo'){
+      this.loteService.incrementarLote().subscribe({
+        next: (data) => {console.log("Lote incrementado com sucesso!"); this.cdr.detectChanges(); this.salvarCorte()},
+        error: (err) => {console.log(err);}
+      });
+    }
+    else{
+      this.salvarCorte();
+    }
+  }
+
+  salvarCorte(){
+
+    const novoCorteParaEnviar: CorteRequest = this.novoCorte;
+
+    this.corteService.adicionarCorte(novoCorteParaEnviar).subscribe({
+      next: (data) => {
+        this.corteAdicionadoRecentemente = data;
+        this.novoCorte = {
+          nomeModelo: '',
+          quantidadeTotal: null,
+          dataDeRegistro:  new Date().toISOString().split('T')[0],
+          observacao: ''
+        }
+        this.fecharCriacao();
+        this.buscarLoteAtual();
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.log(err);
+      }
+    });
+  }
+
+  cancelarCorte(corte : CorteResponse){
+
+    this.corteService.cancelarCorte(corte.id).subscribe({
+      next: (data) => {
+
+        if (this.corteAdicionadoRecentemente?.id === corte.id){
+            this.corteAdicionadoRecentemente.corteStatus = 'CANCELADO';
+        }
+
+        this.buscarCortesDoMesPorStatus();
+        this.corteSelecionado = null;
+        this.corteEdicao = null;
+        this.idCortador = null;
+        this.idEnfestador = null;
+        this.opcoesCard = false},
+      error: (err) => {console.log(err)}
+    })
+  }
+
+  buscarCortePorNomeOuLote(){
+
+    if(this.nomeParaBuscar === '') this.buscarCortesDoMesPorStatus();
+  
+    const anoAtual = new Date().getFullYear();
+    const mesAtual = new Date().getMonth() + 1;
+    this.telaCarregadandoModal = true;
+
+    this.corteService.buscarCortePorNomeOuLote(this.nomeParaBuscar, mesAtual, anoAtual).pipe(
+          finalize(() => {
+            setTimeout(() => {
+              this.telaCarregadandoModal = false;
+              this.cdr.detectChanges();}, 300);            
+          })
+         ).subscribe({
+            next: (data) => {
+              this.cortesDoMes = data;
+              this.cdr.detectChanges();
+          },
+      error: (err) => {console.log(err)}
+    })
+  }
+
+  atualizarPagina(){
+
+    this.telaCarregadandoModal = true;
+    setTimeout(() => {
+              this.telaCarregadandoModal = false;
+              this.cdr.detectChanges();
+              window.location.reload();}, 300);
+  }
+
+  abrirModalOpcao(corte : CorteResponse){
+
+    if(this.corteAbertoOpcao === corte){
+      this.opcoesCard = !this.opcoesCard;
+    }
+    else{
+      this.corteAbertoOpcao = corte;
+      this.opcoesCard = true;
+    }
+  }
+
+  excluirCorte(id:number){
+
+    if (id === this.corteAdicionadoRecentemente?.id){
+      this.corteAdicionadoRecentemente = null;
+    }
+
+    this.corteService.excluirCorte(id).subscribe({
+      next: () => {this.cdr.detectChanges(); console.log("Corte excluido com sucesso!"); this.buscarCortesDoMesPorStatus()},
+      error: (err) => {console.log(err)}
+    })
+  }
+
+  ativarCorte(corte:CorteResponse){
+
+    
+    const dataFormatada = (corte.dataDeCorte == null) ? null : this.formatarData(corte.dataDeCorte);
+
+    const corteParaAtualizar : CorteUpdateRequest ={
+      dataDeCorte: dataFormatada,
+      loteFormatado: corte.loteFormatado,
+      nomeModelo: corte.nomeModelo,
+      quantidadeTotal: corte.quantidadeTotal,
+      observacao: corte.observacao,
+      idCortador: corte.cortador?.id ?? null,
+      idEnfestador: corte.enfestador?.id ?? null
+    }
+
+    this.corteService.atualizarCorte(corte.id, corteParaAtualizar).subscribe({
+      next: (data) => {
+        console.log("Corte atualizado com sucesso");
+        if(corte.id === this.corteAdicionadoRecentemente?.id){
+          this.corteAdicionadoRecentemente = data;
+        }
+
+        const index = this.cortesDoMes.findIndex(
+          corteEsc => corteEsc.id === data.id
+        );
+
+        if(index !== -1){
+          this.cortesDoMes[index] = data;
+        }
+        
+        this.corteSelecionado = null;
+        this.corteEdicao = null;
+        this.idCortador = null;
+        this.idEnfestador = null;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {console.log(err)}
+    })
+  
+    this.opcoesCard = false;
+  }
+}

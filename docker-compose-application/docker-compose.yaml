@@ -1,0 +1,50 @@
+services:
+  mysql:
+    image: mysql:8.0.45
+    container_name: mysql-container-controle-de-corte
+    env_file:
+      - ./config/mysql.env
+    ports:
+      - "3306:3306"
+    volumes:  
+      - mysql-volume:/var/lib/mysql
+
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      
+    restart: always
+    networks:
+      - app-network
+
+  backend-spring:    
+    build: ../Controle-de-Corte-La-Mayara/
+    container_name: controle-de-corte-spring-container
+    restart: always
+    depends_on:
+      mysql:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    env_file:
+      - ./config/backend.env
+    networks:
+      - app-network
+  frontend-angular:
+    image: controle-de-corte-angular-image
+    build: ../controle-de-corte-angular/
+    container_name: controle-de-corte-angular-container
+    restart: always
+    ports:
+        - "4200:4200"
+    depends_on:
+      - backend-spring
+    networks:
+      - app-network
+
+volumes:
+  mysql-volume:
+networks:
+  app-network:

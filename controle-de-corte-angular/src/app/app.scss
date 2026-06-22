@@ -1,0 +1,33 @@
+:host{
+    .container{
+        display: flex;
+        height: 100vh;
+    }
+
+    .sidebar {
+        position: fixed;
+        width: 350px;
+        background: rgb(247, 245, 245);
+        height: 100vh;
+        box-shadow: 0.5px 0 4px rgba(73, 69, 69, 0.582);
+    }
+
+    .content {
+        height: 100vh;
+        margin-left: 350px;
+        overflow-y: auto;
+        background: #ffffff;
+        width: 100%;
+    }
+
+    @media(max-width: 1366px){
+
+        .sidebar{
+            width: 270px;
+        }
+
+        .content{
+            margin-left: 270px;
+        }
+    }
+}

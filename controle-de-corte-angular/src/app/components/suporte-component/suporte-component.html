@@ -1,0 +1,66 @@
+<main>
+    <div class="hero">
+        <div class="header">
+            <h1>Suporte</h1>
+            <span class="span-style">Relate o que está acontecendo que resolveremos o mais breve possível!</span>
+        </div>
+    </div>
+    <div class="hero">
+        <div class="content">            
+                <span class="span-style">
+                    Selecione um assunto para o motivo do contato:
+                </span>
+                <select [(ngModel)]="opcaoSelecionada">
+                    <option value="">Selecionar...</option>
+                    @for (assunto of assuntos; track $index) {
+                        <option [value]="assunto">{{assunto}}</option>
+                    }
+                </select>
+                <span class="span-style">
+                    Agora descreva com mais detalhes:
+                </span>
+                <textarea type="text" placeholder="Digite os detalhes aqui" [(ngModel)]="textoParaMandar"></textarea>
+               <button
+                    class="btn-enviar"
+                    (click)="enviarSuporte()"
+                    [disabled]="telaCarregadandoModal">
+
+                    @if (telaCarregadandoModal) {
+                        <span class="spinner-btn"></span>
+                        <span>Enviando...</span>
+                    }
+                    @else {
+                        <span>Enviar</span>
+                    }
+                </button>
+
+                @if (messageErro) {
+                    <span class="erro-message">
+                        É necessário digitar todas as informações!
+                    </span>
+                }
+
+               @if(modalSucesso){
+                    <div class="success-box">
+                        <span class="message-success">
+                            ✓ Mensagem enviada com sucesso!
+                        </span>
+                        <span class="message-success-detail">
+                            Em breve retornaremos com novidades.
+                        </span>
+                    </div>
+                 }
+
+                 @if(modalfailure){
+                    <div class="failure-box">
+                        <span class="failure-success">
+                            ❌ Erro ao enviar mensagem!
+                        </span>
+                        <span class="failure-success-detail">
+                            Verifique sua conexão a internet
+                        </span>
+                    </div>
+                 }
+        </div>
+    </div>   
+</main>

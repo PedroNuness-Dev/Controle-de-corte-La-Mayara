@@ -1,0 +1,223 @@
+<div class="main">
+    <div class="header">
+        <h1>Configurações</h1>
+        <div class="div-subtitle">
+            <h2>Controle de corte La Mayara Baby</h2>
+        </div>
+    </div>
+    <div class="content">
+        <section>
+            <h2>1.0 Cortes</h2>
+            <ol>
+                <li>
+                    <strong>1.1 O que é um corte?</strong>
+                    <p>O corte é o registro da peça ou conjunto que será processado, incluindo quantidade, lote, data de corte, observações e etc.</p>
+                </li>
+                <li>
+                    <strong>1.2 Como cadastrar um corte?</strong>
+                    <p>Utilize o botão <u>Cadastrar corte</u> em qualquer tela de cortes atuais, podendo passar um lote atual ou incrementar um novo lote e informações adicionais.</p>
+                </li>
+                <li>
+                    <strong>1.3 Como editar um corte existente?</strong>
+                    <p>Selecione o corte na lista e ajuste as informações necessárias, como quantidade, observações, cortador e etc.</p>
+                </li>
+            </ol>
+        </section>
+
+        <section>
+            <h2>2.0 Cortadores</h2>
+            <ol>
+                <li>
+                    <strong>2.1 O que é um cortador?</strong>
+                    <p>O cortador representa o operador responsável pelo corte do material.</p>
+                </li>
+                <li>
+                    <strong>2.2 Como cadastrar um cortador?</strong>
+                    <p>Acesse o cadastro de cortadores logo abaixo (Cadastrar novo cortador) e informe o seu nome.</p>
+                </li>
+                <li>
+                    <strong>2.3 Como vincular um cortador a um corte?</strong>
+                    <p>Ao editar um corte, escolha o cortador disponível para aquele processo.</p>
+                </li>
+                <li>
+                    <strong>2.4 Cortadores cadastrados</strong>
+                    <ul class="ul-list">
+                        @for (cortador of cortadores; track cortador.id) {
+                            <div class="info-pessoa" (click)="buscarEstatistica(cortador.nome)">
+                                <span>{{cortador.nome}}</span>                                
+                            </div>
+                            <div>
+                                <p class="info-pessoa-detalhes">Quantidade de cortes cortados: {{cortador.quantidadeDeCortesCortados}}</p>
+                            </div>
+                            <button class="btn-excluir" (click)="ativarModalExclusao(cortador.id, 'cortador', cortador.nome)">Excluir</button>
+                        }
+                    </ul>
+                </li>
+            </ol>
+            <div class="section-actions">
+                <button type="button" class="action-button" (click)="abrirModoCriacaoCortador()">
+                    @if (modoCadastroCortador) { Cancelar cadastro de cortador } @else { Cadastrar novo cortador }
+                </button>
+                @if (modoCadastroCortador) {
+                    <span class="create-mode">Modo de criação ativo. Preencha os dados do novo cortador.</span>
+                }
+                @if (successCortador) {
+                    <div class="success-banner">Cortador cadastrado com sucesso!</div>
+                }
+            </div>
+            @if (modoCadastroCortador) {
+                <form class="create-form" (submit)="$event.preventDefault()">
+                    <div class="form-row">
+                        <input class="form-field" name="nome" type="text" placeholder="Nome do cortador" required [(ngModel)]="novoCortador.nome">
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="form-submit" (click)="cadastrarCortador()">Cadastrar</button>
+                    </div>
+                </form>
+            }
+        </section>
+
+        <section>
+            <h2>3.0 Enfestadores</h2>
+            <ol>
+                <li>
+                    <strong>3.1 O que é um enfestador?</strong>
+                    <p>O enfestador é o operador que organiza o material para corte, preparando as camadas, cores, produções e etc.</p>
+                </li>
+                <li>
+                    <strong>3.2 Como cadastrar um enfestador?</strong>
+                    <p>Acesse o cadastro de enfestadores logo abaixo (Cadastrar novo enfestador) e informe seu nome.</p>
+                </li>
+                <li>
+                    <strong>3.3 Enfestadores cadastrados</strong>
+                    <ul>
+                        @for (enfestador of enfestadores; track enfestador.id) {
+                            <div class="info-pessoa">
+                                <span>{{ enfestador.nome }}</span>                          
+                            </div>
+                            <div>
+                                <p class="info-pessoa-detalhes" >Quantidade de cortes enfestados: {{enfestador.quantidadeDeCortesEnfestados}}</p>
+                            </div>
+                            <button class="btn-excluir" (click)="ativarModalExclusao(enfestador.id, 'enfestador', enfestador.nome)">Excluir</button>
+                        }
+                    </ul>
+                </li>
+            </ol>
+            <div class="section-actions">
+                <button type="button" class="action-button" (click)="abrirModoCriacaoEnfestador()">
+                    @if (modoCadastroEnfestador) { Cancelar cadastro de enfestador } @else { Cadastrar novo enfestador }
+                </button>
+                @if (modoCadastroEnfestador) {
+                    <span class="create-mode">Modo de criação ativo. Preencha os dados do novo enfestador.</span>
+                }
+                @if (successEnfestador) {
+                    <div class="success-banner">Enfestador cadastrado com sucesso!</div>
+                }
+            </div>
+            @if (modoCadastroEnfestador) {
+                <form class="create-form" (submit)="$event.preventDefault()">
+                    <div class="form-row">
+                        <input class="form-field" name="nome" type="text" placeholder="Nome do enfestador" required [(ngModel)]="novoEnfestador.nome">
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="form-submit" (click)="cadastrarEnfestador()">Cadastrar</button>                        
+                    </div>
+                </form>
+            }
+        </section>
+
+        <section>
+            <h2>4.0 Lotes</h2>
+            <ol>
+                <li>
+                    <strong>4.1 O que é um lote?</strong>
+                    <p>Um lote agrupa cortes relacionados que serão produzidos juntos, facilitando o controle de produção.</p>
+                </li>
+                <li>
+                    <strong>4.2 Como criar e gerenciar lotes?</strong>
+                    <p>Use a funcionalidade de lote para organizar cortes e acompanhar o progresso da produção.</p>
+                </li>
+                <button class="btn-excluir btn-desincrementar-lote" (click)="ativarModalDecrementoLote()">Decrementar Lote</button>   
+            </ol>
+        </section>
+
+        <section>
+            <h2>5.0 Dúvidas gerais</h2>
+            <ol>
+                <li>
+                    <strong>5.1 Como funciona o sistema?</strong>
+                    <p>O sistema controla corte, cortadores, enfestadores e lotes para melhorar a eficiência e o rastreamento.</p>
+                </li>
+                <li>
+                    <strong>5.2 Onde posso ver o histórico?</strong>
+                    <p>Confira a seção de histórico para ver registros anteriores e status de processos concluídos.</p>
+                </li>                                         
+            </ol>
+        </section>
+        <section>
+            <h2>6.0 Histórico</h2>
+            <ol>
+                <li>
+                    <strong>6.1 Como funciona o histórico?</strong>
+                    <p>O sistema se baseia pela data de registro dos cortes, selecioanda na hora do cadastro</p>
+                </li>
+                <li>
+                    <strong>6.2 Como pesquisar?</strong>
+                    <p>Na tela de histórico, você pode selecionar o mês desejado para buscar os cortes</p>
+                    <p style="font-weight: 700;">obs: se caso o mês não for selecionado, o sistema irá buscar pelo mês atual!</p>
+                </li>
+                <li>
+                    <strong>6.3 O que posso fazer na tela de histórico?</strong>
+                    <p>As funcionalidades principais do sistema, estão também na tela de histórico, podendo editar, cancelar e excluir um corte selecionado</p>
+                </li>
+            </ol>
+        </section>
+    </div>
+    @if (modalExclusao) {
+        <div class="overlay-modal">
+            <div class="modal-excluir">
+
+                <h2>Confirmar exclusão</h2>
+
+                <p>
+                    Tem certeza que deseja excluir este {{itemExcluido.tipo}}?
+                    Essa ação não poderá ser desfeita.
+                </p>
+
+                <div class="acoes-modal">
+                    <button class="btn-cancelar" (click)="desativarModalExclusao()">
+                        Cancelar
+                    </button>
+
+                    <button class="btn-excluir" (click)="deletarCortadorOuEnfestador()">
+                        Excluir
+                    </button>
+                </div>
+            </div>
+        </div>
+    }
+
+    @if (modalDecrementarLote) {
+        <div class="overlay-modal">
+            <div class="modal-excluir">
+
+                <h2>Confirmar decremento</h2>
+
+                <p>
+                    Tem certeza que deseja decrementar o lote <span style="font-weight: 700; color: green;">{{loteAtual}}</span>?
+                    Essa ação não poderá ser desfeita.
+                </p>
+
+                <div class="acoes-modal">
+                    <button class="btn-cancelar" (click)="desativarModalDecrementoLote()">
+                        Cancelar
+                    </button>
+
+                    <button class="btn-excluir" (click)="decrementarLote()">
+                        Decrementar
+                    </button>
+                </div>
+            </div>
+        </div>
+    }
+</div>
