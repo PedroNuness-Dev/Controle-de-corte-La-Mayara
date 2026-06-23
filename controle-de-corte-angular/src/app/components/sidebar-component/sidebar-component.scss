@@ -6,6 +6,7 @@
         align-items: center;
         padding-top: 20px;
         flex-direction: column;
+        min-height: 100vh;
     }
     
     .logo{
@@ -15,10 +16,10 @@
     .main-sidebar{
         display: flex;
         flex-direction: column;
-        gap: 24px;
-        height: 60vh;
+        gap: 24px;        
         align-items: center;
         justify-content: center;
+        flex: 1;
         width: 100%;
     }
 
@@ -37,12 +38,11 @@
         background-color: #a5a4a4;
     }
 
-    .footer-sidebar{
-        padding-top: 43%;
+    .footer-sidebar{        
         display: flex;
         flex-direction: column;
-        justify-content: end;
-        align-items: center;
+        margin-top: auto;
+        margin-bottom: 20px;
     }
 
     .footer-sidebar span{
@@ -68,8 +68,7 @@
 
     @media(max-width: 1366px){
 
-        .footer-sidebar{
-            padding-top: 25%;
+        .footer-sidebar{            
             font-size: 16px;
         }
 
