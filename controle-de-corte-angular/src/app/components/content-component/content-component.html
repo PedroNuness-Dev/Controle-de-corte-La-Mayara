@@ -38,6 +38,11 @@
           <div class="coluna">            
               <label>Modelo:</label>
               <input type="text" [(ngModel)]="novoCorte.nomeModelo" required placeholder="Nome do modelo">
+              @if (erros['nomeModelo']) {
+                <span class="erro">
+                  &#9888; {{ erros['nomeModelo'] }}
+                </span>
+              }
               <div class="escolha-lote">
                 <label class="opcao-lote" [class.ativo]="tipoLote === 'atual'">
                   <input type="radio" name="tipoLote" value="atual" [(ngModel)]="tipoLote">
@@ -54,8 +59,18 @@
           <div class="coluna">        
               <label>Quantidade: </label>
               <input type="number" [(ngModel)]="novoCorte.quantidadeTotal" [min]="0" required placeholder="Digite a quantidade total">      
+               @if (erros['quantidade']) {
+                <span class="erro">
+                  &#9888; {{ erros['quantidade'] }}
+                </span>
+              }
               <label>Data de registro: </label>
-              <input type="date" [(ngModel)]="novoCorte.dataDeRegistro" required>            
+              <input type="date" [(ngModel)]="novoCorte.dataDeRegistro" required>  
+               @if (erros['dataRegistro']) {
+                <span class="erro">
+                  &#9888; {{ erros['dataRegistro'] }}
+                </span>
+              }          
           </div>
 
           <div class="coluna observacao">
@@ -107,10 +122,25 @@
             @if (corteSelecionado && corteSelecionado.id === corteAdicionadoRecentemente.id) {
               <label>Modelo:</label>
               <input type="text" [(ngModel)]="corteEdicao!.nomeModelo">
+              @if (erros['nomeModeloAtt']) {
+                <span class="erro">
+                  &#9888; {{ erros['nomeModeloAtt'] }}
+                </span>
+              }
               <label>Lote: </label>
               <input type="text" [(ngModel)]="corteEdicao!.loteFormatado">
+              @if (erros['loteAtt']) {
+                <span class="erro">
+                  &#9888; {{ erros['loteAtt'] }}
+                </span>
+              }
               <label>Data de corte: </label>
               <input type="date" [(ngModel)]="corteEdicao!.dataDeCorte">
+              @if (erros['dataCorteAtt']) {
+                <span class="erro">
+                  &#9888; {{ erros['dataCorteAtt'] }}
+                </span>
+              }
             }
             @else {
               <p><span>Modelo:</span> {{ corteAdicionadoRecentemente.nomeModelo }}</p>
@@ -138,6 +168,11 @@
                 </select>
               <label>Quantidade: </label>
               <input type="number" [(ngModel)]="corteEdicao!.quantidadeTotal">
+              @if (erros['quantidadeAtt']) {
+                <span class="erro">
+                  &#9888; {{ erros['quantidadeAtt'] }}
+                </span>
+              }
             }
             @else {
               <p><span>Enfestador:</span> {{ corteAdicionadoRecentemente.enfestador?.nome || '(Pendente)' }}</p>
@@ -203,10 +238,25 @@
             @if (corteSelecionado && corteSelecionado.id === corte.id) {
               <label>Modelo:</label>
               <input type="text" [(ngModel)]="corteEdicao!.nomeModelo">
+              @if (erros['nomeModeloAtt']) {
+                <span class="erro">
+                  &#9888; {{ erros['nomeModeloAtt'] }}
+                </span>
+              }
               <label>Lote: </label>
               <input type="text" [(ngModel)]="corteEdicao!.loteFormatado">
+              @if (erros['loteAtt']) {
+                <span class="erro">
+                  &#9888; {{ erros['loteAtt'] }}
+                </span>
+              }
               <label>Data de corte: </label>
               <input type="date" [(ngModel)]="corteEdicao!.dataDeCorte">
+              @if (erros['dataCorteAtt']) {
+                <span class="erro">
+                  &#9888; {{ erros['dataCorteAtt'] }}
+                </span>
+              }
             }
             @else {
               <p><span>Modelo:</span> {{ corte.nomeModelo }}</p>
@@ -234,6 +284,11 @@
                 </select>
               <label>Quantidade: </label>
               <input type="number" [(ngModel)]="corteEdicao!.quantidadeTotal">
+              @if (erros['quantidadeAtt']) {
+                <span class="erro">
+                  &#9888; {{ erros['quantidadeAtt'] }}
+                </span>
+              }
             }
             @else {
               <p><span>Enfestador:</span> {{ corte.enfestador?.nome || '(Pendente)' }}</p>

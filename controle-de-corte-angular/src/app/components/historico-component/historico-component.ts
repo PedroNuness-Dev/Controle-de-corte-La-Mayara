@@ -37,6 +37,8 @@ export class HistoricoComponent implements OnInit {
   opcoesCard = false;
   corteAbertoOpcao !: CorteResponse;
 
+  erros: { [key: string]: string } = {};
+
   ngOnInit(): void {
     this.carregarListasDePessoas();
   }
@@ -51,6 +53,29 @@ export class HistoricoComponent implements OnInit {
       next: (data) => { this.cortadores = data; this.cdr.detectChanges(); },
       error: (err) => { console.log(err); }
     });
+  }
+
+  validarAtualizacao(corte : CorteUpdateRequest) : boolean{
+
+    this.erros = {}
+
+    if(!corte.loteFormatado.trim()){
+      this.erros['loteAtt'] = 'Lote obrigatório';
+    }
+     else if (!/^[0-9/]+$/.test(corte.loteFormatado)) {
+      this.erros['loteAtt'] = 'O lote deve conter apenas números e "/"';
+    }
+    else if (!corte.loteFormatado.includes('/')) {
+      this.erros['loteAtt'] = 'O lote deve conter "/"';
+    }
+    if (!corte.nomeModelo.trim()){
+      this.erros['nomeModeloAtt'] = 'Nome do modelo obrigatório';
+    }
+    if(!corte.quantidadeTotal || corte.quantidadeTotal <= 0){
+      this.erros['quantidadeAtt'] = 'Quantidade obrigatória';
+    }           
+
+    return Object.keys(this.erros).length === 0;
   }
 
   testePesquisar(){
@@ -107,6 +132,10 @@ export class HistoricoComponent implements OnInit {
       idCortador: this.idCortador ?? null,
       idEnfestador: this.idEnfestador ?? null
     };
+
+    if(!this.validarAtualizacao(corteParaAtualizar)){
+      return;
+    }
 
     this.corteService.atualizarCorte(this.corteSelecionado.id, corteParaAtualizar).subscribe({
       next: () => {

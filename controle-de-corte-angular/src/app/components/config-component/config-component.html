@@ -73,6 +73,11 @@
                     <div class="form-actions">
                         <button type="submit" class="form-submit" (click)="cadastrarCortador()">Cadastrar</button>
                     </div>
+                    @if (erros['novoCortador']) {
+                        <span class="erro">
+                            &#9888; {{ erros['novoCortador'] }}
+                        </span>
+                    }
                 </form>
             }
         </section>
@@ -122,6 +127,11 @@
                     <div class="form-actions">
                         <button type="submit" class="form-submit" (click)="cadastrarEnfestador()">Cadastrar</button>                        
                     </div>
+                    @if (erros['novoEnfestador']) {
+                        <span class="erro">
+                            &#9888; {{ erros['novoEnfestador'] }}
+                        </span>
+                    }
                 </form>
             }
         </section>

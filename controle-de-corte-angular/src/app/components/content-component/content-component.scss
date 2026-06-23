@@ -613,6 +613,12 @@
             transform: translateY(0);
         }
     }
+    .erro {
+        color: #d6d3d3 !important;
+        font-size: 0.85rem;
+        margin-top: 0.4rem;
+        font-weight: 500;
+    }
 
     @media(max-width: 1366px){
 

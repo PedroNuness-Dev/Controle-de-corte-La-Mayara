@@ -29,6 +29,8 @@ export class ConfigComponent implements OnInit{
   enfestadores : EnfestadorResponse[] = [];
   cortadores : CortadorResponse[] = [];
 
+  erros: { [key: string]: string } = {};
+
   modoCadastroCortador = false;
   modoCadastroEnfestador = false;
 
@@ -75,7 +77,15 @@ export class ConfigComponent implements OnInit{
 
   cadastrarCortador(){
 
-    if(this.novoCortador.nome.trim() === '' ) return;
+    this.erros = {}
+
+    if(!this.novoCortador.nome.trim()){
+      this.erros['novoCortador'] = 'Nome obrigatório'
+    }
+
+    if (Object.keys(this.erros).length > 0) {
+      return;
+    }
 
     this.cortadorService.cadastrarCortador(this.novoCortador).subscribe({
       next : (data) => {
@@ -92,7 +102,15 @@ export class ConfigComponent implements OnInit{
 
   cadastrarEnfestador(){
 
-    if(this.novoEnfestador.nome.trim() === '' ) return;
+    this.erros = {}
+
+    if(!this.novoEnfestador.nome.trim()){
+      this.erros['novoEnfestador'] = 'Nome obrigatório'
+    }
+
+    if (Object.keys(this.erros).length > 0) {
+      return;
+    }
 
     this.enfestadorService.cadastrarEnfestador(this.novoEnfestador).subscribe({
       next : (data) => {

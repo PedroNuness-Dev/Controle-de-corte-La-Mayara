@@ -52,10 +52,25 @@
                             @if (corteSelecionado && corteSelecionado.id === corte.id) {
                                 <label>Modelo:</label>
                                 <input type="text" [(ngModel)]="corteEdicao!.nomeModelo">
+                                @if (erros['nomeModeloAtt']) {
+                                    <span class="erro">
+                                    &#9888; {{ erros['nomeModeloAtt'] }}
+                                    </span>
+                                }
                                 <label>Lote:</label>
                                 <input type="text" [(ngModel)]="corteEdicao!.loteFormatado">
+                                @if (erros['loteAtt']) {
+                                    <span class="erro">
+                                    &#9888; {{ erros['loteAtt'] }}
+                                    </span>
+                                }
                                 <label>Data de corte:</label>
                                 <input type="date" [(ngModel)]="corteEdicao!.dataDeCorte">
+                                @if (erros['dataCorteAtt']) {
+                                    <span class="erro">
+                                    &#9888; {{ erros['dataCorteAtt'] }}
+                                    </span>
+                                }
                             }
                             @else {
                                 <p><span>Modelo:</span> {{ corte.nomeModelo }}</p>
@@ -88,6 +103,11 @@
 
                                 <label>Quantidade:</label>
                                 <input type="number" [(ngModel)]="corteEdicao!.quantidadeTotal">
+                                @if (erros['quantidadeAtt']) {
+                                    <span class="erro">
+                                    &#9888; {{ erros['quantidadeAtt'] }}
+                                    </span>
+                                }
                             }
                             @else {
                                 <p><span>Enfestador:</span> {{ corte.enfestador?.nome || '(Pendente)' }}</p>

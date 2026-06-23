@@ -63,6 +63,8 @@ export class ContentComponent implements OnInit{
   opcoesCard = false;
   corteAbertoOpcao !: CorteResponse;
 
+  erros: { [key: string]: string } = {};
+
   ngOnInit(){
     this.route.params.subscribe(params => {
       this.pageSelected = params['tipo'] || 'Geral';
@@ -198,6 +200,11 @@ export class ContentComponent implements OnInit{
       idEnfestador: this.idEnfestador ?? null
     }
 
+    if(!this.validarAtualizacao(corteParaAtualizar)){
+      return;
+    }
+    
+
     this.corteService.atualizarCorte(this.corteSelecionado!.id, corteParaAtualizar).subscribe({
       next: (data) => {
         console.log("Corte atualizado com sucesso");
@@ -223,6 +230,29 @@ export class ContentComponent implements OnInit{
     })
   }
 
+  validarAtualizacao(corte : CorteUpdateRequest) : boolean{
+
+    this.erros = {}
+
+    if(!corte.loteFormatado.trim()){
+      this.erros['loteAtt'] = 'Lote obrigatório';
+    }
+    else if (!/^[0-9/]+$/.test(corte.loteFormatado)) {
+      this.erros['loteAtt'] = 'O lote deve conter apenas números e "/"';
+    }
+    else if (!corte.loteFormatado.includes('/')) {
+      this.erros['loteAtt'] = 'O lote deve conter "/"';
+    }
+    if (!corte.nomeModelo.trim()){
+      this.erros['nomeModeloAtt'] = 'Nome do modelo obrigatório';
+    }
+    if(!corte.quantidadeTotal || corte.quantidadeTotal <= 0){
+      this.erros['quantidadeAtt'] = 'Quantidade obrigatória';
+    }        
+    
+    return Object.keys(this.erros).length === 0
+  }
+
   formatarData(data:string):string{
 
     let dataVetor = data.split("/");
@@ -231,9 +261,22 @@ export class ContentComponent implements OnInit{
 
   adicionarCorte(){
 
+    this.erros = {};
+
     if(this.novoCorte.dataDeRegistro === ''){
-      alert("Data de registro obrigatória!")
-      return
+      this.erros['dataRegistro'] = 'Data de Registro obrigatória'
+    }
+
+    if(!this.novoCorte.nomeModelo.trim()){
+      this.erros['nomeModelo'] = 'Nome do modelo obrigatório';
+    }
+
+    if(!this.novoCorte.quantidadeTotal || this.novoCorte.quantidadeTotal === 0){
+      this.erros['quantidade'] = 'Quantidade obrigatória'
+    }
+
+    if (Object.keys(this.erros).length > 0) {
+      return;
     }
 
     if ( this.tipoLote === 'novo'){

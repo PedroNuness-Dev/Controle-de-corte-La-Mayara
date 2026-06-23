@@ -20,6 +20,7 @@ services:
       - app-network
 
   backend-spring:    
+    image: controle-de-corte-angular-spring  
     build: ../Controle-de-Corte-La-Mayara/
     container_name: controle-de-corte-spring-container
     restart: always
