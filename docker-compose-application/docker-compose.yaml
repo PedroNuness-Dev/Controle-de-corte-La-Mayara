@@ -20,7 +20,7 @@ services:
       - app-network
 
   backend-spring:    
-    image: controle-de-corte-angular-spring  
+    image: controle-de-corte-spring  
     build: ../Controle-de-Corte-La-Mayara/
     container_name: controle-de-corte-spring-container
     restart: always
@@ -34,7 +34,7 @@ services:
     networks:
       - app-network
   frontend-angular:
-    image: controle-de-corte-angular-image
+    image: controle-de-corte-angular
     build: ../controle-de-corte-angular/
     container_name: controle-de-corte-angular-container
     restart: always
