@@ -1,5 +1,6 @@
 package com.PedroNunesDev.Controle_de_Corte.model;
 
+import com.PedroNunesDev.Controle_de_Corte.enums.ItemStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -21,16 +22,20 @@ public class Item {
 
     private Integer quantidade;
 
-    private String oberservacao;
+    private String observacao;
 
     private Boolean atencao;
 
     private Integer posicao;
 
     @Builder.Default
+    @Enumerated(EnumType.STRING)
+    private ItemStatus itemStatus = ItemStatus.PENDENTE;
+
+    @Builder.Default
     private LocalDate dataDeInsercao = LocalDate.now();
 
     @ManyToOne
-    @JoinColumn
+    @JoinColumn(name = "lista_id")
     private Lista lista;
 }
