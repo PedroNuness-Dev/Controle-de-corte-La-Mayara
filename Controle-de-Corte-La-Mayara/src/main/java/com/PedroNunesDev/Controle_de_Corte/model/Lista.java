@@ -23,7 +23,7 @@ public class Lista {
 
     private String descricao;
 
-    @OneToMany(mappedBy = "lista")
+    @OneToMany(mappedBy = "lista", cascade = CascadeType.ALL)
     private List<Item> items = new ArrayList<>();
 
     @Builder.Default
