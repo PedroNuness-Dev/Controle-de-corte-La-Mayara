@@ -4,6 +4,7 @@ import { HistoricoComponent } from './components/historico-component/historico-c
 import { ConfigComponent } from './components/config-component/config-component';
 import { HomeComponent } from './components/home-component/home-component';
 import { SuporteComponent } from './components/suporte-component/suporte-component';
+import { NotaComponent } from './components/nota-component/nota-component';
 
 export const routes: Routes = [{
     path: "",
@@ -22,4 +23,8 @@ export const routes: Routes = [{
 {
     path: "suporte",
     component: SuporteComponent
+},
+{
+    path: "nota",
+    component: NotaComponent
 }]
