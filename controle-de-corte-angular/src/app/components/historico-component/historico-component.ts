@@ -76,7 +76,13 @@ export class HistoricoComponent implements OnInit {
     }
     if(!corte.quantidadeTotal || corte.quantidadeTotal <= 0){
       this.erros['quantidadeAtt'] = 'Quantidade obrigatória';
-    }           
+    }      
+    if(corte.idCortador != null && corte.idEnfestador == null){
+      this.erros["enfestadorAttError"] = "Selecione um enfestador"
+    }        
+    if(corte.dataDeCorte === '' && corte.idCortador != null){
+      this.erros["dataCorteAtt"] = "Selecione a data de corte"
+    }     
 
     return Object.keys(this.erros).length === 0;
   }
@@ -143,6 +149,8 @@ export class HistoricoComponent implements OnInit {
       idCortador: this.idCortador ?? null,
       idEnfestador: this.idEnfestador ?? null
     };    
+
+    console.log(corteParaAtualizar.dataDeCorte)
 
     if(!this.validarAtualizacao(corteParaAtualizar)){
       return;
