@@ -2,7 +2,7 @@ CREATE TABLE lista(
                       id INTEGER PRIMARY KEY AUTO_INCREMENT,
                       titulo VARCHAR(100) NOT NULL,
                       descricao VARCHAR(250),
-                      data_de_criacao DATE NOT NULL DEFAULT current_date
+                      data_de_criacao DATE NOT NULL DEFAULT (CURRENT_DATE)
 );
 
 
@@ -14,7 +14,7 @@ CREATE TABLE item(
                      atencao BOOLEAN NOT NULL DEFAULT FALSE,
                      posicao INTEGER NOT NULL,
                      lista_id INTEGER,
-                     data_de_insercao DATE NOT NULL DEFAULT current_date,
+                     data_de_insercao DATE NOT NULL DEFAULT (CURRENT_DATE),
 
                      CONSTRAINT fk_item_lista FOREIGN KEY (lista_id) REFERENCES lista(id)
 );
