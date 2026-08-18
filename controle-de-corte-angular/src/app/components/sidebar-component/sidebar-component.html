@@ -1,12 +1,34 @@
 <div class="content">
-    <img src="logo.png" alt="" class="logo">
+    <img src="logo.png" alt="" class="logo">    
     <div class="main-sidebar">
-        <button [routerLink]="['/cortes', 'Geral']" routerLinkActive="active" >Geral</button>
-        <button [routerLink]="['/cortes', 'Pendentes']" routerLinkActive="active" >Pendentes</button>
-        <button [routerLink]="['/cortes', 'Enfestados']" routerLinkActive="active" >Enfestados</button>
-        <button [routerLink]="['/cortes','Cortados']" routerLinkActive="active" >Cortados</button>
-        <button routerLink="historico" routerLinkActive="active">Histórico</button>
-        <button routerLink="configuracoes" routerLinkActive="active">Configurações</button>
+        <button [routerLink]="['/cortes', 'Geral']" routerLinkActive="active">
+            <span class="material-icons-outlined">dashboard</span>
+            <span>Geral</span>
+        </button>
+        <button [routerLink]="['/cortes', 'Pendentes']" routerLinkActive="active">
+            <span class="material-icons-outlined">pending_actions</span>
+            <span>Pendentes</span>
+        </button>
+        <button [routerLink]="['/cortes', 'Enfestados']" routerLinkActive="active">
+            <span class="material-icons-outlined">layers</span>
+            <span>Enfestados</span>            
+        </button>
+        <button [routerLink]="['/cortes','Cortados']" routerLinkActive="active">
+            <span class="material-icons-outlined">content_cut</span>
+            <span>Cortados</span>
+        </button>
+        <button routerLink="nota" routerLinkActive="active">
+            <span class="material-icons-outlined">assignment</span>
+            <span>Notas</span>
+        </button>
+        <button routerLink="historico" routerLinkActive="active">
+            <span class="material-icons-outlined">history</span>
+            <span>Histórico</span>
+        </button>
+        <button routerLink="configuracoes" routerLinkActive="active">
+            <span class="material-icons-outlined">settings</span>
+            <span>Configurações</span>
+        </button>
     </div>
     <div class="footer-sidebar">
         <button routerLink="suporte" class="btn-suporte">Suporte</button>

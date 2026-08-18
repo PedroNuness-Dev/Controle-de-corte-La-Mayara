@@ -2,40 +2,70 @@
 
     .content{
         display: flex;
-        justify-content: center;
-        align-items: center;
+        align-items: stretch;
         padding-top: 20px;
         flex-direction: column;
-        min-height: 100vh;
+        min-height: 100vh;        
+        background-color: white;
     }
     
     .logo{
-        width: 350px;
+        width: 300px;
+        align-self: center;
+        margin-bottom: 24px;
     }
 
     .main-sidebar{
         display: flex;
         flex-direction: column;
-        gap: 24px;        
-        align-items: center;
-        justify-content: center;
+        gap: 10px;
+        padding: 50px 16px;
         flex: 1;
         width: 100%;
     }
 
     .main-sidebar button{
-        width: 60%;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        width: 90%;
         border: none;
-        padding: 11px 0;
-        border-radius: 8px;
-        background-color: #D9D9D9;
-        font-size: 20px;
+        padding: 12px 16px;
+        border-radius: 10px;
+        background-color: transparent;
+        font-size: 18px;
+        color: #555;
         cursor: pointer;
+        text-align: left;
+        transition: background-color 0.15s ease, color 0.15s ease;
+        position: relative;
     }
 
     .main-sidebar button:hover{
-        transform: scale(1.01);
-        background-color: #a5a4a4;
+        background-color: #f0f0f0;
+    }
+
+    .material-icons-outlined{
+        font-size: 20px;
+        flex-shrink: 0;
+    }
+
+    .badge{
+        margin-left: auto;
+        background-color: #e63946;
+        color: white;
+        font-size: 12px;
+        font-weight: 600;
+        padding: 2px 7px;
+        border-radius: 999px;
+        min-width: 20px;
+        text-align: center;
+    }
+
+    button.active{
+        background-color: #e8f5ee !important;
+        color: #1f9d55 !important;
+        font-weight: 600;
     }
 
     .footer-sidebar{        
@@ -43,45 +73,32 @@
         flex-direction: column;
         margin-top: auto;
         margin-bottom: 20px;
+        align-items: center;
     }
 
     .footer-sidebar span{
-        font-size: 20px;
-    }
-
-    .footer-sidebar span a{
-        color: black;
-    }
-
-    button.active{
-        background-color: rgb(88, 88, 88) !important;
-        color: white;
+        font-size: 14px;
+        color: #888;
     }
 
     .btn-suporte{
         border: none;
-        font-size: 20px;
+        font-size: 16px;
         background-color: transparent;
         text-decoration: underline;
         cursor: pointer;
+        margin-bottom: 8px;
     }
 
     @media(max-width: 1366px){
-
-        .footer-sidebar{            
-            font-size: 16px;
+        .footer-sidebar, .footer-sidebar span{
+            font-size: 13px;
         }
-
-        .footer-sidebar span{
-            font-size: 16px;
-        }
-
         .logo{
-            width: 300px;
+            width: 250px;
         }
-
         .main-sidebar button{
-            font-size: 16px;
+            font-size: 14px;
         }
     }
 }
