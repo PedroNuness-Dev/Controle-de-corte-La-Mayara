@@ -6,15 +6,15 @@
 
     .sidebar {
         position: fixed;
-        width: 350px;
+        width: 300px;
         background: rgb(247, 245, 245);
         height: 100vh;
-        box-shadow: 0.5px 0 4px rgba(73, 69, 69, 0.582);
+        border-right: solid 1.5px rgba(10, 10, 10, 0.226);        
     }
 
     .content {
         height: 100vh;
-        margin-left: 350px;
+        margin-left: 300px;
         overflow-y: auto;
         background: #ffffff;
         width: 100%;
@@ -23,11 +23,11 @@
     @media(max-width: 1366px){
 
         .sidebar{
-            width: 270px;
+            width: 240px;
         }
 
         .content{
-            margin-left: 270px;
+            margin-left: 240px;
         }
     }
 }

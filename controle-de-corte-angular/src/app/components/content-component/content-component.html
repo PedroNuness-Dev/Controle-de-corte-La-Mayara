@@ -15,11 +15,12 @@
         <h1 class="title">{{mesAtual}} {{anoAtual}}</h1>
     </div>
     <div class="header-right">
-        <button type="button" class="btn-add-corte btn-header" (click)="abrirCriacao()">Adicionar corte</button>
+        <button type="button" class="btn-add-corte btn-header" (click)="abrirCriacao()">
+            <span class="material-icons-outlined">add</span> Adicionar corte
+        </button>
         <span>Cortes registrados: {{relatorioDeCortes}}</span>
     </div>
-  </div>
-
+  </div> 
   <div class="lista-cortes">
 
     @if (telaCarregadandoModal) {
@@ -84,7 +85,7 @@
         <div class="expand-area ativo">      
           <div class="btn-criacao">
             <button class="btn btn-salvar" (click)="adicionarCorte()">Salvar</button>
-            <button class="btn" (click)="fecharCriacao()">Cancelar</button>
+            <button class="btn btn-cancelar-acao" (click)="fecharCriacao()">Cancelar</button>
           </div>
         </div>
       </div>
@@ -101,6 +102,10 @@
             </button>
             @if (opcoesCard && corteAbertoOpcao.id === corteAdicionadoRecentemente.id) {
               <div class="opcoes-btn">
+                <button type="button" class="btn-opcao" (click)="selecionarCorte(corteAdicionadoRecentemente)">
+                  <img src="pencils.png" alt="">
+                  Editar
+                </button>
                 @if (corteAdicionadoRecentemente.corteStatus === 'CANCELADO') {
                    <button class="btn-opcao ativar" (click)="ativarCorte(corteAdicionadoRecentemente)">
                     ✅ Ativar corte
@@ -146,8 +151,7 @@
               <p><span>Modelo:</span> {{ corteAdicionadoRecentemente.nomeModelo }}</p>
               <p><span>Lote:</span> {{ corteAdicionadoRecentemente.loteFormatado }}</p>
               <p><span>Data de corte:</span> {{ corteAdicionadoRecentemente.dataDeCorte }}</p>
-            }
-            <button type="button" class="btn-edit" (click)="selecionarCorte(corteAdicionadoRecentemente)"><img src="edit.png" alt="" class="icon-edit"> Editar</button>
+            }            
           </div>
 
           <div class="coluna">
@@ -195,8 +199,8 @@
 
         </div>
         <div class="expand-area" [class.ativo]="corteSelecionado?.id === corteAdicionadoRecentemente.id">
-            <button class="btn  btn-salvar" (click)="atualizarCorte()">Salvar</button>
-            <button class="btn " type="button" (click)="fecharModalCorte()">Cancelar</button>
+            <button class="btn btn-salvar" (click)="atualizarCorte()">Salvar</button>
+            <button class="btn btn-cancelar-acao" type="button" (click)="fecharModalCorte()">Cancelar</button>
         </div>
       </div>
       <div>
@@ -217,6 +221,10 @@
             </button>
             @if (opcoesCard && corteAbertoOpcao.id === corte.id) {
               <div class="opcoes-btn">
+                <button type="button" class="btn-opcao" (click)="selecionarCorte(corte)">
+                  <img src="pencils.png" alt="">
+                  Editar
+                </button>
                 @if (corte.corteStatus === 'CANCELADO') {
                    <button class="btn-opcao ativar" (click)="ativarCorte(corte)">
                     ✅ Ativar corte
@@ -226,7 +234,7 @@
                   <button class="btn-opcao cancelar" (click)="cancelarCorte(corte)">
                     ❌ Cancelar corte
                   </button>
-                }
+                }                
                 <button class="btn-opcao excluir" (click)="excluirCorte(corte.id)">
                   🗑️ Excluir corte
                 </button>
@@ -262,8 +270,7 @@
               <p><span>Modelo:</span> {{ corte.nomeModelo }}</p>
               <p><span>Lote:</span> {{ corte.loteFormatado }}</p>
               <p><span>Data de corte:</span> {{ corte.dataDeCorte || '-' }}</p>
-            }
-            <button type="button" class="btn-edit" (click)="selecionarCorte(corte)"><img src="edit.png" alt="" class="icon-edit"> Editar</button>
+            }            
           </div>
 
           <div class="coluna">
@@ -312,7 +319,7 @@
         </div>
         <div class="expand-area" [class.ativo]="corteSelecionado?.id === corte.id">
             <button class="btn btn-salvar" (click)="atualizarCorte()">Salvar</button>
-            <button class="btn" type="button" (click)="fecharModalCorte()">Cancelar</button>
+            <button class="btn btn-cancelar-acao" type="button" (click)="fecharModalCorte()">Cancelar</button>
         </div>
       </div>
     }

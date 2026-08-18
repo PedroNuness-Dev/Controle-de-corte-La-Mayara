@@ -156,7 +156,6 @@ export class ContentComponent implements OnInit{
 
   selecionarCorte(corte:CorteResponse){
 
-    if(this.corteSelecionado == null || this.corteSelecionado.id !== corte.id){
       this.corteSelecionado = corte;
 
       if(corte.dataDeCorte == null){
@@ -173,14 +172,7 @@ export class ContentComponent implements OnInit{
 
       this.idEnfestador = corte.enfestador?.id ?? null;
       this.idCortador = corte.cortador?.id ?? null;
-    }
-    else{
-      this.corteSelecionado = null;
-      this.corteEdicao = null;
-
-      this.idCortador = null;
-      this.idEnfestador = null;
-    }
+      this.opcoesCard = false;
   }
 
   pegarStatusParaEstilo(status:string):string{
@@ -306,6 +298,7 @@ export class ContentComponent implements OnInit{
         this.fecharCriacao();
         this.buscarLoteAtual();
         this.cdr.detectChanges();
+        this.buscarRelatorioDeCortes();
       },
       error: (err) => {
         console.log(err);
@@ -382,7 +375,7 @@ export class ContentComponent implements OnInit{
     }
 
     this.corteService.excluirCorte(id).subscribe({
-      next: () => {this.cdr.detectChanges(); console.log("Corte excluido com sucesso!"); this.buscarCortesDoMesPorStatus()},
+      next: () => {this.cdr.detectChanges(); console.log("Corte excluido com sucesso!"); this.buscarCortesDoMesPorStatus();this.buscarRelatorioDeCortes()},
       error: (err) => {console.log(err)}
     })
   }

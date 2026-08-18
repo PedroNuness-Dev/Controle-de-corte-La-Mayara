@@ -54,9 +54,10 @@ export class ConfigComponent implements OnInit{
   }
 
   modalDecrementarLote = false;
+  modalIncrementoLote = false;
 
   ngOnInit() {
-    
+    this.buscarLote();
     this.buscarEnfestadores();
     this.buscarCortadores();
   }
@@ -188,14 +189,22 @@ export class ConfigComponent implements OnInit{
 
   ativarModalDecrementoLote(){
 
-    if(this.loteAtual == null){
-      this.loteService.buscarLote().subscribe({
+    this.modalDecrementarLote = true;
+  }
+
+  ativarModalIncrementoLote(){
+    this.modalIncrementoLote = true;
+  }
+
+  desativarModalIncrementoLote(){
+    this.modalIncrementoLote = false;
+  }
+
+  buscarLote(){
+    this.loteService.buscarLote().subscribe({
         next: (data) => {this.loteAtual = data.numero_lote; this.cdr.detectChanges()},
         error: (err) => {console.log(err)}
       })
-    }
-
-    this.modalDecrementarLote = true;
   }
 
   decrementarLote(){
@@ -205,8 +214,18 @@ export class ConfigComponent implements OnInit{
     }
 
     this.loteService.decrementarLote().subscribe({
-      next: () => {console.log("Lote decrementado com sucesso!"); this.loteAtual = null; this.modalDecrementarLote=false; this.cdr.detectChanges()} ,
+      next: () => {console.log("Lote decrementado com sucesso!"); this.buscarLote(); this.modalDecrementarLote=false; this.cdr.detectChanges()} ,
       error: (err) => {console.log(err)}
+    })
+  }
+
+  incrementarLote(){
+    if(this.loteAtual == null){
+      return
+    }
+
+    this.loteService.incrementarLote().subscribe({
+      next: () => {console.log("Lote incrementado com sucesso!"); this.buscarLote(); this.modalIncrementoLote = false ;this.cdr.detectChanges()},
     })
   }
 }

@@ -43,19 +43,26 @@
                     <strong>2.4 Cortadores cadastrados</strong>
                     <ul class="ul-list">
                         @for (cortador of cortadores; track cortador.id) {
-                            <div class="info-pessoa" (click)="buscarEstatistica(cortador.nome)">
-                                <span>{{cortador.nome}}</span>                                
-                            </div>
-                            <div>
-                                <p class="info-pessoa-detalhes">Quantidade de cortes cortados: {{cortador.quantidadeDeCortesCortados}}</p>
-                            </div>
-                            <button class="btn-excluir" (click)="ativarModalExclusao(cortador.id, 'cortador', cortador.nome)">Excluir</button>
+                            <li class="pessoa-card">
+                                <div class="pessoa-info" (click)="buscarEstatistica(cortador.nome)">                                    
+                                    <div class="pessoa-texto">
+                                        <span class="pessoa-nome">{{cortador.nome}}</span>
+                                        <p class="info-pessoa-detalhes">Quantidade de cortes cortados: {{cortador.quantidadeDeCortesCortados}}</p>
+                                    </div>
+                                </div>
+                                <button class="btn-excluir-icon" title="Excluir" (click)="ativarModalExclusao(cortador.id, 'cortador', cortador.nome)">
+                                    <span class="material-icons-outlined">delete</span>
+                                </button>
+                            </li>
                         }
                     </ul>
                 </li>
             </ol>
             <div class="section-actions">
-                <button type="button" class="action-button" (click)="abrirModoCriacaoCortador()">
+                <button type="button" class="action-button" [class.active]="modoCadastroCortador" (click)="abrirModoCriacaoCortador()">
+                    <span class="material-icons-outlined">
+                        @if (modoCadastroCortador) { close } @else { person_add }
+                    </span>
                     @if (modoCadastroCortador) { Cancelar cadastro de cortador } @else { Cadastrar novo cortador }
                 </button>
                 @if (modoCadastroCortador) {
@@ -95,21 +102,28 @@
                 </li>
                 <li>
                     <strong>3.3 Enfestadores cadastrados</strong>
-                    <ul>
+                    <ul class="ul-list">
                         @for (enfestador of enfestadores; track enfestador.id) {
-                            <div class="info-pessoa">
-                                <span>{{ enfestador.nome }}</span>                          
-                            </div>
-                            <div>
-                                <p class="info-pessoa-detalhes" >Quantidade de cortes enfestados: {{enfestador.quantidadeDeCortesEnfestados}}</p>
-                            </div>
-                            <button class="btn-excluir" (click)="ativarModalExclusao(enfestador.id, 'enfestador', enfestador.nome)">Excluir</button>
+                            <li class="pessoa-card">
+                                <div class="pessoa-info">                                    
+                                    <div class="pessoa-texto">
+                                        <span class="pessoa-nome">{{ enfestador.nome }}</span>
+                                        <p class="info-pessoa-detalhes">Quantidade de cortes enfestados: {{enfestador.quantidadeDeCortesEnfestados}}</p>
+                                    </div>
+                                </div>
+                                <button class="btn-excluir-icon" title="Excluir" (click)="ativarModalExclusao(enfestador.id, 'enfestador', enfestador.nome)">
+                                    <span class="material-icons-outlined">delete</span>
+                                </button>
+                            </li>
                         }
                     </ul>
                 </li>
             </ol>
             <div class="section-actions">
-                <button type="button" class="action-button" (click)="abrirModoCriacaoEnfestador()">
+                <button type="button" class="action-button" [class.active]="modoCadastroEnfestador" (click)="abrirModoCriacaoEnfestador()">
+                    <span class="material-icons-outlined">
+                        @if (modoCadastroEnfestador) { close } @else { layers }
+                    </span>
                     @if (modoCadastroEnfestador) { Cancelar cadastro de enfestador } @else { Cadastrar novo enfestador }
                 </button>
                 @if (modoCadastroEnfestador) {
@@ -147,7 +161,20 @@
                     <strong>4.2 Como criar e gerenciar lotes?</strong>
                     <p>Use a funcionalidade de lote para organizar cortes e acompanhar o progresso da produção.</p>
                 </li>
-                <button class="btn-excluir btn-desincrementar-lote" (click)="ativarModalDecrementoLote()">Decrementar Lote</button>   
+                <li>
+                    <strong>4.3 Ajustes no lote:</strong>
+                    <p>Use a funcionalidade para realizar ajustes no lote atual.</p>
+                </li>
+                <div class="btns-lote">
+                    <button class="btn-lote btn-incrementar-lote" (click)="ativarModalIncrementoLote()">
+                        <span class="material-icons-outlined">add_circle_outline</span>
+                        Incrementar Lote
+                    </button>
+                    <button class="btn-lote btn-desincrementar-lote" (click)="ativarModalDecrementoLote()">
+                        <span class="material-icons-outlined">remove_circle_outline</span>
+                        Decrementar Lote
+                    </button>
+                </div>
             </ol>
         </section>
 
@@ -190,7 +217,7 @@
                 <h2>Confirmar exclusão</h2>
 
                 <p>
-                    Tem certeza que deseja excluir este {{itemExcluido.tipo}}?
+                    Tem certeza que deseja excluir {{itemExcluido.nome}} como {{itemExcluido.tipo}}?
                     Essa ação não poderá ser desfeita.
                 </p>
 
@@ -225,6 +252,29 @@
 
                     <button class="btn-excluir" (click)="decrementarLote()">
                         Decrementar
+                    </button>
+                </div>
+            </div>
+        </div>
+    }
+
+    @if (modalIncrementoLote) {
+        <div class="overlay-modal">
+            <div class="modal-excluir">
+
+                <h2>Confirmar incremento</h2>
+                <p>
+                    Tem certeza que deseja incrementar o lote <span style="font-weight: 700; color: green;">{{loteAtual}}</span>?
+                    Essa ação não poderá ser desfeita.
+                </p>
+
+                <div class="acoes-modal">
+                    <button class="btn-cancelar" (click)="desativarModalIncrementoLote()">
+                        Cancelar
+                    </button>
+
+                    <button class="btn-excluir btn-incremento" (click)="incrementarLote()">
+                        Incrementar
                     </button>
                 </div>
             </div>

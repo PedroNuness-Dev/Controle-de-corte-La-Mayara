@@ -1,15 +1,32 @@
 <div class="principal">
-    <div class="header">
-        <h1>Histórico de cortes</h1>
-    </div>
-
-    <div class="search-div">
-        <span>Selecione o mês que deseja analisar</span>
-        <div class="input-wrapper">
-            <input type="month" class="input-month" aria-label="Selecionar mês" [(ngModel)]="mesSelecionado" />
+    <div class="header-busca">
+        <div class="header-titulo">
+            <span class="material-icons-outlined icon-titulo">history</span>
+            <div>
+                <h1>Histórico de cortes</h1>
+                <p>Consulte os cortes registrados por mês</p>
+            </div>
         </div>
-        <button type="button" class="btn-search" (click)="buscarCortes()">Buscar</button>
+
+        <div class="busca-mes">
+            <label for="mesSelecionado">Mês de referência</label>
+            <div class="busca-mes-controles">
+                <div class="input-wrapper">
+                    <span class="material-icons-outlined icon-calendario">calendar_month</span>
+                    <input type="month" id="mesSelecionado" class="input-month" aria-label="Selecionar mês" [(ngModel)]="mesSelecionado" />
+                </div>
+                <button type="button" class="btn-search" (click)="buscarCortes()">
+                    <span class="material-icons-outlined">search</span>
+                    Buscar
+                </button>
+            </div>
+        </div>
     </div>
+    @if (infoResult) {
+        <div class="secao-resultados">
+            <span class="secao-label">Resultados de {{getNomeMesFormatado(mesBuscado)}} — {{ getquantidadeDeCortes() }} corte(s) encontrado(s)</span>
+        </div>
+    }
 
     @if (telaCarregandoModal) {
       <div class="loading-overlay">
@@ -25,113 +42,111 @@
             @for (corte of cortesBuscados; track corte.id) {
                 <div class="card-corte" [ngClass]="pegarStatusParaEstilo(corte.corteStatus)">
                     <div class="header-card">
-                        <h3 class="title-card">{{corte.corteStatus}}</h3>
-                            <button class="btn-menu" (click)="abrirModalOpcao(corte)">
-                            <img src="three.png" alt="">
+                    <h3 class="title-card">{{corte.corteStatus}}</h3>
+                        <button class="btn-menu" (click)="abrirModalOpcao(corte)">
+                        <img src="three.png" alt="">
+                        </button>
+                        @if (opcoesCard && corteAbertoOpcao.id === corte.id) {
+                        <div class="opcoes-btn">
+                            <button type="button" class="btn-opcao" (click)="selecionarCorte(corte)">
+                            <img src="pencils.png" alt="">
+                            Editar
                             </button>
-                            @if (opcoesCard && corteAbertoOpcao.id === corte.id) {
-                            <div class="opcoes-btn">
-                                @if (corte.corteStatus === 'CANCELADO') {
-                                <button class="btn-opcao ativar" (click)="ativarCorte(corte)">
-                                    ✅ Ativar corte
-                                </button>
-                                }
-                                @else {
-                                <button class="btn-opcao cancelar" (click)="cancelarCorte(corte)">
-                                    ❌ Cancelar corte
-                                </button>
-                                }
-                                <button class="btn-opcao excluir" (click)="excluirCorte(corte.id)">
-                                🗑️ Excluir corte
-                                </button>
-                            </div>
+                            @if (corte.corteStatus === 'CANCELADO') {
+                            <button class="btn-opcao ativar" (click)="ativarCorte(corte)">
+                                ✅ Ativar corte
+                            </button>
                             }
+                            @else {
+                            <button class="btn-opcao cancelar" (click)="cancelarCorte(corte)">
+                                ❌ Cancelar corte
+                            </button>
+                            }                
+                            <button class="btn-opcao excluir" (click)="excluirCorte(corte.id)">
+                            🗑️ Excluir corte
+                            </button>
                         </div>
+                        }
+                    </div>
                     <div class="linha">
-                        <div class="coluna">
-                            @if (corteSelecionado && corteSelecionado.id === corte.id) {
-                                <label>Modelo:</label>
-                                <input type="text" [(ngModel)]="corteEdicao!.nomeModelo">
-                                @if (erros['nomeModeloAtt']) {
-                                    <span class="erro">
-                                    &#9888; {{ erros['nomeModeloAtt'] }}
-                                    </span>
-                                }
-                                <label>Lote:</label>
-                                <input type="text" [(ngModel)]="corteEdicao!.loteFormatado">
-                                @if (erros['loteAtt']) {
-                                    <span class="erro">
-                                    &#9888; {{ erros['loteAtt'] }}
-                                    </span>
-                                }
-                                <label>Data de corte:</label>
-                                <input type="date" [(ngModel)]="corteEdicao!.dataDeCorte">
-                                @if (erros['dataCorteAtt']) {
-                                    <span class="erro">
-                                    &#9888; {{ erros['dataCorteAtt'] }}
-                                    </span>
-                                }
-                            }
-                            @else {
-                                <p><span>Modelo:</span> {{ corte.nomeModelo }}</p>
-                                <p><span>Lote:</span> {{ corte.loteFormatado || '-' }}</p>
-                                <p><span>Data de corte:</span> {{ corte.dataDeCorte || '-' }}</p>
-                            }
-                            <button type="button" class="btn-edit" (click)="selecionarCorte(corte)">
-                                <img src="edit.png" alt="" class="icon-edit" alt="editar" aria-label="Editar"> 
-                                Editar
-                            </button>
-                        </div>
+                    <div class="coluna">
+                        @if (corteSelecionado && corteSelecionado.id === corte.id) {
+                        <label>Modelo:</label>
+                        <input type="text" [(ngModel)]="corteEdicao!.nomeModelo">
+                        @if (erros['nomeModeloAtt']) {
+                            <span class="erro">
+                            &#9888; {{ erros['nomeModeloAtt'] }}
+                            </span>
+                        }
+                        <label>Lote: </label>
+                        <input type="text" [(ngModel)]="corteEdicao!.loteFormatado">
+                        @if (erros['loteAtt']) {
+                            <span class="erro">
+                            &#9888; {{ erros['loteAtt'] }}
+                            </span>
+                        }
+                        <label>Data de corte: </label>
+                        <input type="date" [(ngModel)]="corteEdicao!.dataDeCorte">
+                        @if (erros['dataCorteAtt']) {
+                            <span class="erro">
+                            &#9888; {{ erros['dataCorteAtt'] }}
+                            </span>
+                        }
+                        }
+                        @else {
+                        <p><span>Modelo:</span> {{ corte.nomeModelo }}</p>
+                        <p><span>Lote:</span> {{ corte.loteFormatado }}</p>
+                        <p><span>Data de corte:</span> {{ corte.dataDeCorte || '-' }}</p>
+                        }            
+                    </div>
 
-                        <div class="coluna">
-                            @if (corteSelecionado && corteSelecionado.id === corte.id) {
-                                <label>Selecionar Enfestador:</label>
-                                <select [(ngModel)]="idEnfestador">
-                                    <option [ngValue]="null">Selecionar enfestador</option>
-                                    @for (enf of enfestadores; track enf.id) {
-                                        <option [ngValue]="enf.id">{{ enf.nome }}</option>
-                                    }
-                                </select>
+                    <div class="coluna">
+                        @if (corteSelecionado && corteSelecionado.id === corte.id) {
+                        <label>Selecionar Enfestador: </label>
+                            <select [(ngModel)]="idEnfestador">
+                                <option [ngValue]="null">Selecionar enfestador</option>
+                                @for (enfestador of enfestadores; track enfestador.id) {
+                                <option [ngValue]="enfestador.id">{{enfestador.nome}}</option>
+                                }     
+                            </select>
+                        <label>Selecionar Cortador: </label>
+                            <select [(ngModel)]="idCortador">
+                                <option [ngValue]="null">Selecionar cortador</option>
+                                @for (cortador of cortadores; track cortador.id) {
+                                <option [ngValue]="cortador.id">{{cortador.nome}}</option>
+                                }                   
+                            </select>
+                        <label>Quantidade: </label>
+                        <input type="number" [(ngModel)]="corteEdicao!.quantidadeTotal">
+                        @if (erros['quantidadeAtt']) {
+                            <span class="erro">
+                            &#9888; {{ erros['quantidadeAtt'] }}
+                            </span>
+                        }
+                        }
+                        @else {
+                        <p><span>Enfestador:</span> {{ corte.enfestador?.nome || '(Pendente)' }}</p>
+                        <p><span>Cortador:</span> {{ corte.cortador?.nome || '(Pendente)' }}</p>
+                        <p><span>Quantidade: </span>{{corte?.quantidadeTotal}}</p>
+                        }
+                    </div>
 
-                                <label>Selecionar Cortador:</label>
-                                <select [(ngModel)]="idCortador">
-                                    <option [ngValue]="null">Selecionar cortador</option>
-                                    @for (cor of cortadores; track cor.id) {
-                                        <option [ngValue]="cor.id">{{ cor.nome }}</option>
-                                    }
-                                </select>
-
-                                <label>Quantidade:</label>
-                                <input type="number" [(ngModel)]="corteEdicao!.quantidadeTotal">
-                                @if (erros['quantidadeAtt']) {
-                                    <span class="erro">
-                                    &#9888; {{ erros['quantidadeAtt'] }}
-                                    </span>
-                                }
-                            }
-                            @else {
-                                <p><span>Enfestador:</span> {{ corte.enfestador?.nome || '(Pendente)' }}</p>
-                                <p><span>Cortador:</span> {{ corte.cortador?.nome || '(Pendente)' }}</p>
-                                <p><span>Quantidade:</span> {{ corte.quantidadeTotal }}</p>
-                            }
-                        </div>
-
-                        <div class="coluna observacao">
-                            <p><span>Observações</span></p>
-                            <div class="box-observacao">
-                                @if (corteSelecionado && corteSelecionado.id === corte.id) {
-                                    <input type="text" [(ngModel)]="corteEdicao!.observacao" class="input-obs">
-                                }
-                                @else {
-                                    {{ corte.observacao || '-' }}
-                                }
-                            </div>
+                    <div class="coluna observacao">
+                        <p><span>Observações</span></p>
+                        <div class="box-observacao">
+                        @if (corteSelecionado && corteSelecionado.id === corte.id) {
+                            <input type="text" [(ngModel)]="corteEdicao!.observacao" class="input-obs">
+                        }
+                        @else {
+                            {{ corte.observacao || '-' }}
+                        }
                         </div>
                     </div>
 
+                    </div>
                     <div class="expand-area" [class.ativo]="corteSelecionado?.id === corte.id">
-                        <button class="btn btn-salvar" type="button" (click)="atualizarCorte()">Salvar</button>
-                        <button class="btn btn-cancelar" type="button" (click)="cancelarEdicao()">Cancelar</button>
+                        <button class="btn btn-salvar" (click)="atualizarCorte()">Salvar</button>
+                        <button class="btn btn-cancelar-acao" type="button" (click)="cancelarEdicao()">Cancelar</button>
                     </div>
                 </div>
             }

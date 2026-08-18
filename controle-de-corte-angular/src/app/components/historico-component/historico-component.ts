@@ -28,6 +28,7 @@ export class HistoricoComponent implements OnInit {
   enfestadores: EnfestadorResponse[] = [];
 
   mesSelecionado = '';
+  mesBuscado = '';
   telaCarregandoModal = false;
   corteSelecionado: CorteResponse | null = null;
   corteEdicao: CorteResponse | null = null;
@@ -36,11 +37,13 @@ export class HistoricoComponent implements OnInit {
 
   opcoesCard = false;
   corteAbertoOpcao !: CorteResponse;
+  infoResult = false;
 
   erros: { [key: string]: string } = {};
 
   ngOnInit(): void {
     this.carregarListasDePessoas();
+    this.mesSelecionado = this.getMesAtualFormatado();
   }
 
   carregarListasDePessoas(): void {
@@ -98,7 +101,13 @@ export class HistoricoComponent implements OnInit {
         }, 400);
       })
     ).subscribe({
-      next: (data) => { this.cortesBuscados = data; this.cdr.detectChanges(); console.log("Busca feita com sucesso!") },
+      next: (data) => {
+        this.cortesBuscados = data;
+        this.mesBuscado = this.mesSelecionado;
+        this.infoResult = true;
+        this.cdr.detectChanges();
+        console.log("Busca feita com sucesso!")
+      },
       error: (err) => { console.log(err); }
     });
   }
@@ -112,6 +121,8 @@ export class HistoricoComponent implements OnInit {
       };
       this.idEnfestador = corte.enfestador?.id ?? null;
       this.idCortador = corte.cortador?.id ?? null;
+
+      this.opcoesCard = false;
     }
     else {
       this.cancelarEdicao();
@@ -131,7 +142,7 @@ export class HistoricoComponent implements OnInit {
       observacao: this.corteEdicao.observacao,
       idCortador: this.idCortador ?? null,
       idEnfestador: this.idEnfestador ?? null
-    };
+    };    
 
     if(!this.validarAtualizacao(corteParaAtualizar)){
       return;
@@ -241,5 +252,33 @@ export class HistoricoComponent implements OnInit {
         this.opcoesCard = false},
       error: (err) => {console.log(err)}
     })
+  }
+
+  getMesAtualFormatado(): string {
+    const hoje = new Date();
+    const ano = hoje.getFullYear();
+    const mes = String(hoje.getMonth() + 1).padStart(2, '0');
+    return `${ano}-${mes}`;
+  }
+
+  getNomeMesFormatado(mes: string): string {
+    if (!mes) {
+      return '';
+    }
+
+    const [ano, mesNumero] = mes.split('-');
+
+    const nomesMeses = [
+      'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+      'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
+    ];
+
+    const nomeMes = nomesMeses[Number(mesNumero) - 1];
+
+    return `${nomeMes} de ${ano}`;
+  }
+
+  getquantidadeDeCortes(): number {
+    return this.cortesBuscados.length;
   }
 }
