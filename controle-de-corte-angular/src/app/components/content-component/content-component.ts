@@ -156,6 +156,8 @@ export class ContentComponent implements OnInit{
 
   selecionarCorte(corte:CorteResponse){
 
+    this.erros = {}
+
       this.corteSelecionado = corte;
 
       if(corte.dataDeCorte == null){
@@ -195,7 +197,6 @@ export class ContentComponent implements OnInit{
     if(!this.validarAtualizacao(corteParaAtualizar)){
       return;
     }
-    
 
     this.corteService.atualizarCorte(this.corteSelecionado!.id, corteParaAtualizar).subscribe({
       next: (data) => {
@@ -240,7 +241,13 @@ export class ContentComponent implements OnInit{
     }
     if(!corte.quantidadeTotal || corte.quantidadeTotal <= 0){
       this.erros['quantidadeAtt'] = 'Quantidade obrigatória';
+    }
+    if(corte.idCortador != null && corte.idEnfestador == null){
+      this.erros["enfestadorAttError"] = "Selecione um enfestador"
     }        
+    if(corte.dataDeCorte == null && corte.idCortador != null){
+      this.erros["dataCorteAtt"] = "Selecione a data de corte"
+    }
     
     return Object.keys(this.erros).length === 0
   }
