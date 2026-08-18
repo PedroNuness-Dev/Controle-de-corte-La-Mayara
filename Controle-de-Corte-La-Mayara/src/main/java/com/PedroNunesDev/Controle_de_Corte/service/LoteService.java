@@ -41,26 +41,32 @@ public class LoteService {
 
             String loteFormatado = (loteExistente.getNumero_lote()+"/"+loteExistente.getAno());
 
-            LoteDtoResponse loteDeResponse = new LoteDtoResponse(loteExistente.getId(),loteFormatado, loteExistente.getAno());
-
-            return loteDeResponse;
+             return new LoteDtoResponse(loteExistente.getId(),loteFormatado, loteExistente.getAno());
         } //Se não existir cria um com o ano atual
         else{
 
             logger.info("Lote não encontrado para o ano {}. Criando novo lote", anoAtual);
 
-            Lote novoLote = new Lote(null, 1, LocalDate.now().getYear());
-
-            Lote novoLoteSalvo = loteRepository.save(novoLote);
-
-            logger.info("Novo lote criado com sucesso: {}/{}", novoLoteSalvo.getNumero_lote(), novoLoteSalvo.getAno());
-
-            String loteFormatado = (novoLoteSalvo.getNumero_lote()+"/"+novoLoteSalvo.getAno());
-
-            LoteDtoResponse loteDtoResponse = new LoteDtoResponse(novoLoteSalvo.getId(), loteFormatado, novoLoteSalvo.getAno());
-
-            return loteDtoResponse;
+            return salvarNovoLote();
         }
+    }
+
+    @Transactional
+    public LoteDtoResponse salvarNovoLote(){
+
+        if (loteRepository.findByAno(LocalDate.now().getYear()).isPresent()){
+            throw new InvalidOperationException("Lote já cadastrado no banco de dados");
+        }
+
+        Lote novoLote = new Lote(null, 1, LocalDate.now().getYear());
+
+        Lote novoLoteSalvo = loteRepository.save(novoLote);
+
+        logger.info("Novo lote criado com sucesso: {}/{}", novoLoteSalvo.getNumero_lote(), novoLoteSalvo.getAno());
+
+        String loteFormatado = (novoLoteSalvo.getNumero_lote()+"/"+novoLoteSalvo.getAno());
+
+        return new LoteDtoResponse(novoLoteSalvo.getId(), loteFormatado, novoLoteSalvo.getAno());
     }
 
     public Lote buscarLoteModel(){
