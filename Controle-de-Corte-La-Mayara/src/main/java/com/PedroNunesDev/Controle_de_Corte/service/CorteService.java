@@ -15,6 +15,8 @@ import com.PedroNunesDev.Controle_de_Corte.repository.CortadorRepository;
 import com.PedroNunesDev.Controle_de_Corte.repository.CorteRepository;
 import com.PedroNunesDev.Controle_de_Corte.repository.EnfestadorRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -48,6 +50,7 @@ public class CorteService {
         return corteMapper.toDto(corteBuscado);
     }
 
+    @Cacheable("cortes")
     @Transactional(readOnly = true)
     public List<CorteDtoResponse> buscarPorMes(Integer mes, Integer ano){
 
@@ -65,6 +68,7 @@ public class CorteService {
                 .toList();
     }
 
+    @Cacheable("cortes")
     @Transactional(readOnly = true)
     public List<CorteDtoResponse> buscarPorStatus(Integer mes, Integer ano, String status){
 
@@ -119,6 +123,7 @@ public class CorteService {
         return anoParaBuscar;
     }
 
+    @CacheEvict(value = "cortes", allEntries = true)
     @Transactional
     public CorteDtoResponse criarCorte(CorteDtoRequest corteDtoRequest){
 
@@ -139,6 +144,7 @@ public class CorteService {
         return corteMapper.toDto(corteSalvo);
     }
 
+    @CacheEvict(value = "cortes", allEntries = true)
     @Transactional
     public CorteDtoResponse atualizarCorte(Long idCorte, CorteUpdateDtoRequest corteUpdateDtoRequest){
 
@@ -184,6 +190,7 @@ public class CorteService {
         return corteMapper.toDto(corteAtualizado);
     }
 
+    @CacheEvict(value = "cortes", allEntries = true)
     @Transactional
     public CorteDtoResponse atualizarEnfestador(Long idCorte, Long idEnfestador){
 
@@ -201,6 +208,7 @@ public class CorteService {
         return corteMapper.toDto(corteAtualizado);
     }
 
+    @CacheEvict(value = "cortes", allEntries = true)
     @Transactional
     public CorteDtoResponse atualizarCortador(Long idCorte, Long idCortador){
 
@@ -218,6 +226,7 @@ public class CorteService {
         return corteMapper.toDto(corteAtualizado);
     }
 
+    @CacheEvict(value = "cortes", allEntries = true)
     @Transactional
     public void cancelarCorte(Long idCorte){
 
@@ -248,6 +257,7 @@ public class CorteService {
         return estatistica;
     }
 
+    @CacheEvict(value = "cortes", allEntries = true)
     @Transactional
     public void excluirCorte(Long id){
 
