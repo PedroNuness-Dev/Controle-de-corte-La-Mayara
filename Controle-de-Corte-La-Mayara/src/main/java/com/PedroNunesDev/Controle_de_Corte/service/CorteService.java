@@ -14,12 +14,14 @@ import com.PedroNunesDev.Controle_de_Corte.model.Lote;
 import com.PedroNunesDev.Controle_de_Corte.repository.CortadorRepository;
 import com.PedroNunesDev.Controle_de_Corte.repository.CorteRepository;
 import com.PedroNunesDev.Controle_de_Corte.repository.EnfestadorRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
 
+@Slf4j
 @Service
 public class CorteService {
 
@@ -156,6 +158,8 @@ public class CorteService {
         Corte corteParaAtualizar = corteRepository.findById(idCorte)
                 .orElseThrow(() -> new ResourceNotFoundException("Corte com ID: "+idCorte+" encontrado"));
 
+        log.info("Data de corte: {}", corteUpdateDtoRequest.dataDeCorte());
+
         corteParaAtualizar.setNomeModelo(corteUpdateDtoRequest.nomeModelo());
         corteParaAtualizar.setDataDeCorte(corteUpdateDtoRequest.dataDeCorte());
         corteParaAtualizar.setLoteFormatado(corteUpdateDtoRequest.loteFormatado());
@@ -165,7 +169,6 @@ public class CorteService {
         corteParaAtualizar.setCortador(cortador);
 
         if (corteParaAtualizar.getCortador() != null && corteParaAtualizar.getEnfestador() != null){
-            corteParaAtualizar.setDataDeCorte(LocalDate.now());
             corteParaAtualizar.setCorteStatus(CorteStatus.CORTADO);
         } else if (corteParaAtualizar.getEnfestador() != null){
             corteParaAtualizar.setCorteStatus(CorteStatus.ENFESTADO);
