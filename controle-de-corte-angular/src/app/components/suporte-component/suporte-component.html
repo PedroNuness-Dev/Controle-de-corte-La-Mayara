@@ -1,26 +1,64 @@
 <main>
-    <div class="hero">
-        <div class="header">
+    <div class="hero-header">
+        <div class="icon-suporte">
+            <span class="material-icons-outlined">support_agent</span>
+        </div>
+        <div>
             <h1>Suporte</h1>
             <span class="span-style">Relate o que está acontecendo que resolveremos o mais breve possível!</span>
         </div>
     </div>
-    <div class="hero">
-        <div class="content">            
-                <span class="span-style">
-                    Selecione um assunto para o motivo do contato:
-                </span>
-                <select [(ngModel)]="opcaoSelecionada">
-                    <option value="">Selecionar...</option>
-                    @for (assunto of assuntos; track $index) {
-                        <option [value]="assunto">{{assunto}}</option>
-                    }
-                </select>
-                <span class="span-style">
-                    Agora descreva com mais detalhes:
-                </span>
-                <textarea type="text" placeholder="Digite os detalhes aqui" [(ngModel)]="textoParaMandar"></textarea>
-               <button
+
+    <div class="hero-grid">
+        <div class="card-info">
+            <h3>Como funciona</h3>
+            <div class="info-item">
+                <span class="material-icons-outlined">edit_note</span>
+                <div>
+                    <strong>Descreva o problema</strong>
+                    <p>Selecione o assunto e conte com detalhes o que está acontecendo.</p>
+                </div>
+            </div>
+            <div class="info-item">
+                <span class="material-icons-outlined">send</span>
+                <div>
+                    <strong>Envie a mensagem</strong>
+                    <p>Nossa equipe recebe sua solicitação em tempo real.</p>
+                </div>
+            </div>
+            <div class="info-item">
+                <span class="material-icons-outlined">schedule</span>
+                <div>
+                    <strong>Aguarde o retorno</strong>
+                    <p>Normalmente respondemos em até 24 horas úteis.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-form">
+            <div class="content">
+                <div class="campo">
+                    <label class="span-style">
+                        <span class="material-icons-outlined label-icon">topic</span>
+                        Selecione um assunto para o motivo do contato:
+                    </label>
+                    <select [(ngModel)]="opcaoSelecionada">
+                        <option value="">Selecionar...</option>
+                        @for (assunto of assuntos; track $index) {
+                            <option [value]="assunto">{{assunto}}</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="campo">
+                    <label class="span-style">
+                        <span class="material-icons-outlined label-icon">description</span>
+                        Agora descreva com mais detalhes:
+                    </label>
+                    <textarea placeholder="Digite os detalhes aqui" [(ngModel)]="textoParaMandar"></textarea>
+                </div>
+
+                <button
                     class="btn-enviar"
                     (click)="enviarSuporte()"
                     [disabled]="telaCarregadandoModal">
@@ -30,37 +68,42 @@
                         <span>Enviando...</span>
                     }
                     @else {
+                        <span class="material-icons-outlined">send</span>
                         <span>Enviar</span>
                     }
                 </button>
 
                 @if (messageErro) {
                     <span class="erro-message">
+                        <span class="material-icons-outlined">error_outline</span>
                         É necessário digitar todas as informações!
                     </span>
                 }
 
-               @if(modalSucesso){
+                @if(modalSucesso){
                     <div class="success-box">
                         <span class="message-success">
-                            ✓ Mensagem enviada com sucesso!
+                            <span class="material-icons-outlined">check_circle</span>
+                            Mensagem enviada com sucesso!
                         </span>
                         <span class="message-success-detail">
                             Em breve retornaremos com novidades.
                         </span>
                     </div>
-                 }
+                }
 
-                 @if(modalfailure){
+                @if(modalfailure){
                     <div class="failure-box">
                         <span class="failure-success">
-                            ❌ Erro ao enviar mensagem!
+                            <span class="material-icons-outlined">cancel</span>
+                            Erro ao enviar mensagem!
                         </span>
                         <span class="failure-success-detail">
                             Verifique sua conexão a internet
                         </span>
                     </div>
-                 }
+                }
+            </div>
         </div>
-    </div>   
+    </div>
 </main>
