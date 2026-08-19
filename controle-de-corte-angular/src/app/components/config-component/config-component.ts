@@ -134,15 +134,6 @@ export class ConfigComponent implements OnInit{
     this.modoCadastroEnfestador = (this.modoCadastroEnfestador === true) ? false : true;
   }
 
-  buscarEstatistica(nome:string | null){
-
-    if(nome == null) return;
-
-    this.corteService.buscarEstatisticas(nome).subscribe({
-      next: (data) => {console.log(data.nome); console.log(data.quantidadeDeCortesCortados); console.log(data.quantidadeDeCortesEnfestados)}
-    })
-  }
-
   ativarModalExclusao(id:number | null, tipo : 'cortador' | 'enfestador', nome:string | null){
 
     this.itemExcluido = {

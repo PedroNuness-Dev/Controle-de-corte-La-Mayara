@@ -44,7 +44,7 @@
                     <ul class="ul-list">
                         @for (cortador of cortadores; track cortador.id) {
                             <li class="pessoa-card">
-                                <div class="pessoa-info" (click)="buscarEstatistica(cortador.nome)">                                    
+                                <div class="pessoa-info">                                    
                                     <div class="pessoa-texto">
                                         <span class="pessoa-nome">{{cortador.nome}}</span>
                                         <p class="info-pessoa-detalhes">Quantidade de cortes cortados: {{cortador.quantidadeDeCortesCortados}}</p>

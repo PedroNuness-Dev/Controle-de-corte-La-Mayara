@@ -53,10 +53,6 @@ export class CorteService {
     return this.http.put<void>(`${this.url}/${idCorte}/cancelar`,null)
   }
 
-  buscarEstatisticas(nome:string) : Observable<EstatisticaPessoa>{
-    return this.http.get<EstatisticaPessoa>(`${this.url}/estatistica?nome=${nome}`);
-  }
-
   excluirCorte(id : number):Observable<void>{
     return this.http.delete<void>(`${this.url}/${id}`);
   }
