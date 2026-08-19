@@ -3,7 +3,6 @@ package com.PedroNunesDev.Controle_de_Corte.service;
 import com.PedroNunesDev.Controle_de_Corte.dto.request.CorteDtoRequest;
 import com.PedroNunesDev.Controle_de_Corte.dto.request.CorteUpdateDtoRequest;
 import com.PedroNunesDev.Controle_de_Corte.dto.response.CorteDtoResponse;
-import com.PedroNunesDev.Controle_de_Corte.dto.response.EstatisticaPessoaDtoResponse;
 import com.PedroNunesDev.Controle_de_Corte.enums.CorteStatus;
 import com.PedroNunesDev.Controle_de_Corte.exception.ResourceNotFoundException;
 import com.PedroNunesDev.Controle_de_Corte.mapper.CorteMapper;
@@ -19,6 +18,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -151,6 +151,9 @@ public class CorteService {
         Enfestador enfestador = null;
         Cortador cortador = null;
 
+        Corte corteParaAtualizar = corteRepository.findById(idCorte)
+                .orElseThrow(() -> new ResourceNotFoundException("Corte com ID: "+idCorte+" encontrado"));
+
         if (corteUpdateDtoRequest.idEnfestador() != null){
             enfestador = enfestadorRepository.findById(corteUpdateDtoRequest.idEnfestador())
                     .orElseThrow(() -> new ResourceNotFoundException("Enfestador com ID: "+corteUpdateDtoRequest.idEnfestador()+" encontrado"));
@@ -161,38 +164,42 @@ public class CorteService {
                     .orElseThrow(() -> new ResourceNotFoundException("Cortador com ID: "+corteUpdateDtoRequest.idCortador()+" encontrado"));
         }
 
-        Corte corteParaAtualizar = corteRepository.findById(idCorte)
-                .orElseThrow(() -> new ResourceNotFoundException("Corte com ID: "+idCorte+" encontrado"));
-
-        log.info("Data de corte: {}", corteUpdateDtoRequest.dataDeCorte());
-
-        corteParaAtualizar.setNomeModelo(corteUpdateDtoRequest.nomeModelo());
-        corteParaAtualizar.setDataDeCorte(corteUpdateDtoRequest.dataDeCorte());
-        corteParaAtualizar.setLoteFormatado(corteUpdateDtoRequest.loteFormatado());
-        corteParaAtualizar.setQuantidadeTotal(corteUpdateDtoRequest.quantidadeTotal());
-        corteParaAtualizar.setObservacao(corteUpdateDtoRequest.observacao());
-        corteParaAtualizar.setEnfestador(enfestador);
-        corteParaAtualizar.setCortador(cortador);
-
-        if (corteParaAtualizar.getCortador() != null && corteParaAtualizar.getEnfestador() != null){
-            corteParaAtualizar.setCorteStatus(CorteStatus.CORTADO);
-        } else if (corteParaAtualizar.getEnfestador() != null){
-            corteParaAtualizar.setCorteStatus(CorteStatus.ENFESTADO);
-            corteParaAtualizar.setDataDeCorte(null);
-        }
-        else {
-            corteParaAtualizar.setCorteStatus(CorteStatus.PENDENTE);
-            corteParaAtualizar.setDataDeCorte(null);
-        }
-
+        corteParaAtualizar = atualizarDadosDoCorte(corteParaAtualizar, corteUpdateDtoRequest,enfestador,cortador);
         Corte corteAtualizado = corteRepository.save(corteParaAtualizar);
 
         return corteMapper.toDto(corteAtualizado);
     }
 
+    private Corte atualizarDadosDoCorte(Corte corte, CorteUpdateDtoRequest corteUpdateDtoRequest, Enfestador enfestador, Cortador cortador){
+
+        corte.setNomeModelo(corteUpdateDtoRequest.nomeModelo());
+        corte.setDataDeCorte(corteUpdateDtoRequest.dataDeCorte());
+        corte.setLoteFormatado(corteUpdateDtoRequest.loteFormatado());
+        corte.setQuantidadeTotal(corteUpdateDtoRequest.quantidadeTotal());
+        corte.setObservacao(corteUpdateDtoRequest.observacao());
+        corte.setEnfestador(enfestador);
+        corte.setCortador(cortador);
+
+        if (corte.getCortador() != null && corte.getEnfestador() != null){
+            corte.setCorteStatus(CorteStatus.CORTADO);
+        } else if (corte.getEnfestador() != null){
+            corte.setCorteStatus(CorteStatus.ENFESTADO);
+            corte.setDataDeCorte(null);
+        }
+        else {
+            corte.setCorteStatus(CorteStatus.PENDENTE);
+            corte.setDataDeCorte(null);
+        }
+
+        return corte;
+    }
+
     @CacheEvict(value = "cortes", allEntries = true)
     @Transactional
-    public CorteDtoResponse atualizarEnfestador(Long idCorte, Long idEnfestador){
+    public CorteDtoResponse atualizarEnfestadorDoCorte(Long idCorte, Long idEnfestador){
+
+        Assert.notNull(idCorte, "Id do corte é obirgatório para a atualização");
+        Assert.notNull(idEnfestador, "Id do enfestador é orbigatório para a atualização");
 
         Corte corteBuscado = corteRepository.findById(idCorte)
                 .orElseThrow(() -> new ResourceNotFoundException("Corte com ID: "+idCorte+" encontrado"));
@@ -210,7 +217,10 @@ public class CorteService {
 
     @CacheEvict(value = "cortes", allEntries = true)
     @Transactional
-    public CorteDtoResponse atualizarCortador(Long idCorte, Long idCortador){
+    public CorteDtoResponse atualizarCortadorDoCorte(Long idCorte, Long idCortador){
+
+        Assert.notNull(idCorte, "Id do corte é obirgatório para a atualização");
+        Assert.notNull(idCortador, "Id do cortador é obrigatório para a atualização");
 
         Corte corteBuscado = corteRepository.findById(idCorte)
                 .orElseThrow(() -> new ResourceNotFoundException("Corte com ID: "+idCorte+" encontrado"));
@@ -244,17 +254,6 @@ public class CorteService {
         int cortesRegistrados = cortesDoMes.size();
 
         return cortesRegistrados;
-    }
-
-    @Transactional(readOnly = true)
-    public EstatisticaPessoaDtoResponse buscar(String nome){
-
-        Long cortesEnfestados = corteRepository.buscarQuantidadeDeCortesPorEnfestador(nome);
-        Long cortesCortados = corteRepository.buscarQuantidadeDeCortesPorCortador(nome);
-
-        EstatisticaPessoaDtoResponse estatistica = new EstatisticaPessoaDtoResponse(nome, cortesEnfestados,cortesCortados);
-
-        return estatistica;
     }
 
     @CacheEvict(value = "cortes", allEntries = true)

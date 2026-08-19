@@ -140,7 +140,7 @@ public class CorteController {
 
         logger.debug("Requisição recebida: PUT /corte/{}/enfestador/{}", idCorte, idEnfestador);
 
-        CorteDtoResponse corteAtualizado = corteService.atualizarEnfestador(idCorte, idEnfestador);
+        CorteDtoResponse corteAtualizado = corteService.atualizarEnfestadorDoCorte(idCorte, idEnfestador);
 
         return ResponseEntity.ok(corteAtualizado);
     }
@@ -156,7 +156,7 @@ public class CorteController {
 
         logger.debug("Requisição recebida: PUT /corte/{}/cortador/{}", idCorte, idCortador);
 
-        CorteDtoResponse corteAtualizado = corteService.atualizarCortador(idCorte, idCortador);
+        CorteDtoResponse corteAtualizado = corteService.atualizarCortadorDoCorte(idCorte, idCortador);
 
         return ResponseEntity.ok(corteAtualizado);
     }
@@ -174,19 +174,6 @@ public class CorteController {
         corteService.cancelarCorte(idCorte);
 
         return ResponseEntity.ok().build();
-    }
-    /**
-     * Busca estatisticas de uma pessoa pelo seu nome.
-     * @param nome da Pessoa
-     * @return Status 200 OK
-     */
-
-    @GetMapping("/estatistica")
-    public ResponseEntity<EstatisticaPessoaDtoResponse> buscarEstatistica(@RequestParam String nome){
-
-        EstatisticaPessoaDtoResponse estatistica = corteService.buscar(nome);
-
-        return ResponseEntity.ok(estatistica);
     }
 
     @DeleteMapping("/{id}")
