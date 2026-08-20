@@ -3,7 +3,6 @@ package com.PedroNunesDev.Controle_de_Corte.controller;
 import com.PedroNunesDev.Controle_de_Corte.dto.request.CorteDtoRequest;
 import com.PedroNunesDev.Controle_de_Corte.dto.request.CorteUpdateDtoRequest;
 import com.PedroNunesDev.Controle_de_Corte.dto.response.CorteDtoResponse;
-import com.PedroNunesDev.Controle_de_Corte.dto.response.EstatisticaPessoaDtoResponse;
 import com.PedroNunesDev.Controle_de_Corte.service.CorteService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -82,20 +81,6 @@ public class CorteController {
         List<CorteDtoResponse> cortes = corteService.buscarCortesPorNomeOuLote(tipo, mes, ano);
 
         return ResponseEntity.ok(cortes);
-    }
-
-    /**
-     * Gera um relatório do total de cortes realizados no mês atual.
-     * @return Quantidade de cortes do mês
-     */
-    @GetMapping("/relatorio")
-    public ResponseEntity<Integer> gerarRelatorio(){
-
-        logger.debug("Requisição recebida: GET /corte/relatorio");
-
-        Integer totalCortes = corteService.relatorioDoMesDoCorte();
-
-        return ResponseEntity.ok(totalCortes);
     }
 
     /**

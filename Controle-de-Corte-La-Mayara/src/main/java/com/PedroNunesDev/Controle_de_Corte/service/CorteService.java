@@ -13,6 +13,7 @@ import com.PedroNunesDev.Controle_de_Corte.model.Lote;
 import com.PedroNunesDev.Controle_de_Corte.repository.CortadorRepository;
 import com.PedroNunesDev.Controle_de_Corte.repository.CorteRepository;
 import com.PedroNunesDev.Controle_de_Corte.repository.EnfestadorRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -25,6 +26,7 @@ import java.util.List;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class CorteService {
 
     private final CortadorRepository cortadorRepository;
@@ -32,14 +34,6 @@ public class CorteService {
     private final LoteService loteService;
     private final CorteRepository corteRepository;
     private final CorteMapper corteMapper;
-
-    public CorteService(CortadorRepository cortadorRepository, EnfestadorRepository enfestadorRepository, LoteService loteService, CorteRepository corteRepository, CorteMapper corteMapper) {
-        this.cortadorRepository = cortadorRepository;
-        this.enfestadorRepository = enfestadorRepository;
-        this.loteService = loteService;
-        this.corteRepository = corteRepository;
-        this.corteMapper = corteMapper;
-    }
 
     @Transactional(readOnly = true)
     public CorteDtoResponse findById(Long id){
@@ -50,7 +44,7 @@ public class CorteService {
         return corteMapper.toDto(corteBuscado);
     }
 
-    @Cacheable("cortes")
+    @Cacheable("cortesPorMes")
     @Transactional(readOnly = true)
     public List<CorteDtoResponse> buscarPorMes(Integer mes, Integer ano){
 
@@ -58,32 +52,41 @@ public class CorteService {
 
         Integer anoParaBuscar = verificarAno(ano);
 
+        log.info("Buscando cortes no banco no mes [{}] de [{}}", mes, anoParaBuscar);
+
         LocalDate diaPrimeiro = LocalDate.of(anoParaBuscar, mesParaBuscar, 1);
         LocalDate diaUltimo = diaPrimeiro.withDayOfMonth(diaPrimeiro.lengthOfMonth());
 
         List<Corte> cortesBuscados = corteRepository.buscarPorMes(diaPrimeiro, diaUltimo);
+
+        log.info("Busca efetuada com sucesso, com um total de [{}] cortes", cortesBuscados.size());
 
         return cortesBuscados.stream()
                 .map(corteMapper::toDto)
                 .toList();
     }
 
-    @Cacheable("cortes")
+    @Cacheable("cortesPorMesEStatus")
     @Transactional(readOnly = true)
     public List<CorteDtoResponse> buscarPorStatus(Integer mes, Integer ano, String status){
 
-        //uso o método de cima para buscar os cortes do mes, aproveitando a logica
-        List<CorteDtoResponse> cortesBuscados = buscarPorMes(mes, ano);
+        Integer mesParaBuscar = verificarMes(mes);
+
+        Integer anoParaBuscar = verificarAno(ano);
+
+        log.info("Buscando cortes no banco no mes [{}] de [{}} com o status [{}]", mes, anoParaBuscar, status);
+
+        LocalDate diaPrimeiro = LocalDate.of(anoParaBuscar, mesParaBuscar, 1);
+        LocalDate diaUltimo = diaPrimeiro.withDayOfMonth(diaPrimeiro.lengthOfMonth());
+
+        List<Corte> cortesBuscados = corteRepository.buscarPorMesEPorStatus(diaPrimeiro,diaUltimo,CorteStatus.from(status));
 
         if (cortesBuscados.isEmpty()) return List.of();
 
-        //Filtro os cortes pelo status passado no método, assim retornando apenas o pedido
-        return cortesBuscados.stream()
-                .filter(corte -> {
-                    CorteStatus corteStatus = CorteStatus.from(status);
+        log.info("Busca efetuada com sucesso, com um total de [{}] cortes", cortesBuscados.size());
 
-                    return corte.corteStatus().equals(corteStatus);
-                })
+        return cortesBuscados.stream()
+                .map(corteMapper::toDto)
                 .toList();
     }
 
@@ -123,7 +126,7 @@ public class CorteService {
         return anoParaBuscar;
     }
 
-    @CacheEvict(value = "cortes", allEntries = true)
+    @CacheEvict(value = {"cortesPorMes", "cortesPorMesEStatus"}, allEntries = true)
     @Transactional
     public CorteDtoResponse criarCorte(CorteDtoRequest corteDtoRequest){
 
@@ -144,7 +147,7 @@ public class CorteService {
         return corteMapper.toDto(corteSalvo);
     }
 
-    @CacheEvict(value = "cortes", allEntries = true)
+    @CacheEvict(value = {"cortesPorMes", "cortesPorMesEStatus"}, allEntries = true)
     @Transactional
     public CorteDtoResponse atualizarCorte(Long idCorte, CorteUpdateDtoRequest corteUpdateDtoRequest){
 
@@ -194,7 +197,7 @@ public class CorteService {
         return corte;
     }
 
-    @CacheEvict(value = "cortes", allEntries = true)
+    @CacheEvict(value = {"cortesPorMes", "cortesPorMesEStatus"}, allEntries = true)
     @Transactional
     public CorteDtoResponse atualizarEnfestadorDoCorte(Long idCorte, Long idEnfestador){
 
@@ -215,7 +218,7 @@ public class CorteService {
         return corteMapper.toDto(corteAtualizado);
     }
 
-    @CacheEvict(value = "cortes", allEntries = true)
+    @CacheEvict(value = {"cortesPorMes", "cortesPorMesEStatus"}, allEntries = true)
     @Transactional
     public CorteDtoResponse atualizarCortadorDoCorte(Long idCorte, Long idCortador){
 
@@ -236,7 +239,7 @@ public class CorteService {
         return corteMapper.toDto(corteAtualizado);
     }
 
-    @CacheEvict(value = "cortes", allEntries = true)
+    @CacheEvict(value = {"cortesPorMes", "cortesPorMesEStatus"}, allEntries = true)
     @Transactional
     public void cancelarCorte(Long idCorte){
 
@@ -246,17 +249,7 @@ public class CorteService {
         corteBuscado.setCorteStatus(CorteStatus.CANCELADO);
     }
 
-    @Transactional(readOnly = true)
-    public int relatorioDoMesDoCorte(){
-
-        List<CorteDtoResponse> cortesDoMes = buscarPorMes(null, null);
-
-        int cortesRegistrados = cortesDoMes.size();
-
-        return cortesRegistrados;
-    }
-
-    @CacheEvict(value = "cortes", allEntries = true)
+    @CacheEvict(value = {"cortesPorMes", "cortesPorMesEStatus"}, allEntries = true)
     @Transactional
     public void excluirCorte(Long id){
 
