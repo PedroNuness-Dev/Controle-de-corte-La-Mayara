@@ -2,10 +2,10 @@ package com.PedroNunesDev.Controle_de_Corte.controller;
 
 import com.PedroNunesDev.Controle_de_Corte.dto.request.CortadorDtoRequest;
 import com.PedroNunesDev.Controle_de_Corte.dto.response.CortadorDtoResponse;
+import com.PedroNunesDev.Controle_de_Corte.dto.response.CortadorOverview;
 import com.PedroNunesDev.Controle_de_Corte.service.CortadorService;
 import jakarta.validation.Valid;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,14 +18,10 @@ import java.util.List;
 @RestController
 @RequestMapping("/cortador")
 @CrossOrigin("*")
+@RequiredArgsConstructor
 public class CortadorController {
 
-    private static final Logger logger = LoggerFactory.getLogger(CortadorController.class);
     private final CortadorService cortadorService;
-
-    public CortadorController(CortadorService cortadorService) {
-        this.cortadorService = cortadorService;
-    }
 
     /**
      * Busca um cortador por ID.
@@ -33,21 +29,27 @@ public class CortadorController {
      * @return Dados do cortador encontrado
      */
     @GetMapping("/{id}")
-    public ResponseEntity<CortadorDtoResponse> findById(@PathVariable Long id) {
+    public ResponseEntity<CortadorDtoResponse> buscarCortadorPorId(@PathVariable Long id) {
 
-        logger.debug("Requisição recebida: GET /cortador/{}", id);
-
-        CortadorDtoResponse cortador = cortadorService.findById(id);
+        CortadorDtoResponse cortador = cortadorService.buscarCortadorPorId(id);
 
         return ResponseEntity.ok(cortador);
     }
 
     @GetMapping
-    public ResponseEntity<List<CortadorDtoResponse>> buscarCortadores(){
+    public ResponseEntity<List<CortadorDtoResponse>> buscarCortadoresAtivos(){
 
-        List<CortadorDtoResponse> cortadores = cortadorService.buscarCortadores();
+        List<CortadorDtoResponse> cortadores = cortadorService.buscarCortadoresAtivos();
 
         return ResponseEntity.ok(cortadores);
+    }
+
+    @GetMapping("/overview")
+    public ResponseEntity<List<CortadorOverview>> buscarDetalhesDosCortadoresAtivos(){
+
+        List<CortadorOverview> responses = cortadorService.buscarDetalhesDosCortadoresAtivos();
+
+        return ResponseEntity.ok(responses);
     }
 
     /**
@@ -57,8 +59,6 @@ public class CortadorController {
      */
     @PostMapping
     public ResponseEntity<CortadorDtoResponse> cadastrarCortador(@RequestBody @Valid CortadorDtoRequest cortadorDtoRequest) {
-
-        logger.debug("Requisição recebida: POST /cortador");
 
         CortadorDtoResponse cortadorNovo = cortadorService.cadastrarCortador(cortadorDtoRequest);
 
@@ -72,11 +72,9 @@ public class CortadorController {
      * @return Cortador atualizado
      */
     @PutMapping("/{id}")
-    public ResponseEntity<CortadorDtoResponse> update(@PathVariable Long id, @RequestBody @Valid CortadorDtoRequest cortadorDtoRequest) {
+    public ResponseEntity<CortadorOverview> atualizarCortador(@PathVariable Long id, @RequestBody @Valid CortadorDtoRequest cortadorDtoRequest) {
 
-        logger.debug("Requisição recebida: PUT /cortador/{}", id);
-
-        CortadorDtoResponse cortadorAtualizado = cortadorService.update(id, cortadorDtoRequest);
+        CortadorOverview cortadorAtualizado = cortadorService.atualizarCortador(id, cortadorDtoRequest);
 
         return ResponseEntity.ok(cortadorAtualizado);
     }
@@ -84,15 +82,13 @@ public class CortadorController {
     /**
      * Desativa um cortador por ID.
      * @param id ID do cortador
-     * @return Status 204 No Content
+     * @return Detalhes do cortador desativado
      */
     @PatchMapping("/{id}")
-    public ResponseEntity<Void> deleteById(@PathVariable Long id) {
+    public ResponseEntity<CortadorOverview> desativarCortadorPorId(@PathVariable Long id) {
 
-        logger.debug("Requisição recebida: DELETE /cortador/{}", id);
+        CortadorOverview response = cortadorService.desativarCortador(id);
 
-        cortadorService.desativarCortador(id);
-
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(response);
     }
 }

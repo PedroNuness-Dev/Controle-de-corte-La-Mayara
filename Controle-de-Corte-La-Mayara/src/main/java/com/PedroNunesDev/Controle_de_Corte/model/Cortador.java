@@ -30,7 +30,7 @@ public class Cortador {
     @OneToMany(mappedBy = "cortador", fetch = FetchType.LAZY)
     private List<Corte> cortes = new ArrayList<>();
 
-    public Integer getQuantidadeDeCortesCortados(){
+    public Integer getQuantidadeDeCortes(){
         return cortes.size();
     }
 }

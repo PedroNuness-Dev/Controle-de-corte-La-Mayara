@@ -4,7 +4,6 @@ import java.io.Serializable;
 
 public record CortadorDtoResponse(
         Long id,
-        String nome,
-        Integer quantidadeDeCortesCortados
+        String nome
 ) implements Serializable {
 }

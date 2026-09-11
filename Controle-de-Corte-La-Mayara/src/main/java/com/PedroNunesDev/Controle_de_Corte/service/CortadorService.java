@@ -2,57 +2,60 @@ package com.PedroNunesDev.Controle_de_Corte.service;
 
 import com.PedroNunesDev.Controle_de_Corte.dto.request.CortadorDtoRequest;
 import com.PedroNunesDev.Controle_de_Corte.dto.response.CortadorDtoResponse;
+import com.PedroNunesDev.Controle_de_Corte.dto.response.CortadorOverview;
 import com.PedroNunesDev.Controle_de_Corte.exception.ResourceNotFoundException;
 import com.PedroNunesDev.Controle_de_Corte.model.Cortador;
 import com.PedroNunesDev.Controle_de_Corte.repository.CortadorRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Comparator;
 import java.util.List;
 
 @Service
+@Slf4j
+@RequiredArgsConstructor
 public class CortadorService {
 
-    private static final Logger logger = LoggerFactory.getLogger(CortadorService.class);
     private final CortadorRepository cortadorRepository;
 
-    public CortadorService(CortadorRepository cortadorRepository) {
-        this.cortadorRepository = cortadorRepository;
-    }
-
     @Transactional(readOnly = true)
-    public CortadorDtoResponse findById(Long id){
+    public CortadorDtoResponse buscarCortadorPorId(Long id){
 
-        logger.info("Buscando cortador com ID: {}", id);
+        log.info("Buscando cortador com ID: {}", id);
 
         Cortador cortador = cortadorRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Cortador com ID " + id + " não encontrado"));
 
-        logger.debug("Cortador encontrado: {}", cortador.getNome());
+        log.debug("Cortador encontrado: {}", cortador.getNome());
 
-        return new CortadorDtoResponse(cortador.getId(), cortador.getNome(), cortador.getQuantidadeDeCortesCortados());
+        return new CortadorDtoResponse(cortador.getId(), cortador.getNome());
     }
 
     @Transactional(readOnly = true)
-    public List<CortadorDtoResponse> buscarCortadores(){
+    public List<CortadorDtoResponse> buscarCortadoresAtivos(){
 
-        return cortadorRepository.findAll()
+        log.info("iniciando busca de todos os cortadores ativos cadastrados no sistema");
+
+        return cortadorRepository.buscarCortadoresAtivos()
                 .stream()
-                .filter(cortador -> cortador.getAtivo() == true)
-                .map(cortador -> {
-                    return new CortadorDtoResponse(cortador.getId(), cortador.getNome(), cortador.getQuantidadeDeCortesCortados());
-                })
-                .sorted(Comparator.comparing(CortadorDtoResponse::nome))
+                .map(cortador -> new CortadorDtoResponse(cortador.getId(), cortador.getNome()))
                 .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<CortadorOverview> buscarDetalhesDosCortadoresAtivos(){
+
+        log.info("iniciando busca de todos os detalhes dos cortadores ativos cadastrados no sistema");
+
+        return cortadorRepository.buscarCortadoresESuasQuantidadesDeCortes();
     }
 
     @Transactional
     public CortadorDtoResponse cadastrarCortador(CortadorDtoRequest cortadorDtoRequest){
 
-        logger.info("Criando novo cortador: {}", cortadorDtoRequest.nome());
+        log.info("Criando novo cortador: {}", cortadorDtoRequest.nome());
 
         Cortador cortador = Cortador.builder()
                 .nome(cortadorDtoRequest.nome())
@@ -61,15 +64,15 @@ public class CortadorService {
 
         Cortador cortadorSalvo = cortadorRepository.save(cortador);
 
-        logger.info("Cortador criado com sucesso. ID: {}", cortadorSalvo.getId());
+        log.info("Cortador criado com sucesso. ID: {}", cortadorSalvo.getId());
 
-        return new CortadorDtoResponse(cortadorSalvo.getId(),cortadorSalvo.getNome(),0);
+        return new CortadorDtoResponse(cortadorSalvo.getId(),cortadorSalvo.getNome());
     }
 
     @Transactional
-    public CortadorDtoResponse update(Long id, CortadorDtoRequest cortadorDtoRequest){
+    public CortadorOverview atualizarCortador(Long id, CortadorDtoRequest cortadorDtoRequest){
 
-        logger.info("Atualizando cortador com ID: {}", id);
+        log.info("Atualizando cortador com ID: {}", id);
 
         Cortador cortador = cortadorRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Cortador com ID " + id + " não encontrado"));
@@ -78,15 +81,15 @@ public class CortadorService {
 
         Cortador cortadorAtualizado = cortadorRepository.save(cortador);
 
-        logger.info("Cortador atualizado com sucesso. ID: {}", cortadorAtualizado.getId());
+        log.info("Cortador atualizado com sucesso. ID: {}", cortadorAtualizado.getId());
 
-        return new CortadorDtoResponse(cortadorAtualizado.getId(), cortadorAtualizado.getNome(), cortadorAtualizado.getQuantidadeDeCortesCortados());
+        return toOverview(cortadorAtualizado);
     }
 
     @Transactional
-    public void desativarCortador(Long id){
+    public CortadorOverview desativarCortador(Long id){
 
-        logger.info("Deletando cortador com ID: {}", id);
+        log.info("Desativando cortador com ID: {}", id);
 
         Cortador cortadorBuscado = cortadorRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Cortador com ID: "+id+" não encontrado"));
@@ -95,6 +98,18 @@ public class CortadorService {
 
         cortadorRepository.save(cortadorBuscado);
 
-        logger.info("Cortador desativado com sucesso. ID: {}", id);
+        log.info("Cortador desativado com sucesso. ID: {}", id);
+
+        return toOverview(cortadorBuscado);
+    }
+
+    private CortadorOverview toOverview(Cortador cortador){
+
+        return new CortadorOverview(
+                cortador.getId(),
+                cortador.getNome(),
+                (long) cortador.getQuantidadeDeCortes(),
+                cortador.getAtivo()
+        );
     }
 }
