@@ -14,10 +14,10 @@ services:
       interval: 5s
       timeout: 5s
       retries: 20
-      
+
     restart: always
     networks:
-      - app-network
+      - app-network  
 
   backend-spring:    
     image: controle-de-corte-spring  
@@ -39,7 +39,7 @@ services:
     container_name: controle-de-corte-angular-container
     restart: always
     ports:
-        - "4200:4200"
+      - "4200:4200"
     depends_on:
       - backend-spring
     networks:
