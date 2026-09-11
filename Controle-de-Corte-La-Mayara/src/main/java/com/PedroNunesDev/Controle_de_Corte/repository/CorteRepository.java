@@ -42,4 +42,10 @@ public interface CorteRepository extends JpaRepository<Corte,Long> {
     FROM Corte c
 """)
     Long buscarQuantidadeDeCortesPorCortador(@Param("nome") String nome);
+
+    @Query("""
+    SELECT COUNT(c) FROM Corte c
+    WHERE c.dataDeRegistro BETWEEN :diaPrimeiro AND :diaUltimo
+""")
+    Integer quantidadeCortesRegistradosNoMes(@Param("diaPrimeiro") LocalDate diaPrimeiro, @Param("diaUltimo") LocalDate diaUltimo);
 }

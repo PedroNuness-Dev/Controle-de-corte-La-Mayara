@@ -38,8 +38,14 @@ public class CorteService {
     @Transactional(readOnly = true)
     public CorteDtoResponse findById(Long id){
 
+        Assert.notNull(id, "Id do corte não pode ser nulo para a busca");
+
+        log.info("Iniciando busca de corte com o id: [{}]", id);
+
         Corte corteBuscado = corteRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Corte com ID: "+id+" encontrado"));
+
+        log.info("Busca realizada com sucesso! Corte de [{}] encontrado", corteBuscado.getNomeModelo());
 
         return corteMapper.toDto(corteBuscado);
     }
@@ -48,14 +54,14 @@ public class CorteService {
     @Transactional(readOnly = true)
     public List<CorteDtoResponse> buscarPorMes(Integer mes, Integer ano){
 
+        Assert.notNull(ano, "O ano para busca não pode ser nulo");
+
         Integer mesParaBuscar = verificarMes(mes);
 
-        Integer anoParaBuscar = verificarAno(ano);
-
-        log.info("Buscando cortes no banco no mes [{}] de [{}}", mes, anoParaBuscar);
-
-        LocalDate diaPrimeiro = LocalDate.of(anoParaBuscar, mesParaBuscar, 1);
+        LocalDate diaPrimeiro = LocalDate.of(ano, mesParaBuscar, 1);
         LocalDate diaUltimo = diaPrimeiro.withDayOfMonth(diaPrimeiro.lengthOfMonth());
+
+        log.info("Buscando cortes no banco do dia [{}] ao dia [{}} do ano [{}]", diaPrimeiro.getDayOfMonth(), diaUltimo.getDayOfMonth(), ano);
 
         List<Corte> cortesBuscados = corteRepository.buscarPorMes(diaPrimeiro, diaUltimo);
 
@@ -70,14 +76,14 @@ public class CorteService {
     @Transactional(readOnly = true)
     public List<CorteDtoResponse> buscarPorStatus(Integer mes, Integer ano, String status){
 
+        Assert.notNull(ano, "O ano para busca não pode ser nulo");
+
         Integer mesParaBuscar = verificarMes(mes);
 
-        Integer anoParaBuscar = verificarAno(ano);
-
-        log.info("Buscando cortes no banco no mes [{}] de [{}} com o status [{}]", mes, anoParaBuscar, status);
-
-        LocalDate diaPrimeiro = LocalDate.of(anoParaBuscar, mesParaBuscar, 1);
+        LocalDate diaPrimeiro = LocalDate.of(ano, mesParaBuscar, 1);
         LocalDate diaUltimo = diaPrimeiro.withDayOfMonth(diaPrimeiro.lengthOfMonth());
+
+        log.info("Buscando cortes no banco do dia [{}] ao dia [{}} do ano [{}] com o status [{}]", diaPrimeiro.getDayOfMonth(), diaUltimo.getDayOfMonth(), ano, status);
 
         List<Corte> cortesBuscados = corteRepository.buscarPorMesEPorStatus(diaPrimeiro,diaUltimo,CorteStatus.from(status));
 
@@ -93,11 +99,11 @@ public class CorteService {
     @Transactional(readOnly = true)
     public List<CorteDtoResponse> buscarCortesPorNomeOuLote(String stringParaBuscar, Integer mes, Integer ano){
 
+        Assert.notNull(ano, "O ano para busca não pode ser nulo");
+
         Integer mesParaBuscar = verificarMes(mes);
 
-        Integer anoParaBuscar = verificarAno(ano);
-
-        LocalDate diaPrimeiro = LocalDate.of(anoParaBuscar, mesParaBuscar, 1);
+        LocalDate diaPrimeiro = LocalDate.of(ano, mesParaBuscar, 1);
         LocalDate diaUltimo = diaPrimeiro.withDayOfMonth(diaPrimeiro.lengthOfMonth());
 
         List<Corte> cortesBuscados = corteRepository.buscarPorNomeOuLote(stringParaBuscar, diaPrimeiro, diaUltimo);
@@ -110,20 +116,10 @@ public class CorteService {
 
     private Integer verificarMes(Integer mes){
 
-        Integer mesParaBuscar = (mes == null || mes == 0) ? LocalDate.now().getMonthValue() : mes;
-
-        if (mesParaBuscar < 1 || mesParaBuscar > 12) {
+        if (mes < 1 || mes > 12) {
             throw new IllegalArgumentException("Mês inválido. O valor deve estar entre 1 e 12.");
         }
-
-        return mesParaBuscar;
-    }
-
-    private Integer verificarAno(Integer ano){
-
-        Integer anoParaBuscar = (ano == null || ano == 0) ? LocalDate.now().getYear() : ano;
-
-        return anoParaBuscar;
+        return mes;
     }
 
     @CacheEvict(value = {"cortesPorMes", "cortesPorMesEStatus"}, allEntries = true)
