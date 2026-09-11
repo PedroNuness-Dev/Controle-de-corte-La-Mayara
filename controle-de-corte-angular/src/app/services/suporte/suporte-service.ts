@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { SuporteDtoRequest } from '../interfaces/SuporteDtoRequest';
+import { SuporteDtoRequest } from '../../interfaces/suporte/SuporteDtoRequest';
 
 @Injectable({
   providedIn: 'root',

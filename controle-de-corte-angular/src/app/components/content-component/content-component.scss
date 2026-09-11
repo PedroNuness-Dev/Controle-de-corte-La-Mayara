@@ -79,6 +79,8 @@
 
     .input-busca{
         width: 100% !important;
+        background-color: transparent !important;
+        border: 1px rgba(0, 0, 0, 0.11) solid !important;
     }
 
     .icon-search {
@@ -382,15 +384,13 @@
     }
 
     .criacao{
-        background-color: rgb(175, 20, 111);
+        background-color: rgb(199, 78, 149);
     }
 
     .escolha-lote{
         display: flex;
         flex-direction: column;
         gap: 10px;
-
-        margin-top: 10px;
     }
 
     .opcao-lote{
@@ -398,11 +398,11 @@
         align-items: center;
         gap: 10px;
 
-        background-color: rgba(255,255,255,0.15);
+        background-color: rgba(255,255,255,0.12);
 
-        padding: 10px 14px;
+        padding: 10px;
 
-        border-radius: 10px;
+        border-radius: 6px;
 
         cursor: pointer;
 
@@ -412,44 +412,97 @@
 
         user-select: none;
 
-        span{
+        span:not(.material-icons-outlined){
             color: white;
             font-size: 15px;
             font-weight: 600;
+            transition: color 0.2s ease;
         }
     }
 
     .opcao-lote:hover{
-        background-color: rgba(255,255,255,0.25);
+        background-color: rgba(255,255,255,0.22);
     }
 
-    .opcao-lote.ativo{
-        border: 2px solid white;
+    .opcao-icon{
+        font-size: 20px;
+        color: rgba(255,255,255,0.75);
+        flex-shrink: 0;
+        transition: color 0.2s ease;
+    }
 
-        background-color: rgba(49, 48, 48, 0.479);
+    .opcao-texto{
+        flex: 1;
+    }
 
-        transform: scale(1.01);
-    } 
+    .opcao-check{
+        font-size: 20px;
+        opacity: 0;
+        transform: scale(0.6);
+        transition: all 0.2s ease;
+        flex-shrink: 0;
+    }
 
     .opcao-lote input[type="radio"]{
-        appearance: none;
-
-        width: 18px;
-        height: 18px;
-
-        border-radius: 50%;
-
-        border: 2px solid white;
-
-        position: relative;
-
-        cursor: pointer;
-
-        transition: all 0.2s ease;
+        display: none;
     }
 
-    .opcao-lote input[type="radio"]:checked{
-        background-color: white;
+    /* --- Estado ativo: "Usar lote atual" (verde) --- */
+    .opcao-atual.ativo{
+        border: 2px solid #ffffff;
+        background-color: rgba(255, 255, 255, 0.95);
+    }
+
+    .opcao-atual.ativo span:not(.material-icons-outlined){
+        color: #a02b6f;
+    }
+
+    .opcao-atual.ativo .opcao-icon{
+        color: #1ca859;
+    }
+
+    .opcao-atual.ativo .opcao-check{
+        color: #1ca859;
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    .opcao-atual.ativo input[type="radio"]{
+        border-color: #1ca859;
+    }
+
+    .opcao-atual.ativo input[type="radio"]::after{
+        background-color: #1ca859;
+        transform: translate(-50%, -50%) scale(1);
+    }
+
+    /* --- Estado ativo: "Incrementar novo lote" (âmbar) --- */
+    .opcao-novo.ativo{
+        border: 2px solid #ffffff;
+        background-color: rgba(255, 255, 255, 0.95);
+    }
+
+    .opcao-novo.ativo span:not(.material-icons-outlined){
+        color: #a02b6f;
+    }
+
+    .opcao-novo.ativo .opcao-icon{
+        color: #d98324;
+    }
+
+    .opcao-novo.ativo .opcao-check{
+        color: #d98324;
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    .opcao-novo.ativo input[type="radio"]{
+        border-color: #d98324;
+    }
+
+    .opcao-novo.ativo input[type="radio"]::after{
+        background-color: #d98324;
+        transform: translate(-50%, -50%) scale(1);
     }
 
     .btn-criacao{
@@ -802,6 +855,22 @@
 
         .expand-area.ativo{
             padding: 8px;
+        }
+
+        .opcao-lote{
+            padding: 8px;
+        }
+
+        .opcao-icon{
+            font-size: 16px;
+        }
+
+        .opcao-check{
+            font-size: 16px;
+        }
+
+        .opcao-lote span:not(.material-icons-outlined){
+            font-size: 13px;
         }
     }
 }

@@ -44,17 +44,22 @@
                   &#9888; {{ erros['nomeModelo'] }}
                 </span>
               }
+              <label>Lote:</label>
               <div class="escolha-lote">
-                <label class="opcao-lote" [class.ativo]="tipoLote === 'atual'">
+                <label class="opcao-lote opcao-atual" [class.ativo]="tipoLote === 'atual'">
                   <input type="radio" name="tipoLote" value="atual" [(ngModel)]="tipoLote">
-                  <span>Usar lote atual</span>
+                  <span class="material-icons-outlined opcao-icon">repeat</span>
+                  <span class="opcao-texto">Usar lote atual</span>
+                  <span class="material-icons-outlined opcao-check">check_circle</span>
                 </label>
 
-                <label class="opcao-lote" [class.ativo]="tipoLote === 'novo'">
+                <label class="opcao-lote opcao-novo" [class.ativo]="tipoLote === 'novo'">
                   <input type="radio" name="tipoLote" value="novo" [(ngModel)]="tipoLote">
-                  <span>Incrementar novo lote</span>
+                  <span class="material-icons-outlined opcao-icon">library_add</span>
+                  <span class="opcao-texto">Incrementar novo lote</span>
+                  <span class="material-icons-outlined opcao-check">check_circle</span>
                 </label>
-              </div>          
+              </div>        
           </div>
 
           <div class="coluna">        

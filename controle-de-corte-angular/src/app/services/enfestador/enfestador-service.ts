@@ -1,9 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { CortadorResponse } from '../interfaces/CortadorResponse';
 import { Observable } from 'rxjs';
-import { EnfestadorResponse } from '../interfaces/EnfestadorResponse';
-import { EnfestadorRequest } from '../interfaces/EnfestadorRequest';
+import { EnfestadorResponse } from '../../interfaces/enfestador/EnfestadorResponse';
+import { EnfestadorRequest } from '../../interfaces/enfestador/EnfestadorRequest';
+import { EnfestadorOverview } from '../../interfaces/enfestador/EnfestadorOverview';
 
 @Injectable({
   providedIn: 'root',
@@ -15,6 +15,10 @@ export class EnfestadorService {
 
   buscarEnfestadores() : Observable<EnfestadorResponse[]>{
     return this.http.get<EnfestadorResponse[]>(`${this.url}`)
+  }
+
+  buscarDetalhesEnfestadores() : Observable<EnfestadorOverview[]>{
+    return this.http.get<EnfestadorOverview[]>(`${this.url}/overview`);
   }
 
   cadastrarEnfestador(enfestador : EnfestadorRequest) : Observable<EnfestadorResponse>{

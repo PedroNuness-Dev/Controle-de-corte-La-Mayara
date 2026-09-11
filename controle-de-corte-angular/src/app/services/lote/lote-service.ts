@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { LoteResponse } from '../interfaces/LoteResponse';
+import { LoteResponse } from '../../interfaces/lote/LoteResponse';
 
 @Injectable({
   providedIn: 'root',

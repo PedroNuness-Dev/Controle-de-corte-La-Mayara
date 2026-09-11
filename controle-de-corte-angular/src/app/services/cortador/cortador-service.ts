@@ -1,8 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { CortadorResponse } from '../interfaces/CortadorResponse';
+import { CortadorResponse } from '../../interfaces/cortador/CortadorResponse';
 import { Observable } from 'rxjs';
-import { CortadorRequest } from '../interfaces/CortadorRequest';
+import { CortadorRequest } from '../../interfaces/cortador/CortadorRequest';
+import { CortadorOverview } from '../../interfaces/cortador/CortadorOverview';
 
 @Injectable({
   providedIn: 'root',
@@ -15,6 +16,10 @@ export class CortadorService {
   buscarCortadores() : Observable<CortadorResponse[]>{
     return this.http.get<CortadorResponse[]>(`${this.url}`)
   }
+
+  buscarDetalhesCortadores() : Observable<CortadorOverview[]>{
+      return this.http.get<CortadorOverview[]>(`${this.url}/overview`);
+    }
 
   cadastrarCortador(cortador : CortadorRequest) : Observable<CortadorResponse>{
     return this.http.post<CortadorResponse>(`${this.url}`, cortador);

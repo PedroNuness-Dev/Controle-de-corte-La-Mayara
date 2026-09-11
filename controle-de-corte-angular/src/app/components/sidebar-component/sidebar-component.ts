@@ -1,7 +1,6 @@
 import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { RouterLinkActive, RouterLink, RouterModule, ActivatedRoute } from "@angular/router";
-import { CorteService } from '../../services/corte-service';
-import { CorteResponse } from '../../interfaces/CorteResponse';
+import { CorteResponse } from '../../interfaces/corte/CorteResponse';
 
 
 @Component({
@@ -14,7 +13,6 @@ export class SidebarComponent implements OnInit {
 
   route = inject(ActivatedRoute);
   cdr = inject(ChangeDetectorRef);
-  corteService = inject(CorteService);
   pageSelected : string | null = null;
   cortes !: CorteResponse[];
 

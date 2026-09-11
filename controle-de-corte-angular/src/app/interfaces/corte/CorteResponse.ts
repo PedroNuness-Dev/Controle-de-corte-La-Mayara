@@ -1,6 +1,6 @@
-import { CortadorResponse } from "./CortadorResponse";
-import { EnfestadorResponse } from "./EnfestadorResponse";
-import { LoteResponse } from "./LoteResponse";
+import { CortadorResponse } from "../cortador/CortadorResponse";
+import { EnfestadorResponse } from "../enfestador/EnfestadorResponse";
+import { LoteResponse } from "../lote/LoteResponse";
 
 export interface CorteResponse{
 

@@ -1,11 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { CorteResponse } from '../interfaces/CorteResponse';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { CorteUpdateRequest } from '../interfaces/CorteUpdate';
-import { CorteRequest } from '../interfaces/CorteRequest';
-import { CortadorResponse } from '../interfaces/CortadorResponse';
-import { EstatisticaPessoa } from '../interfaces/EstatisticasPessoa';
+import { CorteResponse } from '../../interfaces/corte/CorteResponse';
+import { Observable } from 'rxjs';
+import { CorteUpdateRequest } from '../../interfaces/corte/CorteUpdate';
+import { CorteRequest } from '../../interfaces/corte/CorteRequest';
 
 @Injectable({
   providedIn: 'root',
@@ -16,11 +14,10 @@ export class CorteService {
 
   http = inject(HttpClient);
 
-  buscarCortesDoMes(mes : number | null, ano : number | null) : Observable<CorteResponse[]>{
-
+  buscarCortesDoMes(mes : number | null, ano : number | null) : Observable<CorteResponse[]>{    
     if(mes != null && ano != null){
 
-      return this.http.get<CorteResponse[]>(`${this.url}/buscar/mes?mes=${mes}&ano${ano}`)      
+      return this.http.get<CorteResponse[]>(`${this.url}/buscar/mes?mes=${mes}&ano=${ano}`)      
     }
     else{
       return this.http.get<CorteResponse[]>(`${this.url}/buscar/mes`)
@@ -30,11 +27,7 @@ export class CorteService {
   buscarCortesDoMesPorStatus(status:string, ano : number, mes : number) : Observable<CorteResponse[]>{
 
     return this.http.get<CorteResponse[]>(`${this.url}/buscar/mes/status?mes=${mes}&ano=${ano}&status=${status}`)
-  }
-
-  buscarRelatorio() : Observable<number>{
-    return this.http.get<number>(`${this.url}/relatorio`);
-  }
+  }  
 
   atualizarCorte(idCorte: number, corteParaAtualizar: CorteUpdateRequest):Observable<CorteResponse>{
 

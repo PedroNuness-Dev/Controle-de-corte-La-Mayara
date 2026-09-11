@@ -1,17 +1,18 @@
 import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
-import { CorteService } from '../../services/corte-service';
-import { CorteResponse } from '../../interfaces/CorteResponse';
+import { CorteService } from '../../services/corte/corte-service';
+import { CorteResponse } from '../../interfaces/corte/CorteResponse';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { CorteUpdateRequest } from '../../interfaces/CorteUpdate';
-import { CorteRequest } from '../../interfaces/CorteRequest';
-import { LoteService } from '../../services/lote-service';
+import { CorteUpdateRequest } from '../../interfaces/corte/CorteUpdate';
+import { CorteRequest } from '../../interfaces/corte/CorteRequest';
+import { LoteService } from '../../services/lote/lote-service';
 import { finalize } from 'rxjs';
-import { CortadorResponse } from '../../interfaces/CortadorResponse';
-import { EnfestadorResponse } from '../../interfaces/EnfestadorResponse';
-import { EnfestadorService } from '../../services/enfestador-service';
-import { CortadorService } from '../../services/cortador-service';
+import { CortadorResponse } from '../../interfaces/cortador/CortadorResponse';
+import { EnfestadorResponse } from '../../interfaces/enfestador/EnfestadorResponse';
+import { EnfestadorService } from '../../services/enfestador/enfestador-service';
+import { CortadorService } from '../../services/cortador/cortador-service';
+import { RelatorioService } from '../../services/relatorio/relatorio-service';
 
 
 @Component({
@@ -28,6 +29,7 @@ export class ContentComponent implements OnInit{
   loteService = inject(LoteService);
   enfestadorService = inject(EnfestadorService);
   cortadorService = inject(CortadorService);
+  relatorioService = inject(RelatorioService);
 
   cortesDoMes : CorteResponse[] = [];
   pageSelected  = 'Geral'
@@ -72,17 +74,23 @@ export class ContentComponent implements OnInit{
       this.nomeParaBuscar = '';
     })
 
-    this.buscarRelatorioDeCortes();
+
+    this.buscarRelatoiro();
     this.buscarLoteAtual();
     this.buscarCortadores();
     this.buscarEnfestadores();
   }
 
-  buscarRelatorioDeCortes(){
-      this.corteService.buscarRelatorio().subscribe({
-        next: (data) => {this.relatorioDeCortes = data; this.cdr.detectChanges()},
-        error: (err) => {console.log(err)}
-      })
+  buscarRelatoiro(){
+
+    const anoAtual = new Date().getFullYear();
+    const mesAtual = new Date().getMonth() + 1;
+
+    this.relatorioService.buscarRelatorioDoMes(mesAtual,anoAtual).subscribe({
+      next: (data) => {this.relatorioDeCortes = data.quantidade; console.log(`Quantidade de cortes buscadas: ${data.quantidade}`)},
+      error:(err) => {console.log(err)}
+    })
+
   }
 
   buscarCortadores(){
@@ -115,17 +123,18 @@ export class ContentComponent implements OnInit{
 
   buscarCortesDoMesPorStatus(){
 
+    const anoAtual = new Date().getFullYear();
+    const mesAtual = new Date().getMonth() + 1;
+
     if(this.pageSelected === 'Geral'){
-        this.corteService.buscarCortesDoMes(null,null).subscribe({
+        this.corteService.buscarCortesDoMes(mesAtual,anoAtual).subscribe({
           next: (data) => {
             this.cortesDoMes = data;
             this.cdr.detectChanges();},
           error: (err) => {console.log(err)}
         })
       }
-      else{
-        const anoAtual = new Date().getFullYear();
-        const mesAtual = new Date().getMonth() + 1;
+      else{        
         let statusParaMandar !: string;
 
         if(this.pageSelected === 'Pendentes'){
@@ -144,7 +153,7 @@ export class ContentComponent implements OnInit{
             this.cdr.detectChanges();},
           error: (err) => {console.log(err)}
         })
-      }
+      }      
   }
 
   buscarLoteAtual(){
@@ -305,7 +314,7 @@ export class ContentComponent implements OnInit{
         this.fecharCriacao();
         this.buscarLoteAtual();
         this.cdr.detectChanges();
-        this.buscarRelatorioDeCortes();
+        this.buscarRelatoiro();
       },
       error: (err) => {
         console.log(err);
@@ -382,7 +391,7 @@ export class ContentComponent implements OnInit{
     }
 
     this.corteService.excluirCorte(id).subscribe({
-      next: () => {this.cdr.detectChanges(); console.log("Corte excluido com sucesso!"); this.buscarCortesDoMesPorStatus();this.buscarRelatorioDeCortes()},
+      next: () => {this.cdr.detectChanges(); console.log("Corte excluido com sucesso!"); this.buscarCortesDoMesPorStatus(); this.buscarRelatoiro()},
       error: (err) => {console.log(err)}
     })
   }

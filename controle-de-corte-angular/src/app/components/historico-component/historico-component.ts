@@ -2,13 +2,13 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { finalize } from 'rxjs';
-import { CorteResponse } from '../../interfaces/CorteResponse';
-import { CortadorResponse } from '../../interfaces/CortadorResponse';
-import { EnfestadorResponse } from '../../interfaces/EnfestadorResponse';
-import { CorteService } from '../../services/corte-service';
-import { EnfestadorService } from '../../services/enfestador-service';
-import { CortadorService } from '../../services/cortador-service';
-import { CorteUpdateRequest } from '../../interfaces/CorteUpdate';
+import { CorteResponse } from '../../interfaces/corte/CorteResponse';
+import { CortadorResponse } from '../../interfaces/cortador/CortadorResponse';
+import { EnfestadorResponse } from '../../interfaces/enfestador/EnfestadorResponse';
+import { CorteService } from '../../services/corte/corte-service';
+import { EnfestadorService } from '../../services/enfestador/enfestador-service';
+import { CortadorService } from '../../services/cortador/cortador-service';
+import { CorteUpdateRequest } from '../../interfaces/corte/CorteUpdate';
 
 @Component({
   selector: 'app-historico-component',

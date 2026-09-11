@@ -1,14 +1,14 @@
 import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
-import { EnfestadorService } from '../../services/enfestador-service';
-import { CortadorService } from '../../services/cortador-service';
-import { EnfestadorResponse } from '../../interfaces/EnfestadorResponse';
-import { CortadorResponse } from '../../interfaces/CortadorResponse';
-import { EnfestadorRequest } from '../../interfaces/EnfestadorRequest';
-import { CortadorRequest } from '../../interfaces/CortadorRequest';
+import { EnfestadorService } from '../../services/enfestador/enfestador-service';
+import { CortadorService } from '../../services/cortador/cortador-service';
+import { EnfestadorRequest } from '../../interfaces/enfestador/EnfestadorRequest';
+import { CortadorRequest } from '../../interfaces/cortador/CortadorRequest';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { CorteService } from '../../services/corte-service';
-import { LoteService } from '../../services/lote-service';
+import { CorteService } from '../../services/corte/corte-service';
+import { LoteService } from '../../services/lote/lote-service';
+import { EnfestadorOverview } from '../../interfaces/enfestador/EnfestadorOverview';
+import { CortadorOverview } from '../../interfaces/cortador/CortadorOverview';
 
 @Component({
   selector: 'app-config-component',
@@ -26,8 +26,8 @@ export class ConfigComponent implements OnInit{
 
   loteAtual : string | null = null;
 
-  enfestadores : EnfestadorResponse[] = [];
-  cortadores : CortadorResponse[] = [];
+  enfestadores : EnfestadorOverview[] = [];
+  cortadores : CortadorOverview[] = [];
 
   erros: { [key: string]: string } = {};
 
@@ -63,14 +63,14 @@ export class ConfigComponent implements OnInit{
   }
 
   buscarEnfestadores(){
-    this.enfestadorService.buscarEnfestadores().subscribe({
+    this.enfestadorService.buscarDetalhesEnfestadores().subscribe({
       next: (data) => {this.enfestadores = data; this.cdr.detectChanges()},
       error: (err) => {console.log(err)}
     });
   }
 
   buscarCortadores(){
-    this.cortadorService.buscarCortadores().subscribe({
+    this.cortadorService.buscarDetalhesCortadores().subscribe({
       next: (data) => {this.cortadores = data; this.cdr.detectChanges()},
       error: (err) => {console.log(err)}
     })
@@ -93,9 +93,9 @@ export class ConfigComponent implements OnInit{
         this.successCortador = true;
         this.successEnfestador = false;
         console.log("Cortador cadastrado com sucesso!");
-        this.cdr.detectChanges();
         this.buscarCortadores()
         this.modoCadastroCortador = false;
+        this.cdr.detectChanges();
       },
       error : (err) => {console.log(err)}
     })
@@ -117,10 +117,10 @@ export class ConfigComponent implements OnInit{
       next : (data) => {
         this.successEnfestador = true;
         this.successCortador = false;
-        console.log("Enfestador cadastrado com sucesso!");
-        this.cdr.detectChanges();
+        console.log("Enfestador cadastrado com sucesso!");      
         this.buscarEnfestadores()
         this.modoCadastroEnfestador = false;
+        this.cdr.detectChanges();
       },
       error : (err) => {console.log(err)}
     })
@@ -156,9 +156,9 @@ export class ConfigComponent implements OnInit{
         next: (data) =>  {
           this.buscarCortadores();
           this.modalExclusao=false; 
+          this.successCortador = false
           this.cdr.detectChanges();},
-        error: (err) => {console.log(err)},
-        complete: () => {this.successCortador = false}
+        error: (err) => {console.log(err)}
       })
     }
     else{
@@ -166,10 +166,10 @@ export class ConfigComponent implements OnInit{
         next: (data) => {
           this.buscarEnfestadores();
           this.modalExclusao=false; 
+          this.successEnfestador = false
           this.cdr.detectChanges();
         },
-        error: (err) => {console.log(err)},
-        complete: () => {this.successEnfestador = false}
+        error: (err) => {console.log(err)}
       })
     }
   }

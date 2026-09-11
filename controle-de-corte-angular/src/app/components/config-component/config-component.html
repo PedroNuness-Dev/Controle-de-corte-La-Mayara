@@ -42,15 +42,15 @@
                 <li>
                     <strong>2.4 Cortadores cadastrados</strong>
                     <ul class="ul-list">
-                        @for (cortador of cortadores; track cortador.id) {
+                        @for (cortador of cortadores; track cortador.idCortador) {
                             <li class="pessoa-card">
                                 <div class="pessoa-info">                                    
                                     <div class="pessoa-texto">
                                         <span class="pessoa-nome">{{cortador.nome}}</span>
-                                        <p class="info-pessoa-detalhes">Quantidade de cortes cortados: {{cortador.quantidadeDeCortesCortados}}</p>
+                                        <p class="info-pessoa-detalhes">Quantidade de cortes cortados: {{cortador.quantidadeDeCortes}}</p>
                                     </div>
                                 </div>
-                                <button class="btn-excluir-icon" title="Excluir" (click)="ativarModalExclusao(cortador.id, 'cortador', cortador.nome)">
+                                <button class="btn-excluir-icon" title="Excluir" (click)="ativarModalExclusao(cortador.idCortador, 'cortador', cortador.nome)">
                                     <span class="material-icons-outlined">delete</span>
                                 </button>
                             </li>
@@ -103,15 +103,15 @@
                 <li>
                     <strong>3.3 Enfestadores cadastrados</strong>
                     <ul class="ul-list">
-                        @for (enfestador of enfestadores; track enfestador.id) {
+                        @for (enfestador of enfestadores; track enfestador.idEnfestador) {
                             <li class="pessoa-card">
                                 <div class="pessoa-info">                                    
                                     <div class="pessoa-texto">
                                         <span class="pessoa-nome">{{ enfestador.nome }}</span>
-                                        <p class="info-pessoa-detalhes">Quantidade de cortes enfestados: {{enfestador.quantidadeDeCortesEnfestados}}</p>
+                                        <p class="info-pessoa-detalhes">Quantidade de cortes enfestados: {{enfestador.quantidadeDeCortes}}</p>
                                     </div>
                                 </div>
-                                <button class="btn-excluir-icon" title="Excluir" (click)="ativarModalExclusao(enfestador.id, 'enfestador', enfestador.nome)">
+                                <button class="btn-excluir-icon" title="Excluir" (click)="ativarModalExclusao(enfestador.idEnfestador, 'enfestador', enfestador.nome)">
                                     <span class="material-icons-outlined">delete</span>
                                 </button>
                             </li>

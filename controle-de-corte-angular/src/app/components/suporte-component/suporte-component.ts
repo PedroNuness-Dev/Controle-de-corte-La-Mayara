@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { SuporteService } from '../../services/suporte-service';
-import { SuporteDtoRequest } from '../../interfaces/SuporteDtoRequest';
+import { SuporteService } from '../../services/suporte/suporte-service';
+import { SuporteDtoRequest } from '../../interfaces/suporte/SuporteDtoRequest';
 import { finalize } from 'rxjs';
 
 @Component({
