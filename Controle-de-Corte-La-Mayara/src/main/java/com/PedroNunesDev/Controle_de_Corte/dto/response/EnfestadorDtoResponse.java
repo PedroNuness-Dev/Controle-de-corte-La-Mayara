@@ -4,7 +4,6 @@ import java.io.Serializable;
 
 public record EnfestadorDtoResponse (
         Long id,
-        String nome,
-        Integer quantidadeDeCortesEnfestados
+        String nome
 ) implements Serializable {
 }

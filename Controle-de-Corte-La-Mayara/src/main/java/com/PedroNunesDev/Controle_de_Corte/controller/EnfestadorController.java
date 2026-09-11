@@ -2,10 +2,10 @@ package com.PedroNunesDev.Controle_de_Corte.controller;
 
 import com.PedroNunesDev.Controle_de_Corte.dto.request.EnfestadorDtoRequest;
 import com.PedroNunesDev.Controle_de_Corte.dto.response.EnfestadorDtoResponse;
+import com.PedroNunesDev.Controle_de_Corte.dto.response.EnfestadorOverview;
 import com.PedroNunesDev.Controle_de_Corte.service.EnfestadorService;
 import jakarta.validation.Valid;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,14 +18,10 @@ import java.util.List;
 @RestController
 @RequestMapping("/enfestador")
 @CrossOrigin("*")
+@RequiredArgsConstructor
 public class EnfestadorController {
 
-    private static final Logger logger = LoggerFactory.getLogger(EnfestadorController.class);
     private final EnfestadorService enfestadorService;
-
-    public EnfestadorController(EnfestadorService enfestadorService) {
-        this.enfestadorService = enfestadorService;
-    }
 
     /**
      * Busca um enfestador por ID.
@@ -33,21 +29,35 @@ public class EnfestadorController {
      * @return Dados do enfestador encontrado
      */
     @GetMapping("/{id}")
-    public ResponseEntity<EnfestadorDtoResponse> findById(@PathVariable Long id) {
+    public ResponseEntity<EnfestadorDtoResponse> buscarEnfestadorPorId(@PathVariable Long id) {
 
-        logger.debug("Requisição recebida: GET /enfestador/{}", id);
-
-        EnfestadorDtoResponse enfestador = enfestadorService.findById(id);
+        EnfestadorDtoResponse enfestador = enfestadorService.buscarEnfestadorPorId(id);
 
         return ResponseEntity.ok(enfestador);
     }
 
+    /**
+     * Busca enfestadores ativos
+     * @return Lista dos cortadores ativos
+     */
     @GetMapping
-    public ResponseEntity<List<EnfestadorDtoResponse>> buscarEnfestadores(){
+    public ResponseEntity<List<EnfestadorDtoResponse>> buscarEnfestadoresAtivos(){
 
-        List<EnfestadorDtoResponse> enfestadores = enfestadorService.buscarEnfestadores();
+        List<EnfestadorDtoResponse> enfestadores = enfestadorService.buscarEnfestadoresAtivos();
 
         return ResponseEntity.ok(enfestadores);
+    }
+
+    /**
+     * Busca detalhes dos enfestadores ativos
+     * @return Lista dos detalhes dos cortadores ativos
+     */
+    @GetMapping("/overview")
+    public ResponseEntity<List<EnfestadorOverview>> buscarDetalhesDosEnfestadoresAtivos(){
+
+        List<EnfestadorOverview> responses = enfestadorService.buscarDetalhesDosEnfestadoresAtivos();
+
+        return ResponseEntity.ok(responses);
     }
 
     /**
@@ -57,8 +67,6 @@ public class EnfestadorController {
      */
     @PostMapping
     public ResponseEntity<EnfestadorDtoResponse> cadastrarEnfestador(@RequestBody @Valid EnfestadorDtoRequest enfestadorDtoRequest) {
-
-        logger.debug("Requisição recebida: POST /enfestador");
 
         EnfestadorDtoResponse enfestadorNovo = enfestadorService.cadastrarEnfestador(enfestadorDtoRequest);
 
@@ -72,11 +80,9 @@ public class EnfestadorController {
      * @return Enfestador atualizado
      */
     @PutMapping("/{id}")
-    public ResponseEntity<EnfestadorDtoResponse> update(@PathVariable Long id, @RequestBody @Valid EnfestadorDtoRequest enfestadorDtoRequest) {
+    public ResponseEntity<EnfestadorOverview> atualizarEnfestador(@PathVariable Long id, @RequestBody @Valid EnfestadorDtoRequest enfestadorDtoRequest) {
 
-        logger.debug("Requisição recebida: PUT /enfestador/{}", id);
-
-        EnfestadorDtoResponse enfestadorAtualizado = enfestadorService.update(id, enfestadorDtoRequest);
+        EnfestadorOverview enfestadorAtualizado = enfestadorService.atualizarEnfestador(id, enfestadorDtoRequest);
 
         return ResponseEntity.ok(enfestadorAtualizado);
     }
@@ -84,15 +90,13 @@ public class EnfestadorController {
     /**
      * Desativa um enfestador por ID.
      * @param id ID do enfestador
-     * @return Status 204 No Content
+     * @return Detalhes do Enfestador desativado
      */
     @PatchMapping("/{id}")
-    public ResponseEntity<Void> deleteById(@PathVariable Long id) {
+    public ResponseEntity<EnfestadorOverview> desativarEnfestadorPorId(@PathVariable Long id) {
 
-        logger.debug("Requisição recebida: DELETE /enfestador/{}", id);
+        EnfestadorOverview response = enfestadorService.desativarEnfestador(id);
 
-        enfestadorService.desativarEnfestador(id);
-
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(response);
     }
 }

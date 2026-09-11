@@ -2,57 +2,71 @@ package com.PedroNunesDev.Controle_de_Corte.service;
 
 import com.PedroNunesDev.Controle_de_Corte.dto.request.EnfestadorDtoRequest;
 import com.PedroNunesDev.Controle_de_Corte.dto.response.EnfestadorDtoResponse;
+import com.PedroNunesDev.Controle_de_Corte.dto.response.EnfestadorOverview;
 import com.PedroNunesDev.Controle_de_Corte.exception.ResourceNotFoundException;
 import com.PedroNunesDev.Controle_de_Corte.model.Enfestador;
 import com.PedroNunesDev.Controle_de_Corte.repository.EnfestadorRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Comparator;
 import java.util.List;
 
 @Service
+@Slf4j
+@RequiredArgsConstructor
 public class EnfestadorService {
 
-    private static final Logger logger = LoggerFactory.getLogger(EnfestadorService.class);
     private final EnfestadorRepository enfestadorRepository;
 
-    public EnfestadorService(EnfestadorRepository enfestadorRepository) {
-        this.enfestadorRepository = enfestadorRepository;
-    }
-
     @Transactional(readOnly = true)
-    public EnfestadorDtoResponse findById(Long id){
+    public EnfestadorDtoResponse buscarEnfestadorPorId(Long id){
 
-        logger.info("Buscando enfestador com ID: {}", id);
+        log.info("Buscando enfestador com ID: {}", id);
 
         Enfestador enfestador = enfestadorRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Enfestador com ID " + id + " não encontrado"));
 
-        logger.debug("Enfestador encontrado: {}", enfestador.getNome());
+        log.debug("Enfestador encontrado: {}", enfestador.getNome());
 
-        return new EnfestadorDtoResponse(enfestador.getId(), enfestador.getNome(), enfestador.getQuantidadeDeCortesEnfestados());
+        return new EnfestadorDtoResponse(enfestador.getId(), enfestador.getNome());
     }
 
     @Transactional(readOnly = true)
-    public List<EnfestadorDtoResponse> buscarEnfestadores(){
+    public List<EnfestadorDtoResponse> buscarEnfestadoresAtivos(){
 
-        return enfestadorRepository.findAll()
+        log.info("Iniciando busca de todos os enfestadores ativos cadastrados no sistema");
+
+        List<EnfestadorDtoResponse> enfestadores = enfestadorRepository.buscarEnfestadoresAtivos()
                 .stream()
-                .filter(enfestador -> enfestador.getAtivo() == true)
-                .map(enfestador -> {
-                    return new EnfestadorDtoResponse(enfestador.getId(), enfestador.getNome(),enfestador.getQuantidadeDeCortesEnfestados());
-                })
-                .sorted(Comparator.comparing(EnfestadorDtoResponse::nome))
+                .map(enfestador -> new EnfestadorDtoResponse(
+                        enfestador.getId(),
+                        enfestador.getNome()
+                ))
                 .toList();
+
+        log.debug("Total de enfestadores ativos encontrados: {}", enfestadores.size());
+
+        return enfestadores;
+    }
+
+    @Transactional(readOnly = true)
+    public List<EnfestadorOverview> buscarDetalhesDosEnfestadoresAtivos(){
+
+        log.info("Iniciando busca dos detalhes de todos os enfestadores ativos cadastrados no sistema");
+
+        List<EnfestadorOverview> enfestadores = enfestadorRepository.buscarEnfestadoresESuasQuantidadesDeCortes();
+
+        log.debug("Total de enfestadores com overview encontrados: {}", enfestadores.size());
+
+        return enfestadores;
     }
 
     @Transactional
     public EnfestadorDtoResponse cadastrarEnfestador(EnfestadorDtoRequest enfestadorDtoRequest){
 
-        logger.info("Criando novo enfestador: {}", enfestadorDtoRequest.nome());
+        log.info("Criando novo enfestador: {}", enfestadorDtoRequest.nome());
 
         Enfestador enfestador = Enfestador.builder()
                 .nome(enfestadorDtoRequest.nome())
@@ -61,15 +75,15 @@ public class EnfestadorService {
 
         Enfestador enfestadorSalvo = enfestadorRepository.save(enfestador);
 
-        logger.info("Enfestador criado com sucesso. ID: {}", enfestadorSalvo.getId());
+        log.info("Enfestador criado com sucesso. ID: {}", enfestadorSalvo.getId());
 
-        return new EnfestadorDtoResponse(enfestadorSalvo.getId(), enfestadorSalvo.getNome(),0);
+        return new EnfestadorDtoResponse(enfestadorSalvo.getId(), enfestadorSalvo.getNome());
     }
 
     @Transactional
-    public EnfestadorDtoResponse update(Long id, EnfestadorDtoRequest enfestadorDtoRequest){
+    public EnfestadorOverview atualizarEnfestador(Long id, EnfestadorDtoRequest enfestadorDtoRequest){
 
-        logger.info("Atualizando enfestador com ID: {}", id);
+        log.info("Atualizando enfestador com ID: {}", id);
 
         Enfestador enfestador = enfestadorRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Enfestador com ID " + id + " não encontrado"));
@@ -78,23 +92,34 @@ public class EnfestadorService {
 
         Enfestador enfestadorAtualizado = enfestadorRepository.save(enfestador);
 
-        logger.info("Enfestador atualizado com sucesso. ID: {}", enfestadorAtualizado.getId());
+        log.info("Enfestador atualizado com sucesso. ID: {}", enfestadorAtualizado.getId());
 
-        return new EnfestadorDtoResponse(enfestadorAtualizado.getId(), enfestadorAtualizado.getNome(), enfestadorAtualizado.getQuantidadeDeCortesEnfestados());
+        return toOverview(enfestadorAtualizado);
     }
 
     @Transactional
-    public void desativarEnfestador(Long id){
+    public EnfestadorOverview desativarEnfestador(Long id){
 
-        logger.info("Deletando enfestador com ID: {}", id);
+        log.info("Desativando enfestador com ID: {}", id);
 
         Enfestador enfestadorBuscado = enfestadorRepository.findById(id)
-                        .orElseThrow(() -> new ResourceNotFoundException("Enfestador com ID: "+id+" não encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Enfestador com ID: " + id + " não encontrado"));
 
         enfestadorBuscado.setAtivo(false);
 
         enfestadorRepository.save(enfestadorBuscado);
 
-        logger.info("Enfestador desativado com sucesso. ID: {}", id);
+        log.info("Enfestador desativado com sucesso. ID: {}", id);
+
+        return toOverview(enfestadorBuscado);
+    }
+
+    private EnfestadorOverview toOverview(Enfestador enfestador){
+        return new EnfestadorOverview(
+                enfestador.getId(),
+                enfestador.getNome(),
+                (long) enfestador.getQuantidadeDeCortesEnfestados(),
+                enfestador.getAtivo()
+        );
     }
 }
