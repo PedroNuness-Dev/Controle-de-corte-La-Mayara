@@ -11,7 +11,7 @@ import { EnfestadorOverview } from '../../interfaces/enfestador/EnfestadorOvervi
 export class EnfestadorService {
 
   http = inject(HttpClient);
-  url = "http://localhost:8080/enfestador"
+  url = `http://${window.location.hostname}:8080/enfestador`
 
   buscarEnfestadores() : Observable<EnfestadorResponse[]>{
     return this.http.get<EnfestadorResponse[]>(`${this.url}`)

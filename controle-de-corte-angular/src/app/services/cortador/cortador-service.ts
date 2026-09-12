@@ -11,7 +11,7 @@ import { CortadorOverview } from '../../interfaces/cortador/CortadorOverview';
 export class CortadorService {
 
   http = inject(HttpClient);
-  url = "http://localhost:8080/cortador"
+  url = `http://${window.location.hostname}:8080/cortador`
 
   buscarCortadores() : Observable<CortadorResponse[]>{
     return this.http.get<CortadorResponse[]>(`${this.url}`)

@@ -10,9 +10,9 @@ export class RelatorioService {
 
   http = inject(HttpClient)
 
-  url = "http://localhost:8080/relatorio/buscar/quantidade/registros"
+  url = `http://${window.location.hostname}:8080/relatorio/quantidade/registros`
 
-  buscarRelatorioDoMes(mes:number,ano:number) : Observable<QuantidadeDeCortes>{
+  buscarQuantidadeDeCortesDoMes(mes:number,ano:number) : Observable<QuantidadeDeCortes>{
     return this.http.get<QuantidadeDeCortes>(`${this.url}?mes=${mes}&ano=${ano}`);
   }
 }

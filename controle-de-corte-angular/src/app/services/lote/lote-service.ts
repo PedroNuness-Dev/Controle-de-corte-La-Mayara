@@ -8,8 +8,7 @@ import { LoteResponse } from '../../interfaces/lote/LoteResponse';
 })
 export class LoteService {
 
-  url = "http://localhost:8080/lote";
-
+  url = `http://${window.location.hostname}:8080/lote`;
   http = inject(HttpClient);
 
   buscarLote() : Observable<LoteResponse>{

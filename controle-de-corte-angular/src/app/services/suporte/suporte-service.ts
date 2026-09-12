@@ -9,7 +9,7 @@ import { SuporteDtoRequest } from '../../interfaces/suporte/SuporteDtoRequest';
 export class SuporteService {
 
   http = inject(HttpClient);
-  url = "http://localhost:8080/email"
+  url = `http://${window.location.hostname}:8080/email`
 
   mandarEmail(suporteDtoRequest : SuporteDtoRequest) : Observable<string>{
     return this.http.post(`${this.url}/send`,suporteDtoRequest, {responseType:'text'});

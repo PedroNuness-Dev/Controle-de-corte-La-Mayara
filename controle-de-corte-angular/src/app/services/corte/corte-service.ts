@@ -10,7 +10,7 @@ import { CorteRequest } from '../../interfaces/corte/CorteRequest';
 })
 export class CorteService {
 
-  url = "http://localhost:8080/corte"
+  url = `http://${window.location.hostname}:8080/corte`
 
   http = inject(HttpClient);
 
