@@ -16,7 +16,8 @@ public interface CortadorRepository extends JpaRepository<Cortador, Long> {
         cortador.id,
         cortador.nome,
         COUNT(c),
-        cortador.ativo
+        cortador.ativo,
+        cortador.dataDeCadastro
     )
     FROM Cortador cortador
     LEFT JOIN cortador.cortes c
@@ -37,7 +38,8 @@ public interface CortadorRepository extends JpaRepository<Cortador, Long> {
         cortador.id,
         cortador.nome,
         COUNT(c),
-        cortador.ativo
+        cortador.ativo,
+        cortador.dataDeCadastro
     )
     FROM Cortador cortador
     LEFT JOIN cortador.cortes c

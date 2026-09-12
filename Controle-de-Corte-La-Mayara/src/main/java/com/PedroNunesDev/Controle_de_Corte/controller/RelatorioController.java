@@ -14,7 +14,7 @@ public class RelatorioController {
 
     private final RelatorioService relatorioService;
 
-    @GetMapping("/buscar/quantidade/registros")
+    @GetMapping("/quantidade/registros")
     public ResponseEntity<QuantidadeCortesMesResponse> buscarQuantidadeCortesRegistradosMes(@RequestParam Integer mes, @RequestParam Integer ano){
 
         QuantidadeCortesMesResponse quantidadeCortesMesResponse = relatorioService.buscarCortesRegistradosNoMes(mes,ano);

@@ -119,7 +119,8 @@ public class EnfestadorService {
                 enfestador.getId(),
                 enfestador.getNome(),
                 (long) enfestador.getQuantidadeDeCortesEnfestados(),
-                enfestador.getAtivo()
+                enfestador.getAtivo(),
+                enfestador.getDataDeCadastro()
         );
     }
 }

@@ -5,7 +5,7 @@ INSERT INTO enfestador(nome)
 VALUES ('Irã'),('Paulinho'),('Rodolfo'),('Rodrigo'),('Ermeson') ;
 
 INSERT INTO lote(numero_lote,ano_lote)
-VALUES  (015,'2026');
+VALUES  (01,'2026');
 
 INSERT INTO corte(data_de_corte, data_de_registro , nome_modelo, quantidade_total, corte_status, lote_formatado, lote, id_enfestador, id_cortador, observacao)
 VALUES (null,current_date, 'Patrick', 800, 'PENDENTE', '001/26', 1, null, null, '4 x 200');

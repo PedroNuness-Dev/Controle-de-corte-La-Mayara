@@ -1,13 +1,15 @@
 CREATE TABLE enfestador (
                             id_enfestador INTEGER AUTO_INCREMENT PRIMARY KEY,
                             nome VARCHAR(100),
-                            ativo boolean default true
+                            ativo boolean default true,
+                            data_de_cadastro DATE DEFAULT (CURRENT_DATE)
 );
 
 CREATE TABLE cortador (
                        id_cortador INTEGER AUTO_INCREMENT PRIMARY KEY,
                        nome VARCHAR(100),
-                       ativo boolean default true
+                       ativo boolean default true,
+                       data_de_cadastro DATE DEFAULT (CURRENT_DATE)
 );
 
 CREATE TABLE lote(

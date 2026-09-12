@@ -109,7 +109,8 @@ public class CortadorService {
                 cortador.getId(),
                 cortador.getNome(),
                 (long) cortador.getQuantidadeDeCortes(),
-                cortador.getAtivo()
+                cortador.getAtivo(),
+                cortador.getDataDeCadastro()
         );
     }
 }

@@ -3,6 +3,7 @@ package com.PedroNunesDev.Controle_de_Corte.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +27,9 @@ public class Enfestador {
     private String nome;
 
     private Boolean ativo;
+
+    @Builder.Default
+    private LocalDate dataDeCadastro = LocalDate.now();
 
     @OneToMany(mappedBy = "enfestador", fetch = FetchType.LAZY)
     private List<Corte> cortes = new ArrayList<>();

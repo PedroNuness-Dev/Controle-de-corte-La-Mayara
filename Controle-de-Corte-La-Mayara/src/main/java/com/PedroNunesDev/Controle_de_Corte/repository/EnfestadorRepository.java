@@ -16,7 +16,8 @@ public interface EnfestadorRepository extends JpaRepository<Enfestador,Long> {
         enfestador.id,
         enfestador.nome,
         COUNT(c),
-        enfestador.ativo
+        enfestador.ativo,
+        enfestador.dataDeCadastro
     )
     FROM Enfestador enfestador
     LEFT JOIN enfestador.cortes c
@@ -37,7 +38,8 @@ public interface EnfestadorRepository extends JpaRepository<Enfestador,Long> {
         enfestador.id,
         enfestador.nome,
         COUNT(c),
-        enfestador.ativo
+        enfestador.ativo,
+        enfestador.dataDeCadastro
     )
     FROM Enfestador enfestador
     LEFT JOIN enfestador.cortes c

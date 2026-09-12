@@ -10,6 +10,8 @@ public record CorteDtoResponse (
         Long id,
         @JsonFormat(pattern = "dd/MM/yyyy")
         LocalDate dataDeCorte,
+        @JsonFormat(pattern = "dd/MM/yyyy")
+        LocalDate dataDeRegistro,
         String nomeModelo,
         Integer quantidadeTotal,
         CorteStatus corteStatus,
