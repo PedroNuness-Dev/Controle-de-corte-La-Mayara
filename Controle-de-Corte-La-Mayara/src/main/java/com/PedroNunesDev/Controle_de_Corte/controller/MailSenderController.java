@@ -17,10 +17,10 @@ public class MailSenderController {
     }
 
     @PostMapping("/send")
-    public ResponseEntity<String> sendEmail(@RequestBody SuporteDtoRequest suporteDtoRequest){
+    public ResponseEntity<Void> sendEmail(@RequestBody SuporteDtoRequest suporteDtoRequest){
 
-        mailService.enviarEmailTeste(suporteDtoRequest.titulo(), suporteDtoRequest.texto());
+        mailService.enviarEmailTeste(suporteDtoRequest.titulo(), suporteDtoRequest.texto(),suporteDtoRequest.prioridade());
 
-        return ResponseEntity.ok("Email enviado!");
+        return ResponseEntity.ok().build();
     }
 }
