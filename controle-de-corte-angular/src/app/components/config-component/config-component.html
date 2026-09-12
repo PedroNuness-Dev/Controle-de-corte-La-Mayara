@@ -11,15 +11,33 @@
             <ol>
                 <li>
                     <strong>1.1 O que é um corte?</strong>
-                    <p>O corte é o registro da peça ou conjunto que será processado, incluindo quantidade, lote, data de corte, observações e etc.</p>
+                    <p>O corte é o registro central do sistema: representa a peça ou conjunto que será processado. Cada corte guarda nome do modelo, quantidade total, lote, data de registro, data de corte, cortador, enfestador e observações. É a partir dele que todo o acompanhamento de produção é feito.</p>
                 </li>
                 <li>
                     <strong>1.2 Como cadastrar um corte?</strong>
-                    <p>Utilize o botão <u>Cadastrar corte</u> em qualquer tela de cortes atuais, podendo passar um lote atual ou incrementar um novo lote e informações adicionais.</p>
+                    <p>Utilize o botão <u>Adicionar corte</u> em qualquer tela de cortes atuais. No cadastro, informe o nome do modelo, a quantidade total e a data de registro (obrigatória). Você também escolhe se o corte usa o <u>lote atual</u> ou se deve <u>incrementar um novo lote</u> antes de ser salvo. A data de registro não pode ser alterada depois e é o que o sistema usa para localizar o corte no mês correto.</p>
                 </li>
                 <li>
                     <strong>1.3 Como editar um corte existente?</strong>
-                    <p>Selecione o corte na lista e ajuste as informações necessárias, como quantidade, observações, cortador e etc.</p>
+                    <p>Selecione o corte na lista e ajuste os campos necessários. Algumas regras de validação se aplicam: o lote deve conter apenas números e uma barra "/", o nome do modelo e a quantidade (maior que zero) são obrigatórios. Para vincular um <u>cortador</u>, é necessário já ter um <u>enfestador</u> selecionado e informar a data de corte — isso garante que o fluxo de produção seja respeitado.</p>
+                </li>
+                <li>
+                    <strong>1.4 O que significam os status de um corte?</strong>
+                    <p>Cada corte percorre um fluxo de status, indicado tanto no texto quanto na cor do card:</p>
+                    <ul class="legenda-status">
+                        <li><span class="status-dot dot-pendente"></span><strong>Pendente</strong> — corte recém-cadastrado, ainda sem enfestador ou cortador vinculado.</li>
+                        <li><span class="status-dot dot-enfestado"></span><strong>Enfestado</strong> — já possui um enfestador responsável vinculado.</li>
+                        <li><span class="status-dot dot-cortado"></span><strong>Cortado</strong> — possui cortador e data de corte definidos; etapa concluída.</li>
+                        <li><span class="status-dot dot-cancelado"></span><strong>Cancelado</strong> — corte cancelado. Pode ser reativado a qualquer momento pelo menu de opções do card.</li>
+                    </ul>
+                </li>
+                <li>
+                    <strong>1.5 Como cancelar, reativar ou excluir um corte?</strong>
+                    <p>No menu de opções do card (ícone de três pontinhos) você encontra as ações disponíveis. <u>Cancelar corte</u> apenas muda o status para "Cancelado", mantendo o registro e permitindo reativação posterior através da opção <u>Ativar corte</u>. Já <u>Excluir corte</u> remove o registro permanentemente e não pode ser desfeito — use com cautela.</p>
+                </li>
+                <li>
+                    <strong>1.6 Como buscar um corte específico?</strong>
+                    <p>Utilize o campo de busca no topo da tela de cortes, digitando o nome do modelo ou o número do lote e pressionando Enter. A busca considera apenas o mês selecionado no momento.</p>
                 </li>
             </ol>
         </section>
@@ -29,33 +47,38 @@
             <ol>
                 <li>
                     <strong>2.1 O que é um cortador?</strong>
-                    <p>O cortador representa o operador responsável pelo corte do material.</p>
+                    <p>O cortador representa o operador responsável por executar o corte do material, sendo a última etapa antes da conclusão de um corte.</p>
                 </li>
                 <li>
                     <strong>2.2 Como cadastrar um cortador?</strong>
-                    <p>Acesse o cadastro de cortadores logo abaixo (Cadastrar novo cortador) e informe o seu nome.</p>
+                    <p>Acesse o cadastro logo abaixo, no botão <u>Cadastrar novo cortador</u>, e informe o nome. O novo cortador passa a aparecer imediatamente na lista de seleção ao editar um corte.</p>
                 </li>
                 <li>
                     <strong>2.3 Como vincular um cortador a um corte?</strong>
-                    <p>Ao editar um corte, escolha o cortador disponível para aquele processo.</p>
+                    <p>Ao editar um corte, selecione o cortador disponível no campo correspondente. Lembre-se: é necessário que um enfestador já esteja vinculado e que a data de corte seja informada para que a vinculação seja salva com sucesso.</p>
                 </li>
                 <li>
                     <strong>2.4 Cortadores cadastrados</strong>
+                    <p>A lista abaixo mostra todos os cortadores ativos e a quantidade de cortes já finalizados por cada um, atualizada automaticamente conforme novos cortes são concluídos.</p>
                     <ul class="ul-list">
                         @for (cortador of cortadores; track cortador.idCortador) {
                             <li class="pessoa-card">
-                                <div class="pessoa-info">                                    
+                                <div class="pessoa-info"  (click)="abrirDetalhesCortador(cortador)">                                    
                                     <div class="pessoa-texto">
                                         <span class="pessoa-nome">{{cortador.nome}}</span>
                                         <p class="info-pessoa-detalhes">Quantidade de cortes cortados: {{cortador.quantidadeDeCortes}}</p>
                                     </div>
                                 </div>
-                                <button class="btn-excluir-icon" title="Excluir" (click)="ativarModalExclusao(cortador.idCortador, 'cortador', cortador.nome)">
+                                <button class="btn-excluir-icon" title="Excluir" (click)="abrirModalExclusao(cortador.idCortador, 'cortador', cortador.nome)">
                                     <span class="material-icons-outlined">delete</span>
                                 </button>
                             </li>
                         }
                     </ul>
+                </li>
+                <li>
+                    <strong>2.5 Como excluir um cortador?</strong>
+                    <p>Clique no ícone de lixeira ao lado do nome do cortador e confirme a exclusão no modal exibido. A exclusão remove apenas o cadastro da lista; os cortes já registrados mantêm seu histórico normalmente.</p>
                 </li>
             </ol>
             <div class="section-actions">
@@ -77,14 +100,14 @@
                     <div class="form-row">
                         <input class="form-field" name="nome" type="text" placeholder="Nome do cortador" required [(ngModel)]="novoCortador.nome">
                     </div>
-                    <div class="form-actions">
-                        <button type="submit" class="form-submit" (click)="cadastrarCortador()">Cadastrar</button>
-                    </div>
                     @if (erros['novoCortador']) {
                         <span class="erro">
                             &#9888; {{ erros['novoCortador'] }}
                         </span>
                     }
+                    <div class="form-actions">
+                        <button type="submit" class="form-submit" (click)="cadastrarCortador()">Cadastrar</button>
+                    </div>                    
                 </form>
             }
         </section>
@@ -94,29 +117,38 @@
             <ol>
                 <li>
                     <strong>3.1 O que é um enfestador?</strong>
-                    <p>O enfestador é o operador que organiza o material para corte, preparando as camadas, cores, produções e etc.</p>
+                    <p>O enfestador é o operador que organiza o material antes do corte, preparando camadas, cores e produções. Ele representa a etapa intermediária do processo, entre o cadastro do corte e a vinculação de um cortador.</p>
                 </li>
                 <li>
                     <strong>3.2 Como cadastrar um enfestador?</strong>
-                    <p>Acesse o cadastro de enfestadores logo abaixo (Cadastrar novo enfestador) e informe seu nome.</p>
+                    <p>Acesse o cadastro logo abaixo, no botão <u>Cadastrar novo enfestador</u>, e informe o nome. Assim como o cortador, ele passa a aparecer imediatamente na lista de seleção ao editar um corte.</p>
                 </li>
                 <li>
-                    <strong>3.3 Enfestadores cadastrados</strong>
+                    <strong>3.3 Como vincular um enfestador a um corte?</strong>
+                    <p>Ao editar um corte, selecione o enfestador disponível no campo correspondente. Um corte muda para o status "Enfestado" assim que um enfestador é vinculado a ele.</p>
+                </li>
+                <li>
+                    <strong>3.4 Enfestadores cadastrados</strong>
+                    <p>A lista abaixo mostra todos os enfestadores ativos e a quantidade de cortes já enfestados por cada um.</p>
                     <ul class="ul-list">
                         @for (enfestador of enfestadores; track enfestador.idEnfestador) {
                             <li class="pessoa-card">
-                                <div class="pessoa-info">                                    
+                                <div class="pessoa-info" (click)="abrirDetalhesEnfestador(enfestador)">                                    
                                     <div class="pessoa-texto">
                                         <span class="pessoa-nome">{{ enfestador.nome }}</span>
                                         <p class="info-pessoa-detalhes">Quantidade de cortes enfestados: {{enfestador.quantidadeDeCortes}}</p>
                                     </div>
                                 </div>
-                                <button class="btn-excluir-icon" title="Excluir" (click)="ativarModalExclusao(enfestador.idEnfestador, 'enfestador', enfestador.nome)">
+                                <button class="btn-excluir-icon" title="Excluir" (click)="abrirModalExclusao(enfestador.idEnfestador, 'enfestador', enfestador.nome)">
                                     <span class="material-icons-outlined">delete</span>
                                 </button>
                             </li>
                         }
                     </ul>
+                </li>
+                <li>
+                    <strong>3.5 Como excluir um enfestador?</strong>
+                    <p>Clique no ícone de lixeira ao lado do nome do enfestador e confirme a exclusão no modal exibido. Assim como os cortadores, a exclusão remove apenas o cadastro; os cortes já registrados não são afetados.</p>
                 </li>
             </ol>
             <div class="section-actions">
@@ -138,14 +170,14 @@
                     <div class="form-row">
                         <input class="form-field" name="nome" type="text" placeholder="Nome do enfestador" required [(ngModel)]="novoEnfestador.nome">
                     </div>
-                    <div class="form-actions">
-                        <button type="submit" class="form-submit" (click)="cadastrarEnfestador()">Cadastrar</button>                        
-                    </div>
                     @if (erros['novoEnfestador']) {
                         <span class="erro">
                             &#9888; {{ erros['novoEnfestador'] }}
                         </span>
                     }
+                    <div class="form-actions">
+                        <button type="submit" class="form-submit" (click)="cadastrarEnfestador()">Cadastrar</button>                        
+                    </div>                    
                 </form>
             }
         </section>
@@ -155,22 +187,26 @@
             <ol>
                 <li>
                     <strong>4.1 O que é um lote?</strong>
-                    <p>Um lote agrupa cortes relacionados que serão produzidos juntos, facilitando o controle de produção.</p>
+                    <p>Um lote agrupa cortes relacionados que serão produzidos juntos, no formato "número/ano" (por exemplo, 12/2026), facilitando o controle e a rastreabilidade da produção.</p>
                 </li>
                 <li>
                     <strong>4.2 Como criar e gerenciar lotes?</strong>
-                    <p>Use a funcionalidade de lote para organizar cortes e acompanhar o progresso da produção.</p>
+                    <p>O lote é gerenciado automaticamente pelo sistema através do "lote atual", exibido no topo da tela de cortes. Ao cadastrar um novo corte, você escolhe entre reutilizar esse lote ou incrementá-lo para iniciar um novo grupo de produção.</p>
                 </li>
                 <li>
                     <strong>4.3 Ajustes no lote:</strong>
-                    <p>Use a funcionalidade para realizar ajustes no lote atual.</p>
+                    <p>Use os botões abaixo para ajustar manualmente o lote atual. <u>Incrementar Lote</u> avança o número em um, útil ao iniciar um novo grupo de produção fora do fluxo normal de cadastro. <u>Decrementar Lote</u> reverte um incremento feito por engano. Ambas as ações pedem confirmação antes de serem aplicadas.</p>
+                </li>
+                <li>
+                    <strong>4.4 Qual a diferença entre "usar lote atual" e "incrementar novo lote" ao cadastrar um corte?</strong>
+                    <p>Ao marcar <u>Usar lote atual</u>, o corte é salvo com o valor do lote vigente, sem alterá-lo — ideal para agrupar vários cortes no mesmo lote. Ao marcar <u>Incrementar novo lote</u>, o sistema avança o lote atual automaticamente antes de salvar, e o novo corte já é registrado com esse novo valor.</p>
                 </li>
                 <div class="btns-lote">
-                    <button class="btn-lote btn-incrementar-lote" (click)="ativarModalIncrementoLote()">
+                    <button class="btn-lote btn-incrementar-lote" (click)="abrirModalIncrementoLote()">
                         <span class="material-icons-outlined">add_circle_outline</span>
                         Incrementar Lote
                     </button>
-                    <button class="btn-lote btn-desincrementar-lote" (click)="ativarModalDecrementoLote()">
+                    <button class="btn-lote btn-desincrementar-lote" (click)="abrirModalDecrementoLote()">
                         <span class="material-icons-outlined">remove_circle_outline</span>
                         Decrementar Lote
                     </button>
@@ -183,12 +219,16 @@
             <ol>
                 <li>
                     <strong>5.1 Como funciona o sistema?</strong>
-                    <p>O sistema controla corte, cortadores, enfestadores e lotes para melhorar a eficiência e o rastreamento.</p>
+                    <p>O sistema controla corte, cortadores, enfestadores e lotes para melhorar a eficiência e o rastreamento da produção, do cadastro do corte até sua conclusão.</p>
                 </li>
                 <li>
                     <strong>5.2 Onde posso ver o histórico?</strong>
-                    <p>Confira a seção de histórico para ver registros anteriores e status de processos concluídos.</p>
-                </li>                                         
+                    <p>Confira a seção de histórico para ver registros anteriores e o status de processos concluídos, organizados por mês.</p>
+                </li>
+                <li>
+                    <strong>5.3 O que significa o contador "Cortes registrados" no topo da tela?</strong>
+                    <p>Esse número mostra a quantidade total de cortes cadastrados no mês atualmente exibido, atualizando automaticamente sempre que um corte é adicionado ou excluído.</p>
+                </li>
             </ol>
         </section>
         <section>
@@ -196,16 +236,20 @@
             <ol>
                 <li>
                     <strong>6.1 Como funciona o histórico?</strong>
-                    <p>O sistema se baseia pela data de registro dos cortes, selecioanda na hora do cadastro</p>
+                    <p>O sistema se baseia na data de registro dos cortes, definida no momento do cadastro, para organizar e exibir os resultados por mês.</p>
                 </li>
                 <li>
                     <strong>6.2 Como pesquisar?</strong>
-                    <p>Na tela de histórico, você pode selecionar o mês desejado para buscar os cortes</p>
+                    <p>Na tela de histórico, você pode selecionar o mês desejado para buscar os cortes.</p>
                     <p style="font-weight: 700;">obs: se caso o mês não for selecionado, o sistema irá buscar pelo mês atual!</p>
                 </li>
                 <li>
                     <strong>6.3 O que posso fazer na tela de histórico?</strong>
-                    <p>As funcionalidades principais do sistema, estão também na tela de histórico, podendo editar, cancelar e excluir um corte selecionado</p>
+                    <p>As funcionalidades principais do sistema também estão disponíveis na tela de histórico, podendo editar, cancelar, reativar e excluir um corte selecionado, da mesma forma que na tela de cortes atuais.</p>
+                </li>
+                <li>
+                    <strong>6.4 Como identifico rapidamente quando um corte foi registrado?</strong>
+                    <p>Cada card de corte exibe uma pequena etiqueta no canto superior com a data de registro, permitindo identificá-la de forma imediata sem precisar abrir o modo de edição.</p>
                 </li>
             </ol>
         </section>
@@ -217,16 +261,16 @@
                 <h2>Confirmar exclusão</h2>
 
                 <p>
-                    Tem certeza que deseja excluir {{itemExcluido.nome}} como {{itemExcluido.tipo}}?
+                    Tem certeza que deseja excluir {{itemParaExcluir?.nome}} como {{itemParaExcluir?.tipo}}?
                     Essa ação não poderá ser desfeita.
                 </p>
 
                 <div class="acoes-modal">
-                    <button class="btn-cancelar" (click)="desativarModalExclusao()">
+                    <button class="btn-cancelar" (click)="fecharModalExclusao()">
                         Cancelar
                     </button>
 
-                    <button class="btn-excluir" (click)="deletarCortadorOuEnfestador()">
+                    <button class="btn-excluir" (click)="confirmarExclusao()">
                         Excluir
                     </button>
                 </div>
@@ -234,7 +278,7 @@
         </div>
     }
 
-    @if (modalDecrementarLote) {
+    @if (modalDecrementoLote) {
         <div class="overlay-modal">
             <div class="modal-excluir">
 
@@ -246,7 +290,7 @@
                 </p>
 
                 <div class="acoes-modal">
-                    <button class="btn-cancelar" (click)="desativarModalDecrementoLote()">
+                    <button class="btn-cancelar" (click)="fecharModalDecrementoLote()">
                         Cancelar
                     </button>
 
@@ -269,12 +313,70 @@
                 </p>
 
                 <div class="acoes-modal">
-                    <button class="btn-cancelar" (click)="desativarModalIncrementoLote()">
+                    <button class="btn-cancelar" (click)="fecharModalIncrementoLote()">
                         Cancelar
                     </button>
 
                     <button class="btn-excluir btn-incremento" (click)="incrementarLote()">
                         Incrementar
+                    </button>
+                </div>
+            </div>
+        </div>
+    }
+
+    @if (pessoaSelecionada) {
+        <div class="overlay-modal">
+            <div class="modal-pessoa">
+                <button class="btn-fechar-modal" (click)="fecharDetalhesPessoa()" title="Fechar">
+                    <span class="material-icons-outlined">close</span>
+                </button>
+
+                <div class="modal-pessoa-header">
+                    <div class="modal-pessoa-avatar" [style.background-color]="pessoaSelecionada.avatarBg" [style.color]="pessoaSelecionada.avatarCor">
+                        <span class="avatar-emoji">{{ pessoaSelecionada.avatarEmoji }}</span>
+                    </div>
+
+                    <div class="modal-pessoa-titulo">
+                        <h2>{{ pessoaSelecionada.nome }}</h2>
+                        <span class="modal-pessoa-tipo">
+                            {{ pessoaSelecionada.tipo === 'cortador' ? 'Cortador' : 'Enfestador' }}
+                        </span>
+                    </div>
+
+                    <span class="status-badge" [class.status-inativo]="!pessoaSelecionada.isAtivo">
+                        <span class="status-dot-badge"></span>
+                        {{ pessoaSelecionada.isAtivo ? 'Ativo' : 'Inativo' }}
+                    </span>
+                </div>
+
+                <div class="modal-pessoa-info-grid">
+                    <div class="info-item">
+                        <span class="material-icons-outlined">content_cut</span>
+                        <div>
+                            <p class="info-label">
+                                @if (pessoaSelecionada.tipo === 'cortador') { Cortes cortados } @else { Cortes enfestados }
+                            </p>
+                            <p class="info-valor">{{ pessoaSelecionada.quantidadeDeCortes }}</p>
+                        </div>
+                    </div>
+
+                    <div class="info-item">
+                        <span class="material-icons-outlined">event</span>
+                        <div>
+                            <p class="info-label">Cadastrado em</p>
+                            <p class="info-valor">{{ pessoaSelecionada.dataDeCadastro }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="acoes-modal">
+                    <button class="btn-cancelar" (click)="fecharDetalhesPessoa()">
+                        Fechar
+                    </button>
+                    <button class="btn-excluir" (click)="excluirPessoaSelecionada()">
+                        <span class="material-icons-outlined">delete</span>
+                        Excluir
                     </button>
                 </div>
             </div>

@@ -6,6 +6,7 @@ export interface CorteResponse{
 
     id:number,
     dataDeCorte: string,
+    dataDeRegistro: string,
     nomeModelo : string,
     quantidadeTotal : number,
     corteStatus : string,

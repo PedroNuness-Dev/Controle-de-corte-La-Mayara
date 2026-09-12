@@ -1,222 +1,357 @@
-import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
-import { EnfestadorService } from '../../services/enfestador/enfestador-service';
-import { CortadorService } from '../../services/cortador/cortador-service';
-import { EnfestadorRequest } from '../../interfaces/enfestador/EnfestadorRequest';
-import { CortadorRequest } from '../../interfaces/cortador/CortadorRequest';
+import { ChangeDetectorRef, Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+
+import { EnfestadorService } from '../../services/enfestador/enfestador-service';
+import { CortadorService } from '../../services/cortador/cortador-service';
 import { CorteService } from '../../services/corte/corte-service';
 import { LoteService } from '../../services/lote/lote-service';
+
+import { EnfestadorRequest } from '../../interfaces/enfestador/EnfestadorRequest';
+import { CortadorRequest } from '../../interfaces/cortador/CortadorRequest';
 import { EnfestadorOverview } from '../../interfaces/enfestador/EnfestadorOverview';
 import { CortadorOverview } from '../../interfaces/cortador/CortadorOverview';
 
+type TipoItemExclusao = 'cortador' | 'enfestador';
+
+interface ItemParaExcluir {
+  id: number | null;
+  tipo: TipoItemExclusao;
+  nome: string | null;
+}
+
+interface PessoaSelecionada {
+  id: number;
+  tipo: TipoItemExclusao;
+  nome: string;
+  quantidadeDeCortes: number;
+  isAtivo: boolean;
+  dataDeCadastro: string;
+  avatarEmoji: string;
+  avatarBg: string;
+  avatarCor: string;
+}
+
+const AVATARES_ANIMAIS = [
+  { emoji: '🐵', bg: '#eafaf0', cor: '#964B00' },
+  { emoji: '🦊', bg: '#fdf1e2', cor: '#d98324' },
+  { emoji: '🐼', bg: '#eef2f7', cor: '#475569' },
+  { emoji: '🐱', bg: '#fdeef2', cor: '#d63384' },
+  { emoji: '🐶', bg: '#eef6ff', cor: '#2563eb' },
+  { emoji: '🦁', bg: '#fff7e6', cor: '#d97706' },
+  { emoji: '🐨', bg: '#f1f0fb', cor: '#6d5bd0' },
+  { emoji: '🐯', bg: '#fff1e6', cor: '#ea580c' },
+  { emoji: '🐵', bg: '#faf1e6', cor: '#a35d1f' }
+] as const;
+
+const cortadorRequestVazio = (): CortadorRequest => ({ nome: '' });
+const enfestadorRequestVazio = (): EnfestadorRequest => ({ nome: '' });
+
 @Component({
   selector: 'app-config-component',
-  imports : [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './config-component.html',
-  styleUrls: ['./config-component.scss'],
+  styleUrl: './config-component.scss'
 })
-export class ConfigComponent implements OnInit{
+export class ConfigComponent implements OnInit {
 
-  enfestadorService = inject(EnfestadorService);
-  cortadorService = inject(CortadorService);
-  cdr = inject(ChangeDetectorRef);
-  loteService = inject(LoteService);
-  corteService = inject(CorteService);
+  // ---------------------------------------------------------------------
+  // Injeção de dependências
+  // ---------------------------------------------------------------------
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly cdr = inject(ChangeDetectorRef);
 
-  loteAtual : string | null = null;
+  private readonly enfestadorService = inject(EnfestadorService);
+  private readonly cortadorService = inject(CortadorService);
+  private readonly corteService = inject(CorteService);
+  private readonly loteService = inject(LoteService);
 
-  enfestadores : EnfestadorOverview[] = [];
-  cortadores : CortadorOverview[] = [];
+  // ---------------------------------------------------------------------
+  // Estado do lote
+  // ---------------------------------------------------------------------
+  loteAtual: string | null = null;
+  modalIncrementoLote = false;
+  modalDecrementoLote = false;
 
-  erros: { [key: string]: string } = {};
+  // ---------------------------------------------------------------------
+  // Detalhes da pessoa (modal de cortador/enfestador)
+  // ---------------------------------------------------------------------
+  pessoaSelecionada: PessoaSelecionada | null = null;
 
+  private escolherAvatarAnimal(id: number): { avatarEmoji: string; avatarBg: string; avatarCor: string } {
+    const avatar = AVATARES_ANIMAIS[id % AVATARES_ANIMAIS.length];
+    return { avatarEmoji: avatar.emoji, avatarBg: avatar.bg, avatarCor: avatar.cor };
+  }
+
+  // ---------------------------------------------------------------------
+  // Listagens
+  // ---------------------------------------------------------------------
+  enfestadores: EnfestadorOverview[] = [];
+  cortadores: CortadorOverview[] = [];
+
+  // ---------------------------------------------------------------------
+  // Cadastro de cortador / enfestador
+  // ---------------------------------------------------------------------
   modoCadastroCortador = false;
   modoCadastroEnfestador = false;
 
-  nomeParaBuscar !: string;
+  novoCortador: CortadorRequest = cortadorRequestVazio();
+  novoEnfestador: EnfestadorRequest = enfestadorRequestVazio();
 
-  novoCortador : CortadorRequest = {
-    nome:''
-  };
-  novoEnfestador : EnfestadorRequest = {
-    nome : ''
-  };
   successCortador = false;
   successEnfestador = false;
 
+  // ---------------------------------------------------------------------
+  // Exclusão de cortador / enfestador
+  // ---------------------------------------------------------------------
   modalExclusao = false;
+  itemParaExcluir: ItemParaExcluir | null = null;
 
-  itemExcluido !: {
-    id: number | null;
-    tipo: 'cortador' | 'enfestador';
-    nome: string | null;
-  }
+  // ---------------------------------------------------------------------
+  // Validação
+  // ---------------------------------------------------------------------
+  erros: Record<string, string> = {};
 
-  modalDecrementarLote = false;
-  modalIncrementoLote = false;
+  // =======================================================================
+  // Ciclo de vida
+  // =======================================================================
 
-  ngOnInit() {
-    this.buscarLote();
+  ngOnInit(): void {
+    this.buscarLoteAtual();
     this.buscarEnfestadores();
     this.buscarCortadores();
   }
 
-  buscarEnfestadores(){
-    this.enfestadorService.buscarDetalhesEnfestadores().subscribe({
-      next: (data) => {this.enfestadores = data; this.cdr.detectChanges()},
-      error: (err) => {console.log(err)}
-    });
+  // =======================================================================
+  // Busca de dados
+  // =======================================================================
+
+  buscarLoteAtual(): void {
+    this.loteService.buscarLote()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (data) => { this.loteAtual = data.numero_lote; this.cdr.detectChanges(); },
+        error: (err) => console.error('Erro ao buscar lote atual:', err)
+      });
   }
 
-  buscarCortadores(){
-    this.cortadorService.buscarDetalhesCortadores().subscribe({
-      next: (data) => {this.cortadores = data; this.cdr.detectChanges()},
-      error: (err) => {console.log(err)}
-    })
+  buscarEnfestadores(): void {
+    this.enfestadorService.buscarDetalhesEnfestadores()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (data) => { this.enfestadores = data; this.cdr.detectChanges(); },
+        error: (err) => console.error('Erro ao buscar enfestadores:', err)
+      });
   }
 
-  cadastrarCortador(){
+  buscarCortadores(): void {
+    this.cortadorService.buscarDetalhesCortadores()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (data) => { this.cortadores = data; this.cdr.detectChanges(); },
+        error: (err) => console.error('Erro ao buscar cortadores:', err)
+      });
+  }
 
-    this.erros = {}
+  // =======================================================================
+  // Cadastro de cortador / enfestador
+  // =======================================================================
 
-    if(!this.novoCortador.nome.trim()){
-      this.erros['novoCortador'] = 'Nome obrigatório'
+  abrirModoCriacaoCortador(): void {
+    this.erros = {};
+    this.successCortador = false;
+    this.modoCadastroCortador = !this.modoCadastroCortador;
+  }
+
+  abrirModoCriacaoEnfestador(): void {
+    this.erros = {};
+    this.successEnfestador = false;
+    this.modoCadastroEnfestador = !this.modoCadastroEnfestador;
+  }
+
+  cadastrarCortador(): void {
+    this.erros = {};
+
+    if (!this.novoCortador.nome.trim()) {
+      this.erros['novoCortador'] = 'Nome obrigatório';
     }
 
-    if (Object.keys(this.erros).length > 0) {
-      return;
+    if (Object.keys(this.erros).length > 0) return;
+
+    this.cortadorService.cadastrarCortador(this.novoCortador)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.successCortador = true;
+          this.successEnfestador = false;
+          this.novoCortador = cortadorRequestVazio();
+          this.buscarCortadores();
+          this.modoCadastroCortador = false;
+          this.cdr.detectChanges();
+        },
+        error: (err) => console.error('Erro ao cadastrar cortador:', err)
+      });
+  }
+
+  cadastrarEnfestador(): void {
+    this.erros = {};
+
+    if (!this.novoEnfestador.nome.trim()) {
+      this.erros['novoEnfestador'] = 'Nome obrigatório';
     }
 
-    this.cortadorService.cadastrarCortador(this.novoCortador).subscribe({
-      next : (data) => {
-        this.successCortador = true;
-        this.successEnfestador = false;
-        console.log("Cortador cadastrado com sucesso!");
-        this.buscarCortadores()
-        this.modoCadastroCortador = false;
-        this.cdr.detectChanges();
-      },
-      error : (err) => {console.log(err)}
-    })
+    if (Object.keys(this.erros).length > 0) return;
+
+    this.enfestadorService.cadastrarEnfestador(this.novoEnfestador)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.successEnfestador = true;
+          this.successCortador = false;
+          this.novoEnfestador = enfestadorRequestVazio();
+          this.buscarEnfestadores();
+          this.modoCadastroEnfestador = false;
+          this.cdr.detectChanges();
+        },
+        error: (err) => console.error('Erro ao cadastrar enfestador:', err)
+      });
   }
 
-  cadastrarEnfestador(){
+  // =======================================================================
+  // Exclusão de cortador / enfestador
+  // =======================================================================
 
-    this.erros = {}
-
-    if(!this.novoEnfestador.nome.trim()){
-      this.erros['novoEnfestador'] = 'Nome obrigatório'
-    }
-
-    if (Object.keys(this.erros).length > 0) {
-      return;
-    }
-
-    this.enfestadorService.cadastrarEnfestador(this.novoEnfestador).subscribe({
-      next : (data) => {
-        this.successEnfestador = true;
-        this.successCortador = false;
-        console.log("Enfestador cadastrado com sucesso!");      
-        this.buscarEnfestadores()
-        this.modoCadastroEnfestador = false;
-        this.cdr.detectChanges();
-      },
-      error : (err) => {console.log(err)}
-    })
-  }
-
-  abrirModoCriacaoCortador(){
-   this.modoCadastroCortador = (this.modoCadastroCortador === true) ? false : true;
-  }
-
-   abrirModoCriacaoEnfestador(){
-    this.modoCadastroEnfestador = (this.modoCadastroEnfestador === true) ? false : true;
-  }
-
-  ativarModalExclusao(id:number | null, tipo : 'cortador' | 'enfestador', nome:string | null){
-
-    this.itemExcluido = {
-      id,
-      tipo,
-      nome
-    };
-
+  abrirModalExclusao(id: number | null, tipo: TipoItemExclusao, nome: string | null): void {
+    this.itemParaExcluir = { id, tipo, nome };
     this.modalExclusao = true;
   }
 
-  desativarModalExclusao(){
+  fecharModalExclusao(): void {
     this.modalExclusao = false;
   }
 
-  deletarCortadorOuEnfestador(){
+  confirmarExclusao(): void {
+    if (!this.itemParaExcluir) return;
 
-    if(this.itemExcluido.tipo === 'cortador'){
-      this.cortadorService.deletarCortador(this.itemExcluido.id).subscribe({
-        next: (data) =>  {
-          this.buscarCortadores();
-          this.modalExclusao=false; 
-          this.successCortador = false
-          this.cdr.detectChanges();},
-        error: (err) => {console.log(err)}
-      })
+    if (this.itemParaExcluir.tipo === 'cortador') {
+      this.excluirCortador(this.itemParaExcluir.id);
+    } else {
+      this.excluirEnfestador(this.itemParaExcluir.id);
     }
-    else{
-      this.enfestadorService.deletarEnfestador(this.itemExcluido.id).subscribe({
-        next: (data) => {
-          this.buscarEnfestadores();
-          this.modalExclusao=false; 
-          this.successEnfestador = false
+  }
+
+  abrirDetalhesCortador(cortador: CortadorOverview): void {
+    this.pessoaSelecionada = {
+      id: cortador.idCortador,
+      tipo: 'cortador',
+      nome: cortador.nome,
+      quantidadeDeCortes: cortador.quantidadeDeCortes,
+      isAtivo: cortador.isAtivo,
+      dataDeCadastro: cortador.dataDeCadastro,
+      ...this.escolherAvatarAnimal(cortador.idCortador)
+    };
+  }
+
+  abrirDetalhesEnfestador(enfestador: EnfestadorOverview): void {
+    this.pessoaSelecionada = {
+      id: enfestador.idEnfestador,
+      tipo: 'enfestador',
+      nome: enfestador.nome,
+      quantidadeDeCortes: enfestador.quantidadeDeCortes,
+      isAtivo: enfestador.isAtivo,
+      dataDeCadastro: enfestador.dataDeCadastro,
+      ...this.escolherAvatarAnimal(enfestador.idEnfestador)
+    };
+  }
+
+  fecharDetalhesPessoa(): void {
+    this.pessoaSelecionada = null;
+  }
+
+  excluirPessoaSelecionada(): void {
+    if (!this.pessoaSelecionada) return;
+
+    const { id, tipo, nome } = this.pessoaSelecionada;
+    this.fecharDetalhesPessoa();
+    this.abrirModalExclusao(id, tipo, nome);
+  }
+
+  private excluirCortador(id: number | null): void {
+    this.cortadorService.deletarCortador(id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.buscarCortadores();
+          this.modalExclusao = false;
+          this.successCortador = false;
           this.cdr.detectChanges();
         },
-        error: (err) => {console.log(err)}
-      })
-    }
+        error: (err) => console.error('Erro ao excluir cortador:', err)
+      });
   }
 
-  desativarModalDecrementoLote(){
-    this.modalDecrementarLote = false;
+  private excluirEnfestador(id: number | null): void {
+    this.enfestadorService.deletarEnfestador(id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.buscarEnfestadores();
+          this.modalExclusao = false;
+          this.successEnfestador = false;
+          this.cdr.detectChanges();
+        },
+        error: (err) => console.error('Erro ao excluir enfestador:', err)
+      });
   }
 
-  ativarModalDecrementoLote(){
+  // =======================================================================
+  // Lote (incremento / decremento)
+  // =======================================================================
 
-    this.modalDecrementarLote = true;
-  }
-
-  ativarModalIncrementoLote(){
+  abrirModalIncrementoLote(): void {
     this.modalIncrementoLote = true;
   }
 
-  desativarModalIncrementoLote(){
+  fecharModalIncrementoLote(): void {
     this.modalIncrementoLote = false;
   }
 
-  buscarLote(){
-    this.loteService.buscarLote().subscribe({
-        next: (data) => {this.loteAtual = data.numero_lote; this.cdr.detectChanges()},
-        error: (err) => {console.log(err)}
-      })
+  abrirModalDecrementoLote(): void {
+    this.modalDecrementoLote = true;
   }
 
-  decrementarLote(){
-
-    if(this.loteAtual == null){
-      return
-    }
-
-    this.loteService.decrementarLote().subscribe({
-      next: () => {console.log("Lote decrementado com sucesso!"); this.buscarLote(); this.modalDecrementarLote=false; this.cdr.detectChanges()} ,
-      error: (err) => {console.log(err)}
-    })
+  fecharModalDecrementoLote(): void {
+    this.modalDecrementoLote = false;
   }
 
-  incrementarLote(){
-    if(this.loteAtual == null){
-      return
-    }
+  incrementarLote(): void {
+    if (this.loteAtual == null) return;
 
-    this.loteService.incrementarLote().subscribe({
-      next: () => {console.log("Lote incrementado com sucesso!"); this.buscarLote(); this.modalIncrementoLote = false ;this.cdr.detectChanges()},
-    })
+    this.loteService.incrementarLote()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.buscarLoteAtual();
+          this.modalIncrementoLote = false;
+          this.cdr.detectChanges();
+        },
+        error: (err) => console.error('Erro ao incrementar lote:', err)
+      });
+  }
+
+  decrementarLote(): void {
+    if (this.loteAtual == null) return;
+
+    this.loteService.decrementarLote()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.buscarLoteAtual();
+          this.modalDecrementoLote = false;
+          this.cdr.detectChanges();
+        },
+        error: (err) => console.error('Erro ao decrementar lote:', err)
+      });
   }
 }

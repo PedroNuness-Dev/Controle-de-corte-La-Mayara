@@ -41,6 +41,7 @@
         <div class="lista-cortes">
             @for (corte of cortesBuscados; track corte.id) {
                 <div class="card-corte" [ngClass]="pegarStatusParaEstilo(corte.corteStatus)">
+                    <span class="badge-registro">📅 {{ corte.dataDeRegistro }}</span>
                     <div class="header-card">
                     <h3 class="title-card">{{corte.corteStatus}}</h3>
                         <button class="btn-menu" (click)="abrirModalOpcao(corte)">

@@ -52,6 +52,25 @@
 
                 <div class="campo">
                     <label class="span-style">
+                        <span class="material-icons-outlined label-icon">flag</span>
+                        Qual a prioridade desse chamado?
+                    </label>
+                    <div class="prioridade-grupo">
+                        @for (opcao of prioridades; track opcao.valor) {
+                            <button
+                                type="button"
+                                class="chip-prioridade chip-{{ opcao.valor.toLowerCase() }}"
+                                [class.selecionada]="prioridadeSelecionada === opcao.valor"
+                                (click)="selecionarPrioridade(opcao.valor)">
+                                <span class="material-icons-outlined">{{ opcao.icone }}</span>
+                                {{ opcao.label }}
+                            </button>
+                        }
+                    </div>
+                </div>
+
+                <div class="campo">
+                    <label class="span-style">
                         <span class="material-icons-outlined label-icon">description</span>
                         Agora descreva com mais detalhes:
                     </label>
@@ -76,7 +95,7 @@
                 @if (messageErro) {
                     <span class="erro-message">
                         <span class="material-icons-outlined">error_outline</span>
-                        É necessário digitar todas as informações!
+                        É necessário selecionar assunto, prioridade e descrever o problema!
                     </span>
                 }
 

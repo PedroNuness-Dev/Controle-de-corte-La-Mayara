@@ -3,5 +3,6 @@ export interface EnfestadorOverview{
     idEnfestador : number,
     nome : string,
     quantidadeDeCortes : number,
-    isAtivo : boolean
+    isAtivo : boolean,
+    dataDeCadastro : string
 }

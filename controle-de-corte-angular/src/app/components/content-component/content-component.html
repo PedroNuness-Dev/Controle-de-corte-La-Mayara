@@ -23,7 +23,7 @@
   </div> 
   <div class="lista-cortes">
 
-    @if (telaCarregadandoModal) {
+    @if (telaCarregandoModal) {
       <div class="loading-overlay">
         <div class="spinner-container">
           <div class="spinner"></div>
@@ -100,12 +100,13 @@
     @if (corteAdicionadoRecentemente) {
       <span style="font-weight: bold; opacity: 0.5;">Adicionado recentemente</span>
       <div class="card-corte" [ngClass]="pegarStatusParaEstilo(corteAdicionadoRecentemente.corteStatus)">
+       <span class="badge-registro">📅 {{ corteAdicionadoRecentemente.dataDeRegistro }}</span>
        <div class="header-card">
           <h3 class="title-card">{{corteAdicionadoRecentemente.corteStatus}}</h3>
             <button class="btn-menu" (click)="abrirModalOpcao(corteAdicionadoRecentemente)">
               <img src="three.png" alt="">
             </button>
-            @if (opcoesCard && corteAbertoOpcao.id === corteAdicionadoRecentemente.id) {
+            @if (opcoesCardVisiveis && corteComOpcoesAbertas!.id === corteAdicionadoRecentemente.id) {
               <div class="opcoes-btn">
                 <button type="button" class="btn-opcao" (click)="selecionarCorte(corteAdicionadoRecentemente)">
                   <img src="pencils.png" alt="">
@@ -224,12 +225,13 @@
 
     @for (corte of cortesDoMes; track corte.id) {
       <div class="card-corte" [ngClass]="pegarStatusParaEstilo(corte.corteStatus)">
+        <span class="badge-registro">📅 {{ corte.dataDeRegistro }}</span>
         <div class="header-card">
           <h3 class="title-card">{{corte.corteStatus}}</h3>
             <button class="btn-menu" (click)="abrirModalOpcao(corte)">
               <img src="three.png" alt="">
             </button>
-            @if (opcoesCard && corteAbertoOpcao.id === corte.id) {
+            @if (opcoesCardVisiveis && corteComOpcoesAbertas!.id === corte.id) {
               <div class="opcoes-btn">
                 <button type="button" class="btn-opcao" (click)="selecionarCorte(corte)">
                   <img src="pencils.png" alt="">

@@ -1,4 +1,9 @@
 :host{
+
+    // =======================================================================
+    // Layout base
+    // =======================================================================
+
     .main{
         min-height: 100vh;
         display: flex;
@@ -8,6 +13,16 @@
         background-color: white;
         color: #1f2937;
     }
+
+    .content{
+        width: min(100%, 920px);
+        display: grid;
+        gap: 20px;
+    }
+
+    // =======================================================================
+    // Cabeçalho
+    // =======================================================================
 
     .header{
         display: flex;
@@ -38,11 +53,9 @@
         padding: 10px 24px;
     }
 
-    .content{
-        width: min(100%, 920px);
-        display: grid;
-        gap: 20px;
-    }
+    // =======================================================================
+    // Cards de seção (Cortes, Cortadores, Enfestadores, Lotes, etc.)
+    // =======================================================================
 
     section{
         background: #ffffff;
@@ -60,6 +73,104 @@
         border-bottom: 1px solid #e5e7eb;
         padding-bottom: 10px;
     }
+
+    ol{
+        padding-left: 20px;
+        margin: 0;
+        display: grid;
+        gap: 16px;
+        list-style: none;
+    }
+
+    ol > li{
+        list-style: none;
+    }
+
+    ol > li::marker{
+        color: transparent;
+    }
+
+    ul{
+        padding-left: 24px;
+        margin: 0;
+        list-style: disc outside;
+    }
+
+    ul li{
+        list-style: disc;
+        cursor: pointer;
+    }
+
+    li strong{
+        display: block;
+        font-size: 1rem;
+        color: #111827;
+        margin-bottom: 8px;
+    }
+
+    li p{
+        margin: 0;
+        color: #4b5563;
+        line-height: 1.7;
+    }
+
+    // =======================================================================
+    // Legenda dos status de um corte (usada na documentação)
+    // =======================================================================
+
+    .legenda-status{
+        margin-top: 12px;
+        list-style: none;
+        padding-left: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .legenda-status li{
+        list-style: none;
+        cursor: default;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.95rem;
+        color: #4b5563;
+    }
+
+    .legenda-status li strong{
+        display: inline;
+        margin-bottom: 0;
+        font-size: 0.95rem;
+        color: #111827;
+    }
+
+    .status-dot{
+        display: inline-block;
+        width: 11px;
+        height: 11px;
+        border-radius: 50%;
+        flex-shrink: 0;
+    }
+
+    .dot-pendente{
+        background-color: var(--gray-primary-color, #9ca3af);
+    }
+
+    .dot-enfestado{
+        background-color: var(--orange-primary-color, #d98324);
+    }
+
+    .dot-cortado{
+        background-color: var(--green-primary-color, #1ca859);
+    }
+
+    .dot-cancelado{
+        background-color: #941111;
+    }
+
+    // =======================================================================
+    // Botões de ação principais (Adicionar/Cadastrar, etc.)
+    // =======================================================================
 
     .section-actions{
         display: flex;
@@ -123,6 +234,9 @@
         font-weight: 600;
     }
 
+    // =======================================================================
+    // Formulários de cadastro
+    // =======================================================================
 
     section form{
         display: flex;
@@ -130,7 +244,6 @@
         gap: 12px;
         margin-top: 14px;
     }
-
 
     section form .form-row{
         display: flex;
@@ -178,72 +291,45 @@
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        gap: 8px;
-        background-color: transparent;
-        color: #1f9d55;
-        border: 1.5px solid #1f9d55;
-        padding: 10px 18px;
+        gap: 10px;
+        background-color: #1f9d55;
+        color: #ffffff;
+        border: none;
         border-radius: 10px;
+        padding: 12px 20px;
+        font-size: 15px;
         font-weight: 600;
         cursor: pointer;
-        transition: background-color 0.15s ease;
-        box-shadow: none;
+        transition: background-color 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease;
+        box-shadow: 0 4px 12px rgba(31, 157, 85, 0.25);
+        min-width: 235px;
+
+        .material-icons-outlined{
+            font-size: 20px;
+            flex-shrink: 0;
+        }
     }
 
     .form-submit:hover{
-        background-color: #e8f5ee;
+        background-color: #17803f;
+        box-shadow: 0 6px 16px rgba(31, 157, 85, 0.3);
         transform: none;
-        box-shadow: none;
     }
 
-    .form-cancel{
-        background: transparent;
-        border: 1px solid #e5e7eb;
-        padding: 8px 12px;
-        border-radius: 8px;
-        color: #374151;
-        cursor: pointer;
+    .form-submit:active{
+        transform: scale(0.97);
     }
 
-    ol{
-        padding-left: 20px;
-        margin: 0;
-        display: grid;
-        gap: 16px;
-        list-style: none;
+    .erro {
+        color: #dc2626;
+        font-size: 0.85rem;
+        margin-top: 0.4rem;
+        font-weight: 500;
     }
 
-    ol > li{
-        list-style: none;
-    }
-
-    ol > li::marker{
-        color: transparent;
-    }
-
-    ul{
-        padding-left: 24px;
-        margin: 0;
-        list-style: disc outside;
-    }
-
-    ul li{
-        list-style: disc;
-        cursor: pointer;
-    }
-
-    li strong{
-        display: block;
-        font-size: 1rem;
-        color: #111827;
-        margin-bottom: 8px;
-    }
-
-    li p{
-        margin: 0;
-        color: #4b5563;
-        line-height: 1.7;
-    }
+    // =======================================================================
+    // Lista de cortadores/enfestadores
+    // =======================================================================
 
     .ul-list{
         margin-top: 16px;
@@ -275,25 +361,10 @@
     .pessoa-info{
         display: flex;
         align-items: center;
+        flex: 1;
         gap: 12px;
         min-width: 0;
         cursor: pointer;
-    }
-
-    .pessoa-avatar{
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 38px;
-        height: 38px;
-        border-radius: 50%;
-        background-color: #e8f5ee;
-        color: #1f9d55;
-        flex-shrink: 0;
-
-        .material-icons-outlined{
-            font-size: 20px;
-        }
     }
 
     .pessoa-texto{
@@ -325,7 +396,7 @@
         background-color: transparent;
         color: #cc3131;
         border: none;
-        border-radius: 8px;
+        border-radius: 6px;
         width: 34px;
         height: 34px;
         flex-shrink: 0;
@@ -345,136 +416,9 @@
         transform: scale(0.95);
     }
 
-    .btn-excluir {
-        background-color: transparent;
-        color: #cc3131;
-        border: none;
-        border-radius: 6px !important;
-        padding: 8px 14px;
-        font-size: 14px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: background-color 0.15s ease;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 6px;
-        box-shadow: none;
-    }    
-
-    .btn-excluir:hover {
-        background-color: #fdeaea;
-        transform: none;
-    }
-
-    .btn-excluir:active {
-        transform: scale(0.98);
-    }
-
-    .overlay-modal {
-        position: fixed;
-
-        top: 0;
-        left: 0;
-
-        width: 100%;
-        height: 100vh;
-
-        background: rgba(0, 0, 0, 0.55);
-
-        display: flex;
-        align-items: center;
-        justify-content: center;
-
-        z-index: 999;
-    }
-
-    .modal-excluir {
-        width: 400px;
-        max-width: 90%;
-
-        background: white;
-
-        border-radius: 16px;
-
-        padding: 24px;
-
-        box-shadow:
-            0 10px 25px rgba(0, 0, 0, 0.2);
-
-        animation: aparecerModal 0.2s ease;
-    }
-
-    .modal-excluir h2 {
-        margin: 0 0 12px;
-
-        font-size: 22px;
-        color: #111827;
-    }
-
-    .modal-excluir p {
-        margin-bottom: 24px;
-
-        color: #4b5563;
-        line-height: 1.5;
-    }
-
-    @keyframes aparecerModal {
-        from {
-            opacity: 0;
-            transform: scale(0.95);
-        }
-
-        to {
-            opacity: 1;
-            transform: scale(1);
-        }
-    }
-
-    .acoes-modal{
-        display: flex;
-        justify-content: flex-end;
-        gap: 12px;
-        margin-top: 4px;
-    }
-
-    .acoes-modal button{
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 6px;
-        border: none;
-        border-radius: 10px;
-        padding: 10px 18px;
-        font-size: 14px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: background-color 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease;
-    }
-
-    .acoes-modal .btn-cancelar{
-        background-color: #f0f0f0;
-        color: #444;
-    }
-
-    .acoes-modal .btn-cancelar:hover{
-        background-color: #e2e2e2;
-    }
-
-    .acoes-modal .btn-excluir{
-        background-color: #cc3131;
-        color: #ffffff;
-        box-shadow: 0 4px 12px rgba(204, 49, 49, 0.25);
-    }
-
-    .acoes-modal .btn-excluir:hover{
-        background-color: #b91c1c;
-        box-shadow: 0 6px 16px rgba(204, 49, 49, 0.3);
-    }
-
-    .acoes-modal .btn-excluir:active{
-        transform: scale(0.97);
-    }
+    // =======================================================================
+    // Lote (incrementar/decrementar)
+    // =======================================================================
 
     .btns-lote{
         display: flex;
@@ -521,78 +465,424 @@
         background-color: #fdeaea;
     }
 
-    .erro {
-        color: #dc2626;
-        font-size: 0.85rem;
-        margin-top: 0.4rem;
-        font-weight: 500;
-    }
-
     .btn-incremento{
         background-color: rgb(52, 170, 52) !important;
     }
 
+    // =======================================================================
+    // Modais — base (overlay + exclusão)
+    // =======================================================================
+
+    .overlay-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.55);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 999;
+    }
+
+    .modal-excluir {
+        width: 400px;
+        max-width: 90%;
+        background: white;
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        animation: aparecerModal 0.2s ease;
+    }
+
+    .modal-excluir h2 {
+        margin: 0 0 12px;
+        font-size: 22px;
+        color: #111827;
+    }
+
+    .modal-excluir p {
+        margin-bottom: 24px;
+        color: #4b5563;
+        line-height: 1.5;
+    }
+
+    @keyframes aparecerModal {
+        from {
+            opacity: 0;
+            transform: scale(0.95);
+        }
+
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    .acoes-modal{
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+        margin-top: 4px;
+    }
+
+    .acoes-modal button{
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        border: none;
+        border-radius: 10px;
+        padding: 10px 18px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease;
+    }
+
+    .acoes-modal .btn-cancelar{
+        background-color: #f0f0f0;
+        color: #444;
+        border-radius: 6px !important;
+    }
+
+    .acoes-modal .btn-cancelar:hover{
+        background-color: #e2e2e2;
+    }
+
+    .acoes-modal .btn-excluir{
+        background-color: #cc3131;
+        color: #ffffff;
+        box-shadow: 0 4px 12px rgba(204, 49, 49, 0.25);
+        border-radius: 6px !important;
+    }
+
+    .acoes-modal .btn-excluir:hover{
+        background-color: #b91c1c;
+        box-shadow: 0 6px 16px rgba(204, 49, 49, 0.3);
+    }
+
+    .acoes-modal .btn-excluir:active{
+        transform: scale(0.97);
+    }
+
+    // =======================================================================
+    // Modal — detalhes de cortador/enfestador
+    // =======================================================================
+
+    .modal-pessoa{
+        width: 420px;
+        max-width: 90%;
+        background: white;
+        border-radius: 8px;
+        padding: 28px;
+        position: relative;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        animation: aparecerModal 0.2s ease;
+    }
+
+    .btn-fechar-modal{
+        position: absolute;
+        top: 16px;
+        right: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        background-color: transparent;
+        border: none;
+        border-radius: 6px;
+        color: #6b7280;
+        cursor: pointer;
+        transition: background-color 0.15s ease;
+
+        .material-icons-outlined{
+            font-size: 20px;
+        }
+    }
+
+    .btn-fechar-modal:hover{
+        background-color: #f3f4f6;
+        color: #111827;
+    }
+
+    .modal-pessoa-header{
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 22px;
+        padding-right: 28px;
+    }
+
+    .modal-pessoa-avatar{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 52px;
+        height: 52px;
+        border-radius: 50%;
+        flex-shrink: 0;
+    }
+
+    .avatar-emoji{
+        font-size: 26px;
+        line-height: 1;
+    }
+
+    .modal-pessoa-titulo{
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        min-width: 0;
+    }
+
+    .modal-pessoa-titulo h2{
+        margin: 0;
+        font-size: 19px;
+        color: #111827;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .modal-pessoa-tipo{
+        font-size: 13px;
+        font-weight: 600;
+        color: #6b7280;
+    }
+
+    .status-badge{
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        margin-left: auto;
+        flex-shrink: 0;
+        background-color: #e8f5ee;
+        color: #1f9d55;
+        font-size: 12px;
+        font-weight: 700;
+        padding: 6px 10px;
+        border-radius: 999px;
+    }
+
+    .status-badge.status-inativo{
+        background-color: #f3f4f6;
+        color: #6b7280;
+    }
+
+    .status-dot-badge{
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background-color: currentColor;
+    }
+
+    .modal-pessoa-info-grid{
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-bottom: 24px;
+    }
+
+    .info-item{
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background-color: #f7f9fb;
+        border: 1px solid #eef0f3;
+        border-radius: 12px;
+        padding: 12px 14px;
+
+        .material-icons-outlined{
+            font-size: 20px;
+            color: #1f9d55;
+            flex-shrink: 0;
+        }
+    }
+
+    .info-label{
+        margin: 0;
+        font-size: 12px;
+        color: #6b7280;
+        font-weight: 500;
+    }
+
+    .info-valor{
+        margin: 0;
+        font-size: 15px;
+        color: #111827;
+        font-weight: 700;
+    }
+
+    // =======================================================================
+    // Responsivo
+    // =======================================================================
+
     @media(max-width: 1366px){
+
+        // --- Layout geral ---
+        .content{
+            width: min(100%, 760px);
+            gap: 12px;
+        }
+
+        .header{
+            margin-bottom: 14px;
+            gap: 6px;
+        }
+
         .header h1{
-            font-size: 2.2rem;
+            font-size: 1.7rem;
         }
 
         .header h2{
-            font-size: 1.15rem;
+            font-size: 0.95rem;
+        }
+
+        .div-subtitle{
+            padding: 6px 14px;
+        }
+
+        // --- Cards de seção ---
+        section{
+            padding: 14px;
+            border-radius: 14px;
         }
 
         section h2{
-            font-size: 1.05rem;
+            font-size: 0.95rem;
+            margin-bottom: 10px;
+            padding-bottom: 6px;
+        }
+
+        li strong{
+            font-size: 0.82rem;
+            margin-bottom: 4px;
+        }
+
+        li p{
+            font-size: 0.82rem;
+            line-height: 1.5;
+        }
+
+        ol{
+            gap: 9px;
+        }
+
+        // --- Legenda de status ---
+        .legenda-status{
+            gap: 6px;
+            margin-top: 8px;
+        }
+
+        .legenda-status li,
+        .legenda-status li strong{
+            font-size: 0.78rem;
+        }
+
+        .status-dot{
+            width: 9px;
+            height: 9px;
+        }
+
+        // --- Botões de ação principais ---
+        .section-actions{
+            gap: 8px;
+            margin-top: 14px;
         }
 
         .action-button{
-            font-size: 0.85rem;
+            font-size: 0.78rem;
+            padding: 8px 14px;
+            min-width: 170px;
+            gap: 6px;
+            border-radius: 8px;
+
+            .material-icons-outlined{
+                font-size: 16px;
+            }
         }
 
         .create-mode,
         .success-banner{
-            font-size: 0.85rem;
+            font-size: 0.78rem;
+            padding: 6px 10px;
+            border-radius: 8px;
+        }
+
+        // --- Formulários ---
+        section form{
+            gap: 8px;
+            margin-top: 10px;
         }
 
         .form-field,
         section form textarea{
-            font-size: 0.85rem;
+            font-size: 0.78rem;
+            padding: 7px 9px;
         }
 
-        li strong{
-            font-size: 0.9rem;
-        }
+        .form-submit{
+            font-size: 0.78rem;
+            padding: 8px 14px;
+            min-width: 170px;
+            gap: 6px;
+            border-radius: 8px;
 
-        li p{
-            font-size: 0.9rem;
-        }
-
-        .pessoa-nome{
-            font-size: 14px;
-        }
-
-        .info-pessoa-detalhes{
-            font-size: 12px;
-        }
-
-        .btn-excluir{
-            font-size: 12px;
-        }
-
-        .btn-lote{
-            font-size: 12px;
-        }
-
-        .modal-excluir h2{
-            font-size: 20px;
-        }
-
-        .modal-excluir p{
-            font-size: 0.9rem;
+            .material-icons-outlined{
+                font-size: 16px;
+            }
         }
 
         .erro{
-            font-size: 0.8rem;
+            font-size: 0.72rem;
+        }
+
+        // --- Lista de cortadores/enfestadores ---
+        .ul-list{
+            gap: 6px;
+            margin-top: 10px;
+        }
+
+        .pessoa-card{
+            padding: 6px 10px;
+            gap: 8px;
+            border-radius: 8px;
+        }
+
+        .pessoa-nome{
+            font-size: 13px;
+        }
+
+        .info-pessoa-detalhes{
+            font-size: 11px;
+        }
+
+        .btn-excluir-icon{
+            width: 26px;
+            height: 26px;
+
+            .material-icons-outlined{
+                font-size: 15px;
+            }
+        }
+
+        // --- Lote ---
+        .btns-lote{
+            gap: 6px;
+        }
+
+        .btn-lote{
+            padding: 7px 12px;
+            font-size: 11px;
+            gap: 6px;
+            width: 23%;
+
+            .material-icons-outlined{
+                font-size: 16px;
+            }
         }
     }
 }
