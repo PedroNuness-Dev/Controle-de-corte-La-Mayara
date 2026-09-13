@@ -22,7 +22,8 @@ public interface CortadorRepository extends JpaRepository<Cortador, Long> {
     FROM Cortador cortador
     LEFT JOIN cortador.cortes c
     WHERE cortador.ativo = TRUE
-    GROUP BY cortador.nome
+    GROUP BY cortador.id
+    ORDER BY cortador.nome
 """)
     List<CortadorOverview> buscarCortadoresESuasQuantidadesDeCortes();
 
@@ -44,7 +45,8 @@ public interface CortadorRepository extends JpaRepository<Cortador, Long> {
     FROM Cortador cortador
     LEFT JOIN cortador.cortes c
     WHERE cortador.id = :id
-    GROUP BY cortador.nome
+    GROUP BY cortador.id
+    ORDER BY cortador.nome
 """)
     Optional<CortadorOverview> buscarCortadorPorId(@Param("id") Long id);
 }

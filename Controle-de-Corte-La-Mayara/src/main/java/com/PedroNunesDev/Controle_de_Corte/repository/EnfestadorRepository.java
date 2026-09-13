@@ -22,7 +22,8 @@ public interface EnfestadorRepository extends JpaRepository<Enfestador,Long> {
     FROM Enfestador enfestador
     LEFT JOIN enfestador.cortes c
     WHERE enfestador.ativo = TRUE
-    GROUP BY enfestador.nome
+    GROUP BY enfestador.id
+    ORDER BY enfestador.nome
 """)
     List<EnfestadorOverview> buscarEnfestadoresESuasQuantidadesDeCortes();
 
@@ -44,7 +45,8 @@ public interface EnfestadorRepository extends JpaRepository<Enfestador,Long> {
     FROM Enfestador enfestador
     LEFT JOIN enfestador.cortes c
     WHERE enfestador.id = :id
-    GROUP BY enfestador.nome
+    GROUP BY enfestador.id
+    ORDER BY enfestador.nome
 """)
     Optional<EnfestadorOverview> buscarEnfestadorPorId(@Param("id") Long id);
 }
