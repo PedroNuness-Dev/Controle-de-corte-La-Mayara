@@ -1,6 +1,12 @@
 <div class="content">
-    <img src="logo.png" alt="" class="logo">    
+    <div class="logo-wrapper">
+        <img src="logo.png" alt="" class="logo" routerLink="/">
+        <span class="logo-subtitulo">Painel de Produção</span>
+    </div>
     <div class="main-sidebar">
+
+        <span class="nav-label">Cortes</span>
+
         <button [routerLink]="['/cortes', 'Geral']" routerLinkActive="active">
             <span class="icon-box">
                 <span class="material-icons-outlined">dashboard</span>
@@ -25,12 +31,9 @@
             </span>
             <span>Cortados</span>
         </button>
-        <!--<button routerLink="nota" routerLinkActive="active">
-            <span class="icon-box">
-                <span class="material-icons-outlined">assignment</span>
-            </span>
-            <span>Notas</span>
-        </button>-->
+
+        <span class="nav-label">Sistema</span>
+
         <button routerLink="historico" routerLinkActive="active">
             <span class="icon-box">
                 <span class="material-icons-outlined">history</span>
@@ -43,9 +46,15 @@
             </span>
             <span>Configurações</span>
         </button>
+        <button routerLink="suporte" routerLinkActive="active">
+            <span class="icon-box">
+                <span class="material-icons-outlined">support_agent</span>
+            </span>
+            <span>Suporte</span>
+        </button>
     </div>
-    <div class="footer-sidebar">
-        <button routerLink="suporte" class="btn-suporte">Suporte</button>
-        <span>Pedro Nunes 2026</span>
+
+    <div class="footer-sidebar">        
+        <span>Pedro Nunes | 2026</span>
     </div>
 </div>

@@ -3,64 +3,124 @@
     .content{
         display: flex;
         align-items: stretch;
-        padding-top: 20px;
+        padding-top: 24px;
         flex-direction: column;
-        min-height: 100vh;        
-        background-color: white;
+        height: 100%;
+        background-color: rgb(247, 245, 245);
     }
-    
+
+    .logo-wrapper{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+        margin-bottom: 32px;
+    }
+
     .logo{
-        width: 300px;
-        align-self: center;
-        margin-bottom: 24px;
+        width: 280px;
+        margin-bottom: 20px;
+        cursor: pointer;
+    }
+
+    .logo-subtitulo{
+        font-size: 12px;
+        font-weight: 600;
+        color: #8a8a8a;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
     }
 
     .main-sidebar{
         display: flex;
         flex-direction: column;
-        gap: 10px;
-        padding: 50px 16px;
+        gap: 4px;
+        padding: 8px 16px 8px 20px;
         flex: 1;
+        min-height: 0;  
         width: 100%;
+        overflow-y: auto;
+
+        &::-webkit-scrollbar{
+            width: 4px;
+        }
+        &::-webkit-scrollbar-thumb{
+            background-color: rgba(0,0,0,0.12);
+            border-radius: 4px;
+        }
+        &::-webkit-scrollbar-track{
+            background: transparent;
+        }
+    }
+
+    // labels de agrupamento ("CORTES" / "SISTEMA")
+    .nav-label{
+        font-size: 11px;
+        font-weight: 700;
+        color: #a8adb5;
+        text-transform: uppercase;
+        letter-spacing: 0.09em;
+        padding: 14px 12px 6px;
+
+        &:first-child{
+            padding-top: 4px;
+        }
     }
 
     .main-sidebar button{
         display: flex;
         align-items: center;
         gap: 12px;
-        width: 90%;
+        width: 85%;
         border: none;
-        padding: 8px 12px;
+        padding: 10px 12px;
         border-radius: 6px;
         background-color: transparent;
-        font-size: 18px;
-        color: #555;
+        font-size: 15px;
+        font-weight: 500;
+        color: #444;
         cursor: pointer;
         text-align: left;
-        transition: background-color 0.15s ease, color 0.15s ease;
+        transition: background-color 0.18s ease, color 0.18s ease, transform 0.15s ease;
         position: relative;
+        overflow: hidden;
     }
 
     .main-sidebar button:hover{
-        background-color: #f0f0f0;
+        background-color: #eceff3;
+        transform: translateX(2px);
+    }
+
+    .main-sidebar button:hover .icon-box .material-icons-outlined{
+        transform: scale(1.12);
+    }
+
+    .main-sidebar button:active{
+        transform: scale(0.98);
+    }
+
+    // acessibilidade: indicação visual clara ao navegar por teclado (Tab)
+    .main-sidebar button:focus-visible{
+        outline: 2px solid #1a5fb4;
+        outline-offset: 2px;
     }
 
     .icon-box{
         display: flex;
         align-items: center;
         justify-content: center;
-        width: 32px;
-        height: 32px;
-        border-radius: 4px;
+        width: 34px;
+        height: 34px;
+        border-radius: 6px;
         background-color: transparent;
-        transition: background-color 0.15s ease;
+        transition: background-color 0.18s ease;
         flex-shrink: 0;
     }
 
     .icon-box .material-icons-outlined{
         font-size: 20px;
-        color: #555;
-        transition: color 0.15s ease;
+        color: #666;
+        transition: color 0.18s ease, transform 0.18s ease;
     }
 
     .badge{
@@ -70,7 +130,7 @@
         font-size: 12px;
         font-weight: 600;
         padding: 2px 7px;
-        border-radius: 8px;
+        border-radius: 6px;
         min-width: 20px;
         text-align: center;
     }
@@ -81,25 +141,41 @@
         font-weight: 600;
     }
 
+    button.active::before{
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 6px;
+        bottom: 6px;
+        width: 4px;
+        border-radius: 0 4px 4px 0;
+        background: #1a5fb4;
+    }
+
     button.active .icon-box{
-        background-color: #1a5fb4;
+        background: linear-gradient(135deg, #1a5fb4, #2f74d1);
+        box-shadow: 0 2px 6px rgba(26, 95, 180, 0.35);
     }
 
     button.active .icon-box .material-icons-outlined{
         color: #fff;
     }
 
-    .footer-sidebar{        
+    .footer-sidebar{
         display: flex;
         flex-direction: column;
         margin-top: auto;
-        margin-bottom: 20px;
+        margin-bottom: 28px;
         align-items: center;
+        padding-top: 10px;
+        border-top: 1px solid rgba(0, 0, 0, 0.08);
+        margin-left: 20px;
+        margin-right: 20px;
     }
 
     .footer-sidebar span{
-        font-size: 14px;
-        color: #888;
+        font-size: 13px;
+        color: #999;
     }
 
     .btn-suporte{
@@ -113,17 +189,24 @@
 
     @media(max-width: 1366px){
         .footer-sidebar, .footer-sidebar span{
-            font-size: 13px;
+            font-size: 12px;
         }
         .logo{
-            width: 250px;
+            width: 180px;
+        }
+        .logo-subtitulo{
+            font-size: 10px;
         }
         .main-sidebar button{
-            font-size: 14px;
+            font-size: 13px;
         }
         .icon-box{
-            width: 28px;
-            height: 28px;
+            width: 30px;
+            height: 30px;
+        }
+        .nav-label{
+            font-size: 10px;
+            padding: 10px 12px 4px;
         }
     }
 }

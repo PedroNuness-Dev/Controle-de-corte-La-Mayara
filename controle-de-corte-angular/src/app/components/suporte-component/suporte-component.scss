@@ -1,12 +1,7 @@
 :host {
     display: block;
     min-height: 100vh;
-    background: linear-gradient(
-        135deg,
-        #ffe5ec 0%,
-        #fff5f7 50%,
-        #ffffff 100%
-    );
+    background-color: white;
 
     main {
         display: flex;
@@ -14,6 +9,7 @@
         padding: 32px 24px;
         flex-direction: column;
         gap: 20px;
+        background-color: white !important;
     }
 
     // =======================================================================

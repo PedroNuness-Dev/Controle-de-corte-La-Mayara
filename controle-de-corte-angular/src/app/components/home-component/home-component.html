@@ -1,17 +1,74 @@
 <main>
-  <div class="hero">
-    <div class="header">
-      <h1>Bem-vindo ao controle de corte</h1>
-      <span>La Mayara Baby</span>
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
 
-      <p>
-        Gerencie a produção, acompanhe cortes e mantenha o fluxo
-        organizado de forma simples e rápida.
-      </p>
+  <div class="home-conteudo">
+    <div class="hero">
+      <div class="header">
+        <span class="eyebrow">Controle de Corte · La Mayara Baby</span>
+
+        <h1>Cada corte no lugar certo, do início ao fim.</h1>
+
+        <p>
+          Do lote pendente à peça cortada: acompanhe cada etapa da produção
+          em tempo real, sem planilhas soltas e sem perder o fio da meada.
+        </p>
+
+        <div class="cta-group">
+          <button type="button" class="btn-primario" [routerLink]="['/cortes', 'Geral']">
+            <span class="material-icons-outlined">dashboard</span>
+            Ir para o painel
+          </button>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="glow"></div>
+        <img src="boneca-sucesso.png" alt="Boneca La Mayara Baby" class="boneca">
+      </div>
     </div>
 
-    <div class="content">
-      <img src="boneca-sucesso.png" alt="Boneca La Mayara Baby">
+    <div class="linha-corte" aria-hidden="true">
+      <span class="tracejado"></span>
+      <span class="material-icons-outlined icone-tesoura">content_cut</span>
+      <span class="tracejado"></span>
+    </div>
+
+    <div class="features-row">
+      <div class="feature-card">
+        <div class="feature-icon feature-icon-1">
+          <span class="material-icons-outlined">route</span>
+        </div>
+        <h3>Fluxo completo</h3>
+        <p>Pendente, enfestado, cortado — acompanhe cada corte em todas as etapas, sem perder o controle.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon feature-icon-2">
+          <span class="material-icons-outlined">bolt</span>
+        </div>
+        <h3>Atualização rápida</h3>
+        <p>Registre um corte novo ou atualize um em andamento em segundos, direto do painel.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon feature-icon-3">
+          <span class="material-icons-outlined">history</span>
+        </div>
+        <h3>Histórico sempre à mão</h3>
+        <p>Consulte cortes de meses anteriores a qualquer momento, com busca por nome ou lote.</p>
+      </div>
     </div>
   </div>
+
+  <footer class="footer-home">
+    <div class="footer-linha"></div>
+    <div class="footer-conteudo">
+        <span class="footer-marca">La Mayara Baby</span>
+        <span class="footer-separador">•</span>
+        <span class="footer-assinatura">Desenvolvido por Pedro Nunes</span>
+        <span class="footer-separador">•</span>
+        <span class="footer-ano">2026</span>
+    </div>
+  </footer>
 </main>

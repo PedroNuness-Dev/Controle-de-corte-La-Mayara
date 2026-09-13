@@ -1,0 +1,35 @@
+:host{
+
+    .container{
+        display: flex;
+        height: 100vh;
+    }
+
+    .sidebar {
+        position: fixed;
+        width: 300px;
+        background: rgb(247, 245, 245);
+        height: 100vh;
+        border-right: none;
+        box-shadow: 2px 0 12px rgba(0, 0, 0, 0.04);
+        overflow: hidden; // <- chave para conter qualquer elemento interno
+        z-index: 10;
+    }
+
+    .content {
+        height: 100vh;
+        margin-left: 300px;
+        overflow-y: auto;
+        background-color: white;
+        width: 100%;
+    }
+
+    @media(max-width: 1366px){
+        .sidebar{
+            width: 240px;
+        }
+        .content{
+            margin-left: 240px;
+        }
+    }
+}
