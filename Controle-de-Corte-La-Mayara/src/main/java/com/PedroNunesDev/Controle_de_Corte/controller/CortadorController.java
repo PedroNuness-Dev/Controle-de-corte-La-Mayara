@@ -44,10 +44,18 @@ public class CortadorController {
         return ResponseEntity.ok(cortadores);
     }
 
-    @GetMapping("/overview")
+    @GetMapping("/ativos/overview")
     public ResponseEntity<List<CortadorOverview>> buscarDetalhesDosCortadoresAtivos(){
 
         List<CortadorOverview> responses = cortadorService.buscarDetalhesDosCortadoresAtivos();
+
+        return ResponseEntity.ok(responses);
+    }
+
+    @GetMapping("/inativos/overview")
+    public ResponseEntity<List<CortadorOverview>> buscarDetalhesDosCortadoresInativos(){
+
+        List<CortadorOverview> responses = cortadorService.buscarDetalhesDosCortadoresInativos();
 
         return ResponseEntity.ok(responses);
     }
@@ -84,10 +92,18 @@ public class CortadorController {
      * @param id ID do cortador
      * @return Detalhes do cortador desativado
      */
-    @PatchMapping("/{id}")
+    @PatchMapping("/desativar/{id}")
     public ResponseEntity<CortadorOverview> desativarCortadorPorId(@PathVariable Long id) {
 
         CortadorOverview response = cortadorService.desativarCortador(id);
+
+        return ResponseEntity.ok(response);
+    }
+
+    @PatchMapping("/ativar/{id}")
+    public ResponseEntity<CortadorOverview> ativarCortadorPorId(@PathVariable Long id) {
+
+        CortadorOverview response = cortadorService.ativarCortador(id);
 
         return ResponseEntity.ok(response);
     }

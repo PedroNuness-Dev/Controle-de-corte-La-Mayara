@@ -28,6 +28,22 @@ public interface CortadorRepository extends JpaRepository<Cortador, Long> {
     List<CortadorOverview> buscarCortadoresESuasQuantidadesDeCortes();
 
     @Query("""
+    SELECT new com.PedroNunesDev.Controle_de_Corte.dto.response.CortadorOverview(
+        cortador.id,
+        cortador.nome,
+        COUNT(c),
+        cortador.ativo,
+        cortador.dataDeCadastro
+    )
+    FROM Cortador cortador
+    LEFT JOIN cortador.cortes c
+    WHERE cortador.ativo = FALSE
+    GROUP BY cortador.id
+    ORDER BY cortador.nome
+""")
+    List<CortadorOverview> buscarCortadoresInativosESuasQuantidadesDeCortes();
+
+    @Query("""
     SELECT cortador FROM Cortador cortador
     WHERE cortador.ativo = TRUE
     ORDER BY cortador.nome

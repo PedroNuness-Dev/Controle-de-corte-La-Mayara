@@ -45,6 +45,14 @@ public class CortadorService {
     }
 
     @Transactional(readOnly = true)
+    public List<CortadorOverview> buscarDetalhesDosCortadoresInativos(){
+
+        log.info("iniciando busca de todos os detalhes dos cortadores inativos cadastrados no sistema");
+
+        return cortadorRepository.buscarCortadoresInativosESuasQuantidadesDeCortes();
+    }
+
+    @Transactional(readOnly = true)
     public List<CortadorOverview> buscarDetalhesDosCortadoresAtivos(){
 
         log.info("iniciando busca de todos os detalhes dos cortadores ativos cadastrados no sistema");
@@ -84,6 +92,23 @@ public class CortadorService {
         log.info("Cortador atualizado com sucesso. ID: {}", cortadorAtualizado.getId());
 
         return toOverview(cortadorAtualizado);
+    }
+
+    @Transactional
+    public CortadorOverview ativarCortador(Long idCortador){
+
+        log.info("Ativando cortador com ID: {}", idCortador);
+
+        Cortador cortadorBuscado = cortadorRepository.findById(idCortador)
+                .orElseThrow(() -> new ResourceNotFoundException("Cortador com ID: "+idCortador+" não encontrado"));
+
+        cortadorBuscado.setAtivo(true);
+
+        cortadorRepository.save(cortadorBuscado);
+
+        log.info("Cortador ativado com sucesso. ID: {}", idCortador);
+
+        return toOverview(cortadorBuscado);
     }
 
     @Transactional
