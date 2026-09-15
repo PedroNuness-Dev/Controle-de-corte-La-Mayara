@@ -58,7 +58,15 @@ public class EnfestadorService {
 
         List<EnfestadorOverview> enfestadores = enfestadorRepository.buscarEnfestadoresESuasQuantidadesDeCortes();
 
-        log.debug("Total de enfestadores com overview encontrados: {}", enfestadores.size());
+        return enfestadores;
+    }
+
+    @Transactional(readOnly = true)
+    public List<EnfestadorOverview> buscarDetalhesDosEnfestadoresInativos(){
+
+        log.info("Iniciando busca dos detalhes de todos os enfestadores inativos cadastrados no sistema");
+
+        List<EnfestadorOverview> enfestadores = enfestadorRepository.buscarEnfestadoresInativosESuasQuantidadesDeCortes();
 
         return enfestadores;
     }
@@ -110,6 +118,23 @@ public class EnfestadorService {
         enfestadorRepository.save(enfestadorBuscado);
 
         log.info("Enfestador desativado com sucesso. ID: {}", id);
+
+        return toOverview(enfestadorBuscado);
+    }
+
+    @Transactional
+    public EnfestadorOverview ativarEnfestador(Long idEnfestador){
+
+        log.info("Ativando enfestador com ID: {}", idEnfestador);
+
+        Enfestador enfestadorBuscado = enfestadorRepository.findById(idEnfestador)
+                .orElseThrow(() -> new ResourceNotFoundException("Enfestador com ID: " + idEnfestador + " não encontrado"));
+
+        enfestadorBuscado.setAtivo(true);
+
+        enfestadorRepository.save(enfestadorBuscado);
+
+        log.info("Enfestador ativado com sucesso. ID: {}", idEnfestador);
 
         return toOverview(enfestadorBuscado);
     }

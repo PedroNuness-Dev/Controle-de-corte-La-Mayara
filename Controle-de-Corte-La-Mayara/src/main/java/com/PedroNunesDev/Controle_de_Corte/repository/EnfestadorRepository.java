@@ -28,6 +28,22 @@ public interface EnfestadorRepository extends JpaRepository<Enfestador,Long> {
     List<EnfestadorOverview> buscarEnfestadoresESuasQuantidadesDeCortes();
 
     @Query("""
+    SELECT new com.PedroNunesDev.Controle_de_Corte.dto.response.EnfestadorOverview(
+        enfestador.id,
+        enfestador.nome,
+        COUNT(c),
+        enfestador.ativo,
+        enfestador.dataDeCadastro
+    )
+    FROM Enfestador enfestador
+    LEFT JOIN enfestador.cortes c
+    WHERE enfestador.ativo = FALSE
+    GROUP BY enfestador.id
+    ORDER BY enfestador.nome
+""")
+    List<EnfestadorOverview> buscarEnfestadoresInativosESuasQuantidadesDeCortes();
+
+    @Query("""
     SELECT enfestador FROM Enfestador enfestador
     WHERE enfestador.ativo = TRUE
     ORDER BY enfestador.nome

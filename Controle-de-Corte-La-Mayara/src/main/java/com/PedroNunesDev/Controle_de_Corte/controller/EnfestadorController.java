@@ -52,10 +52,18 @@ public class EnfestadorController {
      * Busca detalhes dos enfestadores ativos
      * @return Lista dos detalhes dos cortadores ativos
      */
-    @GetMapping("/overview")
+    @GetMapping("/ativos/overview")
     public ResponseEntity<List<EnfestadorOverview>> buscarDetalhesDosEnfestadoresAtivos(){
 
         List<EnfestadorOverview> responses = enfestadorService.buscarDetalhesDosEnfestadoresAtivos();
+
+        return ResponseEntity.ok(responses);
+    }
+
+    @GetMapping("/inativos/overview")
+    public ResponseEntity<List<EnfestadorOverview>> buscarDetalhesDosEnfestadoresInativos(){
+
+        List<EnfestadorOverview> responses = enfestadorService.buscarDetalhesDosEnfestadoresInativos();
 
         return ResponseEntity.ok(responses);
     }
@@ -92,10 +100,18 @@ public class EnfestadorController {
      * @param id ID do enfestador
      * @return Detalhes do Enfestador desativado
      */
-    @PatchMapping("/{id}")
+    @PatchMapping("/desativar/{id}")
     public ResponseEntity<EnfestadorOverview> desativarEnfestadorPorId(@PathVariable Long id) {
 
         EnfestadorOverview response = enfestadorService.desativarEnfestador(id);
+
+        return ResponseEntity.ok(response);
+    }
+
+    @PatchMapping("/ativar/{id}")
+    public ResponseEntity<EnfestadorOverview> ativarEnfestadorPorId(@PathVariable Long id) {
+
+        EnfestadorOverview response = enfestadorService.ativarEnfestador(id);
 
         return ResponseEntity.ok(response);
     }
