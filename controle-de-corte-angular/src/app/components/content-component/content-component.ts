@@ -35,7 +35,7 @@ const STATUS_POR_PAGINA: Partial<Record<TipoPagina, StatusCorte>> = {
 const corteRequestVazio = (): CorteRequest => ({
   nomeModelo: '',
   quantidadeTotal: null,
-  dataDeRegistro: new Date().toISOString().split('T')[0],
+  dataDeRegistro: new Date().toLocaleDateString("en-CA"),
   observacao: ''
 });
 
@@ -452,7 +452,7 @@ export class ContentComponent implements OnInit {
   ): CorteUpdateRequest {
 
     
-    const dataParaAtualizar = corte.dataDeCorte != null ? this.converterDataParaISO(corte.dataDeCorte) : null;
+    const dataParaAtualizar = corte.dataDeCorte ?? null;
 
     return {
       dataDeCorte: dataParaAtualizar,
