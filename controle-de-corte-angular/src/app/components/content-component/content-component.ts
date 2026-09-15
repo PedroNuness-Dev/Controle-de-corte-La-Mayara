@@ -232,7 +232,7 @@ export class ContentComponent implements OnInit {
     this.corteSelecionado = corte;
     this.corteEdicao = {
       ...corte,
-      dataDeCorte: corte.dataDeCorte ? this.converterDataParaISO(corte.dataDeCorte) : corte.dataDeCorte
+      dataDeCorte: this.converterDataParaISO(corte.dataDeCorte) ?? ''
     };
     this.idEnfestador = corte.enfestador?.id ?? null;
     this.idCortador = corte.cortador?.id ?? null;
@@ -439,10 +439,30 @@ export class ContentComponent implements OnInit {
     return { ano: agora.getFullYear(), mes: agora.getMonth() + 1 };
   }
 
-  /** Converte data no formato dd/mm/aaaa para aaaa-mm-dd (usado em inputs type="date"). */
-  private converterDataParaISO(data: string): string {
-    const [dia, mes, ano] = data.split('/');
-    return `${ano}-${mes}-${dia}`;
+  /**
+   * Converte data de dd/MM/yyyy (formato retornado pelo backend) para yyyy-MM-dd (ISO),
+   * que é o formato exigido pelo backend ao ENVIAR uma data e pelo <input type="date">.
+   *
+   * É idempotente: se a data já estiver em ISO, retorna sem alterar.
+   * Isso permite chamar este método em qualquer ponto do fluxo (exibição ou envio)
+   * sem risco de converter duas vezes.
+   */
+  private converterDataParaISO(data: string | null | undefined): string | null {
+    if (!data) return null;
+
+    // Já está em ISO (yyyy-MM-dd) -> retorna como está
+    if (/^\d{4}-\d{2}-\d{2}$/.test(data)) {
+      return data;
+    }
+
+    // Está em dd/MM/yyyy -> converte
+    if (/^\d{2}\/\d{2}\/\d{4}$/.test(data)) {
+      const [dia, mes, ano] = data.split('/');
+      return `${ano}-${mes}-${dia}`;
+    }
+
+    console.warn('Formato de data inesperado ao converter para ISO:', data);
+    return data;
   }
 
   private montarCorteUpdateRequest(
@@ -451,11 +471,8 @@ export class ContentComponent implements OnInit {
     idEnfestador: number | null
   ): CorteUpdateRequest {
 
-    
-    const dataParaAtualizar = corte.dataDeCorte ?? null;
-
     return {
-      dataDeCorte: dataParaAtualizar,
+      dataDeCorte: this.converterDataParaISO(corte.dataDeCorte),
       loteFormatado: corte.loteFormatado,
       nomeModelo: corte.nomeModelo,
       quantidadeTotal: corte.quantidadeTotal,
