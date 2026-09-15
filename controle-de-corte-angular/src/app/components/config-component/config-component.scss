@@ -358,6 +358,14 @@
         background-color: #f0f0f0;
     }
 
+    .pessoa-card-inativo{
+        opacity: 0.6;
+    }
+
+    .pessoa-card-inativo:hover{
+        opacity: 0.85;
+    }
+
     .pessoa-info{
         display: flex;
         align-items: center;
@@ -567,6 +575,22 @@
         transform: scale(0.97);
     }
 
+    .acoes-modal .btn-reativar{
+        background-color: #1f9d55;
+        color: #ffffff;
+        box-shadow: 0 4px 12px rgba(31, 157, 85, 0.25);
+        border-radius: 6px !important;
+    }
+
+    .acoes-modal .btn-reativar:hover{
+        background-color: #17803f;
+        box-shadow: 0 6px 16px rgba(31, 157, 85, 0.3);
+    }
+
+    .acoes-modal .btn-reativar:active{
+        transform: scale(0.97);
+    }
+
     // =======================================================================
     // Modal — detalhes de cortador/enfestador
     // =======================================================================
@@ -651,6 +675,79 @@
         font-size: 13px;
         font-weight: 600;
         color: #6b7280;
+    }
+
+    // ---------------------------------------------------------------------
+    // Edição de nome (cortador / enfestador) dentro do modal de detalhes
+    // ---------------------------------------------------------------------
+
+    .nome-row{
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        min-width: 0;
+    }
+
+    .nome-row h2{
+        flex: 1;
+        min-width: 0;
+    }
+
+    .editar-nome-row{
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        min-width: 0;
+    }
+
+    .input-editar-nome{
+        flex: 1;
+        min-width: 0;
+        padding: 6px 10px;
+        font-size: 15px;
+    }
+
+    .btn-icone-nome{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 26px;
+        height: 26px;
+        flex-shrink: 0;
+        border: none;
+        border-radius: 6px;
+        background-color: transparent;
+        cursor: pointer;
+        transition: background-color 0.15s ease;
+
+        .material-icons-outlined{
+            font-size: 16px;
+        }
+    }
+
+    .btn-editar-nome{
+        color: #6b7280;
+    }
+
+    .btn-editar-nome:hover{
+        background-color: #f3f4f6;
+        color: #111827;
+    }
+
+    .btn-salvar-nome{
+        color: #1f9d55;
+    }
+
+    .btn-salvar-nome:hover{
+        background-color: #e8f5ee;
+    }
+
+    .btn-cancelar-nome{
+        color: #cc3131;
+    }
+
+    .btn-cancelar-nome:hover{
+        background-color: #fdeaea;
     }
 
     .status-badge{
@@ -882,6 +979,25 @@
 
             .material-icons-outlined{
                 font-size: 16px;
+            }
+        }
+
+        // --- Edição de nome no modal de detalhes ---
+        .modal-pessoa-titulo h2{
+            font-size: 16px;
+        }
+
+        .input-editar-nome{
+            font-size: 13px;
+            padding: 5px 8px;
+        }
+
+        .btn-icone-nome{
+            width: 22px;
+            height: 22px;
+
+            .material-icons-outlined{
+                font-size: 14px;
             }
         }
     }

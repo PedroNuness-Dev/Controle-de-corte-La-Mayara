@@ -80,6 +80,26 @@
                     <strong>2.5 Como excluir um cortador?</strong>
                     <p>Clique no ícone de lixeira ao lado do nome do cortador e confirme a exclusão no modal exibido. A exclusão remove apenas o cadastro da lista; os cortes já registrados mantêm seu histórico normalmente.</p>
                 </li>
+                <li>
+                    <strong>2.6 Cortadores inativos</strong>
+                    <p>Cortadores excluídos ficam disponíveis aqui apenas para consulta. Clique em um deles para ver os detalhes.</p>
+                    @if (cortadoresInativos.length === 0) {
+                        <p class="info-pessoa-detalhes">Nenhum cortador inativo no momento.</p>
+                    } @else {
+                        <ul class="ul-list">
+                            @for (cortador of cortadoresInativos; track cortador.idCortador) {
+                                <li class="pessoa-card pessoa-card-inativo">
+                                    <div class="pessoa-info" (click)="abrirDetalhesCortador(cortador)">
+                                        <div class="pessoa-texto">
+                                            <span class="pessoa-nome">{{ cortador.nome }}</span>
+                                            <p class="info-pessoa-detalhes">Quantidade de cortes cortados: {{ cortador.quantidadeDeCortes }}</p>
+                                        </div>
+                                    </div>
+                                </li>
+                            }
+                        </ul>
+                    }
+                </li>
             </ol>
             <div class="section-actions">
                 <button type="button" class="action-button" [class.active]="modoCadastroCortador" (click)="abrirModoCriacaoCortador()">
@@ -149,6 +169,26 @@
                 <li>
                     <strong>3.5 Como excluir um enfestador?</strong>
                     <p>Clique no ícone de lixeira ao lado do nome do enfestador e confirme a exclusão no modal exibido. Assim como os cortadores, a exclusão remove apenas o cadastro; os cortes já registrados não são afetados.</p>
+                </li>
+                <li>
+                    <strong>3.6 Enfestadores inativos</strong>
+                    <p>Enfestadores excluídos ficam disponíveis aqui apenas para consulta. Clique em um deles para ver os detalhes.</p>
+                    @if (enfestadoresInativos.length === 0) {
+                        <p class="info-pessoa-detalhes">Nenhum enfestador inativo no momento.</p>
+                    } @else {
+                        <ul class="ul-list">
+                            @for (enfestador of enfestadoresInativos; track enfestador.idEnfestador) {
+                                <li class="pessoa-card pessoa-card-inativo">
+                                    <div class="pessoa-info" (click)="abrirDetalhesEnfestador(enfestador)">
+                                        <div class="pessoa-texto">
+                                            <span class="pessoa-nome">{{ enfestador.nome }}</span>
+                                            <p class="info-pessoa-detalhes">Quantidade de cortes enfestados: {{ enfestador.quantidadeDeCortes }}</p>
+                                        </div>
+                                    </div>
+                                </li>
+                            }
+                        </ul>
+                    }
                 </li>
             </ol>
             <div class="section-actions">
@@ -338,7 +378,34 @@
                     </div>
 
                     <div class="modal-pessoa-titulo">
-                        <h2>{{ pessoaSelecionada.nome }}</h2>
+                        @if (!editandoNomePessoa) {
+                            <div class="nome-row">
+                                <h2>{{ pessoaSelecionada.nome }}</h2>
+                                <button class="btn-icone-nome btn-editar-nome" title="Editar nome" (click)="iniciarEdicaoNome()">
+                                    <span class="material-icons-outlined">edit</span>
+                                </button>
+                            </div>
+                        } @else {
+                            <div class="editar-nome-row">
+                                <input
+                                    class="form-field input-editar-nome"
+                                    type="text"
+                                    name="nomeEditavel"
+                                    placeholder="Nome"
+                                    [(ngModel)]="nomeEditavel"
+                                    (keydown.enter)="salvarNomeEditado()">
+                                <button class="btn-icone-nome btn-salvar-nome" title="Salvar" (click)="salvarNomeEditado()">
+                                    <span class="material-icons-outlined">check</span>
+                                </button>
+                                <button class="btn-icone-nome btn-cancelar-nome" title="Cancelar" (click)="cancelarEdicaoNome()">
+                                    <span class="material-icons-outlined">close</span>
+                                </button>
+                            </div>
+                            @if (erros['nomeEditavel']) {
+                                <span class="erro">&#9888; {{ erros['nomeEditavel'] }}</span>
+                            }
+                        }
+
                         <span class="modal-pessoa-tipo">
                             {{ pessoaSelecionada.tipo === 'cortador' ? 'Cortador' : 'Enfestador' }}
                         </span>
@@ -374,10 +441,17 @@
                     <button class="btn-cancelar" (click)="fecharDetalhesPessoa()">
                         Fechar
                     </button>
-                    <button class="btn-excluir" (click)="excluirPessoaSelecionada()">
-                        <span class="material-icons-outlined">delete</span>
-                        Excluir
-                    </button>
+                    @if (pessoaSelecionada.isAtivo) {
+                        <button class="btn-excluir" (click)="excluirPessoaSelecionada()">
+                            <span class="material-icons-outlined">delete</span>
+                            Excluir
+                        </button>
+                    } @else {
+                        <button class="btn-reativar" (click)="reativarPessoaSelecionada()">
+                            <span class="material-icons-outlined">restore</span>
+                            Reativar
+                        </button>
+                    }
                 </div>
             </div>
         </div>

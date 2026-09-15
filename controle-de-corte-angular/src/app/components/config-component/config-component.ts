@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, DestroyRef, HostListener, inject, OnInit } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -37,12 +37,12 @@ const AVATARES_ANIMAIS = [
   { emoji: '🐵', bg: '#eafaf0', cor: '#964B00' },
   { emoji: '🦊', bg: '#fdf1e2', cor: '#d98324' },
   { emoji: '🐼', bg: '#eef2f7', cor: '#475569' },
+  { emoji: '🐵', bg: '#faf1e6', cor: '#a35d1f' },
   { emoji: '🐱', bg: '#fdeef2', cor: '#d63384' },
   { emoji: '🐶', bg: '#eef6ff', cor: '#2563eb' },
   { emoji: '🦁', bg: '#fff7e6', cor: '#d97706' },
   { emoji: '🐨', bg: '#f1f0fb', cor: '#6d5bd0' },
-  { emoji: '🐯', bg: '#fff1e6', cor: '#ea580c' },
-  { emoji: '🐵', bg: '#faf1e6', cor: '#a35d1f' }
+  { emoji: '🐯', bg: '#fff1e6', cor: '#ea580c' }
 ] as const;
 
 const cortadorRequestVazio = (): CortadorRequest => ({ nome: '' });
@@ -75,6 +75,23 @@ export class ConfigComponent implements OnInit {
   modalDecrementoLote = false;
 
   // ---------------------------------------------------------------------
+  // Dados para atualização de cortadores | enfestadores
+  // ---------------------------------------------------------------------
+  editandoNomePessoa = false;
+  nomeEditavel = '';
+
+  // ---------------------------------------------------------------------
+  // Mapeamento de ações ao pressionar teclas
+  // ---------------------------------------------------------------------
+  @HostListener('document:keydown.escape')
+  onEscape() {
+    this.fecharDetalhesPessoa();
+    this.fecharModalIncrementoLote();
+    this.fecharModalDecrementoLote();
+    this.fecharModalExclusao();
+  }
+
+  // ---------------------------------------------------------------------
   // Detalhes da pessoa (modal de cortador/enfestador)
   // ---------------------------------------------------------------------
   pessoaSelecionada: PessoaSelecionada | null = null;
@@ -89,6 +106,9 @@ export class ConfigComponent implements OnInit {
   // ---------------------------------------------------------------------
   enfestadores: EnfestadorOverview[] = [];
   cortadores: CortadorOverview[] = [];
+
+  enfestadoresInativos: EnfestadorOverview[] = [];
+  cortadoresInativos: CortadorOverview[] = [];
 
   // ---------------------------------------------------------------------
   // Cadastro de cortador / enfestador
@@ -121,6 +141,8 @@ export class ConfigComponent implements OnInit {
     this.buscarLoteAtual();
     this.buscarEnfestadores();
     this.buscarCortadores();
+    this.buscarEnfestadoresInativos();
+    this.buscarCortadoresInativos();
   }
 
   // =======================================================================
@@ -151,6 +173,24 @@ export class ConfigComponent implements OnInit {
       .subscribe({
         next: (data) => { this.cortadores = data; this.cdr.detectChanges(); },
         error: (err) => console.error('Erro ao buscar cortadores:', err)
+      });
+  }
+
+  buscarEnfestadoresInativos(): void {
+    this.enfestadorService.buscarDetalhesEnfestadoresInativos()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (data) => { this.enfestadoresInativos = data; this.cdr.detectChanges(); },
+        error: (err) => console.error('Erro ao buscar enfestadores inativos:', err)
+      });
+  }
+
+  buscarCortadoresInativos(): void {
+    this.cortadorService.buscarDetalhesCortadoresInativos()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (data) => { this.cortadoresInativos = data; this.cdr.detectChanges(); },
+        error: (err) => console.error('Erro ao buscar cortadores inativos:', err)
       });
   }
 
@@ -267,6 +307,9 @@ export class ConfigComponent implements OnInit {
 
   fecharDetalhesPessoa(): void {
     this.pessoaSelecionada = null;
+    this.editandoNomePessoa = false;
+    this.nomeEditavel = '';
+    delete this.erros['nomeEditavel'];
   }
 
   excluirPessoaSelecionada(): void {
@@ -277,12 +320,47 @@ export class ConfigComponent implements OnInit {
     this.abrirModalExclusao(id, tipo, nome);
   }
 
+  reativarPessoaSelecionada(): void {
+    if (!this.pessoaSelecionada) return;
+
+    const { id, tipo } = this.pessoaSelecionada;
+
+    if (tipo === 'cortador') {
+      this.cortadorService.ativarCortador(id)
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe({
+          next: () => this.finalizarReativacao(tipo),
+          error: (err) => console.error('Erro ao ativar cortador:', err)
+        });
+    } else {
+      this.enfestadorService.ativarEnfestador(id)
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe({
+          next: () => this.finalizarReativacao(tipo),
+          error: (err) => console.error('Erro ao ativar enfestador:', err)
+        });
+    }
+  }
+
+  private finalizarReativacao(tipo: TipoItemExclusao): void {
+    this.fecharDetalhesPessoa();
+
+    if (tipo === 'cortador') {
+      this.buscarCortadores();
+      this.buscarCortadoresInativos();
+    } else {
+      this.buscarEnfestadores();
+      this.buscarEnfestadoresInativos();
+    }
+  }
+
   private excluirCortador(id: number | null): void {
     this.cortadorService.deletarCortador(id)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
           this.buscarCortadores();
+          this.buscarCortadoresInativos();
           this.modalExclusao = false;
           this.successCortador = false;
           this.cdr.detectChanges();
@@ -297,12 +375,76 @@ export class ConfigComponent implements OnInit {
       .subscribe({
         next: () => {
           this.buscarEnfestadores();
+          this.buscarEnfestadoresInativos();
           this.modalExclusao = false;
           this.successEnfestador = false;
           this.cdr.detectChanges();
         },
         error: (err) => console.error('Erro ao excluir enfestador:', err)
       });
+  }
+
+  // =======================================================================
+  // Edição de nome (cortador / enfestador)
+  // =======================================================================
+
+  iniciarEdicaoNome(): void {
+    if (!this.pessoaSelecionada) return;
+
+    this.nomeEditavel = this.pessoaSelecionada.nome;
+    this.editandoNomePessoa = true;
+    delete this.erros['nomeEditavel'];
+  }
+
+  cancelarEdicaoNome(): void {
+    this.editandoNomePessoa = false;
+    this.nomeEditavel = '';
+    delete this.erros['nomeEditavel'];
+  }
+
+  salvarNomeEditado(): void {
+    if (!this.pessoaSelecionada) return;
+
+    const nomeTratado = this.nomeEditavel.trim();
+
+    if (!nomeTratado) {
+      this.erros['nomeEditavel'] = 'Nome obrigatório';
+      return;
+    }
+    delete this.erros['nomeEditavel'];
+
+    if (this.pessoaSelecionada.tipo === 'cortador') {
+      this.cortadorService.atualizarCortador(this.pessoaSelecionada.id, { nome: nomeTratado })
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe({
+          next: (atualizado) => this.aplicarNomeAtualizado(atualizado.nome),
+          error: (err) => console.error('Erro ao atualizar cortador:', err)
+        });
+    } else {
+      this.enfestadorService.atualizarEnfestador(this.pessoaSelecionada.id, { nome: nomeTratado })
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe({
+          next: (atualizado) => this.aplicarNomeAtualizado(atualizado.nome),
+          error: (err) => console.error('Erro ao atualizar enfestador:', err)
+        });
+    }
+  }
+
+  private aplicarNomeAtualizado(novoNome: string): void {
+    if (!this.pessoaSelecionada) return;
+
+    this.pessoaSelecionada.nome = novoNome;
+    this.editandoNomePessoa = false;
+
+    if (this.pessoaSelecionada.tipo === 'cortador') {
+      this.buscarCortadores();
+      this.buscarCortadoresInativos();
+    } else {
+      this.buscarEnfestadores();
+      this.buscarEnfestadoresInativos();
+    }
+
+    this.cdr.detectChanges();
   }
 
   // =======================================================================

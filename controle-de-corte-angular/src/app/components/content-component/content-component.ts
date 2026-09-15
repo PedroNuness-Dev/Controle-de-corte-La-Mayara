@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, DestroyRef, HostListener, inject, OnInit } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
@@ -104,6 +104,14 @@ export class ContentComponent implements OnInit {
   modoCriacao = false;
   tipoLote: TipoLote = 'atual';
   novoCorte: CorteRequest = corteRequestVazio();
+
+  // ---------------------------------------------------------------------
+  // Mapeamento de ações ao pressionar teclas
+  // ---------------------------------------------------------------------
+  @HostListener('document:keydown.escape')
+  onEscape() {
+    this.corteSelecionado = null;
+  }
 
   // ---------------------------------------------------------------------
   // Validação
@@ -265,6 +273,8 @@ export class ContentComponent implements OnInit {
       corte.cortador?.id ?? null,
       corte.enfestador?.id ?? null
     );
+
+    if (!this.validarAtualizacao(corteParaAtualizar)) return;
 
     this.corteService.atualizarCorte(corte.id, corteParaAtualizar)
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -440,8 +450,12 @@ export class ContentComponent implements OnInit {
     idCortador: number | null,
     idEnfestador: number | null
   ): CorteUpdateRequest {
+
+    
+    const dataParaAtualizar = corte.dataDeCorte != null ? this.converterDataParaISO(corte.dataDeCorte) : null;
+
     return {
-      dataDeCorte: corte.dataDeCorte,
+      dataDeCorte: dataParaAtualizar,
       loteFormatado: corte.loteFormatado,
       nomeModelo: corte.nomeModelo,
       quantidadeTotal: corte.quantidadeTotal,

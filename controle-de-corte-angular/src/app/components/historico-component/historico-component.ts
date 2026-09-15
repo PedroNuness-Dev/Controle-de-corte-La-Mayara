@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, HostListener, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { finalize } from 'rxjs';
 import { CorteResponse } from '../../interfaces/corte/CorteResponse';
@@ -56,6 +56,11 @@ export class HistoricoComponent implements OnInit {
       next: (data) => { this.cortadores = data; this.cdr.detectChanges(); },
       error: (err) => { console.log(err); }
     });
+  }
+
+  @HostListener('document:keydown.escape')
+  onEscape() {
+    this.corteSelecionado = null;
   }
 
   validarAtualizacao(corte : CorteUpdateRequest) : boolean{
