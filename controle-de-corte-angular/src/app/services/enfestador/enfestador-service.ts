@@ -18,14 +18,26 @@ export class EnfestadorService {
   }
 
   buscarDetalhesEnfestadores() : Observable<EnfestadorOverview[]>{
-    return this.http.get<EnfestadorOverview[]>(`${this.url}/overview`);
+    return this.http.get<EnfestadorOverview[]>(`${this.url}/ativos/overview`);
+  }
+
+  buscarDetalhesEnfestadoresInativos() : Observable<EnfestadorOverview[]>{
+    return this.http.get<EnfestadorOverview[]>(`${this.url}/inativos/overview`);
   }
 
   cadastrarEnfestador(enfestador : EnfestadorRequest) : Observable<EnfestadorResponse>{
     return this.http.post<EnfestadorResponse>(`${this.url}`, enfestador);
   }
 
+  atualizarEnfestador(idEnfestador : number, enfestadorAtualizado : EnfestadorRequest) : Observable<EnfestadorOverview>{
+      return this.http.put<EnfestadorOverview>(`${this.url}/${idEnfestador}`, enfestadorAtualizado);
+    }
+
   deletarEnfestador(id : number | null){
-    return this.http.patch<void>(`${this.url}/${id}`, null)
+    return this.http.patch<void>(`${this.url}/desativar/${id}`, null)
+  }
+
+  ativarEnfestador(id : number | null){
+    return this.http.patch<void>(`${this.url}/ativar/${id}`, null)
   }
 }

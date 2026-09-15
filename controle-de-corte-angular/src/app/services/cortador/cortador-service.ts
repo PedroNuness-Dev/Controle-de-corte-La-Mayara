@@ -18,14 +18,26 @@ export class CortadorService {
   }
 
   buscarDetalhesCortadores() : Observable<CortadorOverview[]>{
-      return this.http.get<CortadorOverview[]>(`${this.url}/overview`);
-    }
+      return this.http.get<CortadorOverview[]>(`${this.url}/ativos/overview`);
+  }
+
+  buscarDetalhesCortadoresInativos() : Observable<CortadorOverview[]>{
+      return this.http.get<CortadorOverview[]>(`${this.url}/inativos/overview`);
+  }
 
   cadastrarCortador(cortador : CortadorRequest) : Observable<CortadorResponse>{
     return this.http.post<CortadorResponse>(`${this.url}`, cortador);
   }
 
+  atualizarCortador(idCortador : number, cortadorAtualizado : CortadorRequest) : Observable<CortadorOverview>{
+    return this.http.put<CortadorOverview>(`${this.url}/${idCortador}`, cortadorAtualizado);
+  }
+
   deletarCortador(id : number | null) : Observable<void>{
-    return this.http.patch<void>(`${this.url}/${id}`, null);
+    return this.http.patch<void>(`${this.url}/desativar/${id}`, null);
+  }
+
+  ativarCortador(id : number | null) : Observable<CortadorOverview>{
+    return this.http.patch<CortadorOverview>(`${this.url}/ativar/${id}`, null);
   }
 }
