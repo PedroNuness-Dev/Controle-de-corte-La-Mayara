@@ -1,26 +1,64 @@
 <div class="container">
 
   <div class="header-container">
+
     <div class="header-left">
+      <div class="page-title-group">
         <h1 class="title">{{pageSelected}}</h1>
-        <h3>Lote atual: <span style="color: green;">{{loteAtual}}</span></h3>
-        <form>
-            <div class="input-nome">
-                <img src="search.png" alt="" class="icon-search">
-                <input type="text" placeholder="Digite nome ou lote" class="input-busca" name="nome" [(ngModel)]="nomeParaBuscar" (keydown.enter)="buscarCortePorNomeOuLote()" required>
-            </div>
-        </form>
+        <div class="lote-badge">
+          <span class="material-icons-outlined">inventory_2</span>
+          Lote atual: <strong>{{loteAtual}}</strong>
+        </div>
+      </div>
+      <form>
+        <div class="input-nome">
+          <span class="material-icons-outlined icon-search">search</span>
+          <input type="text" placeholder="Digite nome ou lote" class="input-busca" name="nome" [(ngModel)]="nomeParaBuscar" (keydown.enter)="buscarCortePorNomeOuLote()" required>
+        </div>
+      </form>
     </div>
+
     <div class="header-center">
-        <h1 class="title">{{mesAtual}} {{anoAtual}}</h1>
+      <div class="data-atual">
+        <span class="data-dia">{{diaAtual}}</span>
+        <div class="data-divisor"></div>
+        <div class="data-texto">
+          <span class="data-mes">{{mesAtual}}</span>
+          <span class="data-rodape">{{diaSemanaAtual}} · {{anoAtual}}</span>
+        </div>
+      </div>
     </div>
+
     <div class="header-right">
-        <button type="button" class="btn-add-corte btn-header" (click)="abrirCriacao()">
-            <span class="material-icons-outlined">add</span> Adicionar corte
-        </button>
-        <span>Cortes registrados: {{relatorioDeCortes}}</span>
+      <button type="button" class="btn-add-corte btn-header" (click)="abrirCriacao()">
+        <span class="material-icons-outlined">add</span> Adicionar corte
+      </button>
+
+      <div class="stats-row">
+        <div class="stat-item stat-total">
+          <span class="stat-valor">{{ relatorioDeCortes?.quantidadeTotal ?? 0 }}</span>
+          <span class="stat-label">Total</span>
+        </div>
+        <div class="stat-item stat-pendente">
+          <span class="stat-valor">{{ relatorioDeCortes?.quantidadePendentes ?? 0 }}</span>
+          <span class="stat-label">Pendentes</span>
+        </div>
+        <div class="stat-item stat-enfestado">
+          <span class="stat-valor">{{ relatorioDeCortes?.quantidadeEnfestados ?? 0 }}</span>
+          <span class="stat-label">Enfestados</span>
+        </div>
+        <div class="stat-item stat-cortado">
+          <span class="stat-valor">{{ relatorioDeCortes?.quantidadeCortados ?? 0 }}</span>
+          <span class="stat-label">Cortados</span>
+        </div>
+        <div class="stat-item stat-cancelado">
+          <span class="stat-valor">{{ relatorioDeCortes?.quantidadeCancelados ?? 0 }}</span>
+          <span class="stat-label">Cancelados</span>
+        </div>
+      </div>
     </div>
-  </div> 
+
+  </div>
   <div class="lista-cortes">
 
     @if (telaCarregandoModal) {

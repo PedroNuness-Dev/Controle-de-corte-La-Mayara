@@ -16,6 +16,7 @@ import { CorteRequest } from '../../interfaces/corte/CorteRequest';
 import { CorteUpdateRequest } from '../../interfaces/corte/CorteUpdate';
 import { CortadorResponse } from '../../interfaces/cortador/CortadorResponse';
 import { EnfestadorResponse } from '../../interfaces/enfestador/EnfestadorResponse';
+import { QuantidadeDeCortes } from '../../interfaces/corte/QuantidadeDeCortesResponse';
 
 type StatusCorte = 'pendente' | 'enfestado' | 'cortado';
 type TipoPagina = 'Geral' | 'Pendentes' | 'Enfestados' | 'Cortados';
@@ -24,6 +25,12 @@ type TipoLote = 'atual' | 'novo';
 const MESES = [
   'JANEIRO', 'FEVEREIRO', 'MARÇO', 'ABRIL', 'MAIO', 'JUNHO',
   'JULHO', 'AGOSTO', 'SETEMBRO', 'OUTUBRO', 'NOVEMBRO', 'DEZEMBRO'
+] as const;
+
+// Novo: nomes dos dias da semana para exibir no cartão de data do header
+const DIAS_SEMANA = [
+  'DOMINGO', 'SEGUNDA-FEIRA', 'TERÇA-FEIRA', 'QUARTA-FEIRA',
+  'QUINTA-FEIRA', 'SEXTA-FEIRA', 'SÁBADO'
 ] as const;
 
 const STATUS_POR_PAGINA: Partial<Record<TipoPagina, StatusCorte>> = {
@@ -67,12 +74,16 @@ export class ContentComponent implements OnInit {
   readonly anoAtual = new Date().getFullYear();
   readonly mesAtual = MESES[new Date().getMonth()];
 
+  // Novo: usados no cartão de data do header (dia do mês + dia da semana)
+  readonly diaAtual = new Date().getDate();
+  readonly diaSemanaAtual = DIAS_SEMANA[new Date().getDay()];
+
   // ---------------------------------------------------------------------
   // Estado da listagem principal
   // ---------------------------------------------------------------------
   pageSelected: TipoPagina = 'Geral';
   cortesDoMes: CorteResponse[] = [];
-  relatorioDeCortes = 0;
+  relatorioDeCortes : QuantidadeDeCortes | null = null;
   loteAtual = '';
   nomeParaBuscar = '';
   telaCarregandoModal = false;
@@ -147,7 +158,7 @@ export class ContentComponent implements OnInit {
     this.relatorioService.buscarQuantidadeDeCortesDoMes(mes, ano)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: (data) => (this.relatorioDeCortes = data.quantidade),
+        next: (data) => {this.relatorioDeCortes = data; this.cdr.detectChanges();},
         error: (err) => console.error('Erro ao buscar relatório do mês:', err)
       });
   }
@@ -261,6 +272,7 @@ export class ContentComponent implements OnInit {
         next: (data) => {
           this.substituirCorteNaLista(data);
           this.limparSelecaoDeEdicao();
+          this.buscarQuantidadeDeCortesDoMes();
           this.cdr.detectChanges();
         },
         error: (err) => console.error('Erro ao atualizar corte:', err)
@@ -282,6 +294,7 @@ export class ContentComponent implements OnInit {
         next: (data) => {
           this.substituirCorteNaLista(data);
           this.limparSelecaoDeEdicao();
+          this.buscarQuantidadeDeCortesDoMes();
           this.cdr.detectChanges();
         },
         error: (err) => console.error('Erro ao ativar corte:', err)
@@ -389,6 +402,7 @@ export class ContentComponent implements OnInit {
             this.corteAdicionadoRecentemente.corteStatus = 'CANCELADO';
           }
           this.buscarCortesDoMesPorStatus();
+          this.buscarQuantidadeDeCortesDoMes();
           this.limparSelecaoDeEdicao();
           this.opcoesCardVisiveis = false;
         },
