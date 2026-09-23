@@ -25,9 +25,9 @@ public class RelatorioService {
         LocalDate diaPrimeiro = LocalDate.of(ano, mesParaBuscar, 1);
         LocalDate diaUltimo = diaPrimeiro.withDayOfMonth(diaPrimeiro.lengthOfMonth());
 
-        Integer quantidadeCortesRegistrados = corteRepository.quantidadeCortesRegistradosNoMes(diaPrimeiro,diaUltimo);
+        QuantidadeCortesMesResponse quantidadeCortesRegistrados = corteRepository.quantidadeCortesRegistradosNoMes(diaPrimeiro,diaUltimo);
 
-        return new QuantidadeCortesMesResponse(quantidadeCortesRegistrados);
+        return quantidadeCortesRegistrados;
     }
 
     private Integer verificarMes(Integer mes){
