@@ -15,9 +15,10 @@
     .header-container{
         display: grid;
         grid-template-columns: 1fr auto 1fr;
-        align-items: start;
+        align-items: center;
         width: 100%;
-        padding-bottom: 40px;
+        padding-bottom: 24px;
+        margin-bottom: 30px;        
         gap: 20px;
     }
 
@@ -25,18 +26,15 @@
         padding-left: 40px;
         min-width: 0;
         justify-self: start;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
     }
 
-    .header-left h3{
-        margin: 0;
-        font-size: 30px;
-    }
-
-    .header-center{
-        justify-self: center;
-        text-align: center;
-        align-self: baseline;
-        white-space: nowrap;
+    .page-title-group{
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
     }
 
     .title{
@@ -45,20 +43,88 @@
         margin-top: 10px;
     }
 
+    /* --- Selo do lote atual --- */
+    .lote-badge{
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        width: fit-content;
+
+        color: #555;
+
+        font-size: 19px;
+        font-weight: 600;
+
+        .material-icons-outlined{
+            font-size: 21px;
+            color: #1ca859;
+        }
+
+        strong{
+            color: #1ca859;
+            font-weight: 800;
+        }
+    }
+
+    /* --- Data no centro: tipografia com um contorno bem sutil --- */
+    .header-center{
+        justify-self: center;
+    }
+
+    .data-atual{
+        display: flex;
+        align-items: center;
+        gap: 20px;
+
+        padding: 14px 32px;
+        border: 1px solid #ececec;
+        border-radius: 14px;
+        background-color: #fafafa;
+    }
+
+    .data-dia{
+        font-size: 44px;
+        font-weight: 800;
+        line-height: 1;
+        color: #1ca859;
+    }
+
+    .data-divisor{
+        width: 1px;
+        height: 42px;
+        background-color: #e2e2e2;
+    }
+
+    .data-texto{
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .data-mes{
+        font-size: 16px;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        color: #333;
+    }
+
+    .data-rodape{
+        font-size: 13px;
+        font-weight: 600;
+        letter-spacing: 0.3px;
+        text-transform: uppercase;
+        color: #9a9a9a;
+    }
+
     .header-right{
         display: flex;
         flex-direction: column;
         gap: 12px;
-        padding-top: 20px;
         padding-right: 40px;
         align-items: center;
-        font-size: 20px;
         justify-self: end;
         min-width: 0;
-    }
-
-    .header-right span{
-        font-weight: 600;
     }
 
     .input-nome {
@@ -88,8 +154,8 @@
         left: 10px;
         top: 50%;
         transform: translateY(-50%);
-        width: 18px;
-        opacity: 0.8;
+        font-size: 18px;
+        opacity: 0.6;
     }
 
     .btn-header{
@@ -124,6 +190,74 @@
     .btn-header .material-icons-outlined{
         font-size: 20px;
         flex-shrink: 0;
+    }
+
+    /* --- Linha fina de estatísticas por status, sem caixas --- */
+    .stats-row{
+        display: flex;
+        align-items: center;
+    }
+
+    .stat-item{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1px;
+
+        padding: 0 12px;
+        border-right: 1px solid #e5e5e5;
+    }
+
+    .stat-item:last-child{
+        border-right: none;
+    }
+
+    .stat-total{
+        background-color: rgba(28, 168, 89, 0.1);
+        border-right: none;
+        border-radius: 8px;
+        padding: 6px 16px;
+        margin-right: 8px;
+    }
+
+    .stat-total .stat-valor{
+        color: #1ca859;
+        font-size: 19px;
+    }
+
+    .stat-total .stat-label{
+        color: #1ca859;
+    }
+
+    .stat-valor{
+        font-size: 17px;
+        font-weight: 800;
+        line-height: 1;
+        color: #333;
+    }
+
+    .stat-label{
+        font-size: 9px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+        color: #9a9a9a;
+    }
+
+    .stat-pendente .stat-valor{
+        color: var(--gray-primary-color);
+    }
+
+    .stat-enfestado .stat-valor{
+        color: var(--orange-primary-color);
+    }
+
+    .stat-cortado .stat-valor{
+        color: var(--green-primary-color);
+    }
+
+    .stat-cancelado .stat-valor{
+        color: rgb(148, 17, 17);
     }
 
     .lista-cortes {
@@ -762,14 +896,40 @@
         .header-left{
             padding-left: 20px;
             min-width: 220px;
+            gap: 10px;
         }
 
-        .header-left h3{
-            font-size: 22px;
+        .lote-badge{
+            font-size: 15px;
+
+            .material-icons-outlined{
+                font-size: 17px;
+            }
         }
 
         .header-center{
-            min-width: 180px;
+            min-width: 200px;
+        }
+
+        .data-atual{
+            padding: 10px 20px;
+            gap: 10px;
+        }
+
+        .data-mes{
+            font-size: 13px;
+        }
+
+        .data-dia{
+            font-size: 28px;
+        }
+
+        .data-divisor{
+            height: 24px;
+        }
+
+        .data-rodape{
+            font-size: 12px;
         }
 
         .title{
@@ -779,8 +939,28 @@
         .header-right{
             min-width: 180px;
             padding-right: 20px;
-            padding-top: 10px;
+            gap: 8px;
+        }
+
+        .stat-item{
+            padding: 0 8px;
+        }
+
+        .stat-total{
+            padding: 4px 10px;
+            margin-right: 4px;
+        }
+
+        .stat-total .stat-valor{
             font-size: 15px;
+        }
+
+        .stat-valor{
+            font-size: 14px;
+        }
+
+        .stat-label{
+            font-size: 8px;
         }
 
         .input-nome input{
@@ -789,7 +969,7 @@
         }
 
         .icon-search{
-            width: 15px;
+            font-size: 15px;
         }
 
         .btn-header{

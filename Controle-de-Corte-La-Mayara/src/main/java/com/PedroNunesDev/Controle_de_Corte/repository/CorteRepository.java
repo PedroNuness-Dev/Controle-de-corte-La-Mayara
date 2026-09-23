@@ -1,5 +1,6 @@
 package com.PedroNunesDev.Controle_de_Corte.repository;
 
+import com.PedroNunesDev.Controle_de_Corte.dto.response.QuantidadeCortesMesResponse;
 import com.PedroNunesDev.Controle_de_Corte.enums.CorteStatus;
 import com.PedroNunesDev.Controle_de_Corte.model.Corte;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -44,8 +45,14 @@ public interface CorteRepository extends JpaRepository<Corte,Long> {
     Long buscarQuantidadeDeCortesPorCortador(@Param("nome") String nome);
 
     @Query("""
-    SELECT COUNT(c) FROM Corte c
+    SELECT
+     COUNT(c),
+     COALESCE(SUM(CASE WHEN c.corteStatus = 'PENDENTE' THEN 1 ELSE 0 END),0),
+     COALESCE(SUM(CASE WHEN c.corteStatus = 'ENFESTADO' THEN 1 ELSE 0 END),0),
+     COALESCE(SUM(CASE WHEN c.corteStatus = 'CORTADO' THEN 1 ELSE 0 END),0),
+     COALESCE(SUM(CASE WHEN c.corteStatus = 'CANCELADO' THEN 1 ELSE 0 END),0)
+     FROM Corte c
     WHERE c.dataDeRegistro BETWEEN :diaPrimeiro AND :diaUltimo
 """)
-    Integer quantidadeCortesRegistradosNoMes(@Param("diaPrimeiro") LocalDate diaPrimeiro, @Param("diaUltimo") LocalDate diaUltimo);
+    QuantidadeCortesMesResponse quantidadeCortesRegistradosNoMes(@Param("diaPrimeiro") LocalDate diaPrimeiro, @Param("diaUltimo") LocalDate diaUltimo);
 }
