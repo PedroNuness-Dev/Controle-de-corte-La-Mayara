@@ -1,2 +1,3 @@
 config/mysql.env
 config/backend.env
+backups/
