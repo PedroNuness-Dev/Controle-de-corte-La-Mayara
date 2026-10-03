@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -52,13 +53,19 @@ public class EnfestadorService {
     }
 
     @Transactional(readOnly = true)
-    public List<EnfestadorOverview> buscarDetalhesDosEnfestadoresAtivos(){
+    public List<EnfestadorOverview> buscarDetalhesDosEnfestadoresAtivos(LocalDate dataInicial, LocalDate dataFinal){
 
-        log.info("Iniciando busca dos detalhes de todos os enfestadores ativos cadastrados no sistema");
+        if (dataInicial == null || dataFinal == null){
+            log.info("iniciando busca de todos os detalhes dos enfestadores ativos cadastrados no sistema");
 
-        List<EnfestadorOverview> enfestadores = enfestadorRepository.buscarEnfestadoresESuasQuantidadesDeCortes();
+            return enfestadorRepository.buscarEnfestadoresESuasQuantidadesDeCortes();
+        }else{
+            log.info("iniciando busca de todos os detalhes dos enfestadores ativos cadastrados no sistema por data");
 
-        return enfestadores;
+            if (dataInicial.isAfter(dataFinal)) throw new IllegalArgumentException("Data inicial não pode ser posterior a data final");
+
+            return enfestadorRepository.buscarEnfestadoresESuasQuantidadesDeCortesPorData(dataInicial,dataFinal);
+        }
     }
 
     @Transactional(readOnly = true)

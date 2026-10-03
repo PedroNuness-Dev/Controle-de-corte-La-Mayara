@@ -6,11 +6,13 @@ import com.PedroNunesDev.Controle_de_Corte.dto.response.CortadorOverview;
 import com.PedroNunesDev.Controle_de_Corte.exception.ResourceNotFoundException;
 import com.PedroNunesDev.Controle_de_Corte.model.Cortador;
 import com.PedroNunesDev.Controle_de_Corte.repository.CortadorRepository;
+import com.PedroNunesDev.Controle_de_Corte.utils.ValidacaoDatas;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -19,6 +21,7 @@ import java.util.List;
 public class CortadorService {
 
     private final CortadorRepository cortadorRepository;
+    private final ValidacaoDatas validacaoDatas;
 
     @Transactional(readOnly = true)
     public CortadorDtoResponse buscarCortadorPorId(Long id){
@@ -53,11 +56,19 @@ public class CortadorService {
     }
 
     @Transactional(readOnly = true)
-    public List<CortadorOverview> buscarDetalhesDosCortadoresAtivos(){
+    public List<CortadorOverview> buscarDetalhesDosCortadoresAtivos(LocalDate dataInicial, LocalDate dataFinal){
 
-        log.info("iniciando busca de todos os detalhes dos cortadores ativos cadastrados no sistema");
+        if (dataInicial == null || dataFinal == null){
+            log.info("iniciando busca de todos os detalhes dos cortadores ativos cadastrados no sistema");
 
-        return cortadorRepository.buscarCortadoresESuasQuantidadesDeCortes();
+            return cortadorRepository.buscarCortadoresESuasQuantidadesDeCortes();
+        }else{
+            log.info("iniciando busca de todos os detalhes dos cortadores ativos cadastrados no sistema por data");
+
+            if (dataInicial.isAfter(dataFinal)) throw new IllegalArgumentException("Data inicial não pode ser posterior a data final");
+
+            return cortadorRepository.buscarCortadoresESuasQuantidadesDeCortesPorData(dataInicial,dataFinal);
+        }
     }
 
     @Transactional
