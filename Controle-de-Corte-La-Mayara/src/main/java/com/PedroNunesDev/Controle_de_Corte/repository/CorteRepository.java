@@ -14,6 +14,7 @@ public interface CorteRepository extends JpaRepository<Corte,Long> {
 
     @Query("SELECT c FROM Corte c" +
             " WHERE c.dataDeRegistro BETWEEN :diaPrimeiro AND :diaUltimo" +
+            " OR (c.corteStatus <> CORTADO AND c.corteStatus <> CANCELADO)" +
             " ORDER BY c.nomeModelo ASC")
     List<Corte> buscarPorMes(@Param("diaPrimeiro") LocalDate diaPrimeiro,@Param("diaUltimo") LocalDate diaUltimo);
 
