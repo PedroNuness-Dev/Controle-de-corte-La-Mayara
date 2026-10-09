@@ -30,23 +30,34 @@ public class RelatorioService {
         LocalDate diaPrimeiro = LocalDate.of(ano, mes, 1);
         LocalDate diaUltimo = diaPrimeiro.withDayOfMonth(diaPrimeiro.lengthOfMonth());
 
-        return corteRepository.quantidadeCortesRegistradosNoMes(diaPrimeiro,diaUltimo);
+        return corteRepository.quantidadeCortesRegistrados(diaPrimeiro,diaUltimo);
     }
 
     public AnaliseCortesResponse buscarAnaliseDeCortesEColaboradores(LocalDate dataInicial, LocalDate dataFinal){
 
         if (dataInicial.isAfter(dataFinal)) throw new IllegalArgumentException("Data inicial não pode ser posterior a data final");
 
-        QuantidadeCortesMesResponse quantidadeCortesMes = corteRepository.quantidadeCortesRegistradosNoMes(dataInicial, dataFinal);
-        List<CortadorOverview> cortadorOverview = cortadorService.buscarDetalhesDosCortadoresAtivos(dataInicial,dataFinal);
-        List<EnfestadorOverview> enfestadorOverview = enfestadorService.buscarDetalhesDosEnfestadoresAtivos(dataInicial,dataFinal);
+        return construirAnaliseDeCortes(dataInicial,dataFinal);
+    }
+    
+    public AnaliseCortesResponse construirAnaliseDeCortes(LocalDate dataInicial, LocalDate dataFinal){
+        
+        QuantidadeCortesMesResponse quantidadeCortesMes = corteRepository.quantidadeCortesRegistrados(dataInicial, dataFinal);
+        Long quantidadeDePecas = corteRepository.quantidadeDePecasRegistrados(dataInicial,dataFinal);
+        List<CortadorOverview> cortadoresAtivos = cortadorService.buscarDetalhesDosCortadoresAtivos(dataInicial,dataFinal);
+        List<EnfestadorOverview> enfestadoresAtivos = enfestadorService.buscarDetalhesDosEnfestadoresAtivos(dataInicial,dataFinal);
+        List<CortadorOverview> cortadoresInativos = cortadorService.buscarDetalhesDosCortadoresInativos(dataInicial,dataFinal);
+        List<EnfestadorOverview> enfestadoresInativos = enfestadorService.buscarDetalhesDosEnfestadoresInativos(dataInicial,dataFinal);
 
         return new AnaliseCortesResponse(
                 dataInicial,
                 dataFinal,
                 quantidadeCortesMes,
-                cortadorOverview,
-                enfestadorOverview
+                quantidadeDePecas,
+                cortadoresAtivos,
+                cortadoresInativos,
+                enfestadoresAtivos,
+                enfestadoresInativos
         );
     }
 }
