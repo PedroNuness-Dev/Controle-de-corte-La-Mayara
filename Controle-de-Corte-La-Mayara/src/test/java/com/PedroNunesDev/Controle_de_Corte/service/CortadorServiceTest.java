@@ -6,6 +6,7 @@ import com.PedroNunesDev.Controle_de_Corte.dto.response.CortadorOverview;
 import com.PedroNunesDev.Controle_de_Corte.exception.ResourceNotFoundException;
 import com.PedroNunesDev.Controle_de_Corte.model.Cortador;
 import com.PedroNunesDev.Controle_de_Corte.repository.CortadorRepository;
+import com.PedroNunesDev.Controle_de_Corte.utils.ValidacaoDatas;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -26,8 +27,15 @@ class CortadorServiceTest {
     @Mock
     private CortadorRepository cortadorRepository;
 
+    @Mock
+    private ValidacaoDatas validacaoDatas;
+
     @InjectMocks
     private CortadorService cortadorService;
+
+    // ------------------------------------------------------------------
+    // buscarCortadorPorId
+    // ------------------------------------------------------------------
 
     @Test
     void deveBuscarCortadorPorIdComSucesso() {
@@ -59,6 +67,10 @@ class CortadorServiceTest {
 
         assertEquals("Cortador com ID 99 não encontrado", exception.getMessage());
     }
+
+    // ------------------------------------------------------------------
+    // buscarCortadoresAtivos
+    // ------------------------------------------------------------------
 
     @Test
     void deveRetornarListaDeCortadoresAtivos() {
@@ -95,30 +107,9 @@ class CortadorServiceTest {
         assertTrue(response.isEmpty());
     }
 
-    @Test
-    void deveRetornarDetalhesDosCortadoresInativos() {
-        List<CortadorOverview> overviews = List.of(mock(CortadorOverview.class));
-
-        when(cortadorRepository.buscarCortadoresInativosESuasQuantidadesDeCortes())
-                .thenReturn(overviews);
-
-        List<CortadorOverview> response = cortadorService.buscarDetalhesDosCortadoresInativos();
-
-        assertSame(overviews, response);
-
-        verify(cortadorRepository).buscarCortadoresInativosESuasQuantidadesDeCortes();
-    }
-
-    @Test
-    void deveRetornarListaVaziaQuandoNaoHouverCortadoresInativos() {
-        when(cortadorRepository.buscarCortadoresInativosESuasQuantidadesDeCortes())
-                .thenReturn(List.of());
-
-        List<CortadorOverview> response = cortadorService.buscarDetalhesDosCortadoresInativos();
-
-        assertNotNull(response);
-        assertTrue(response.isEmpty());
-    }
+    // ------------------------------------------------------------------
+    // buscarDetalhesDosCortadoresAtivos
+    // ------------------------------------------------------------------
 
     @Test
     void deveBuscarDetalhesSemFiltroQuandoAmbasAsDatasForemNulas() {
@@ -133,6 +124,7 @@ class CortadorServiceTest {
 
         verify(cortadorRepository).buscarCortadoresESuasQuantidadesDeCortes();
         verify(cortadorRepository, never()).buscarCortadoresESuasQuantidadesDeCortesPorData(any(), any());
+        verifyNoInteractions(validacaoDatas);
     }
 
     @Test
@@ -149,6 +141,7 @@ class CortadorServiceTest {
 
         verify(cortadorRepository).buscarCortadoresESuasQuantidadesDeCortes();
         verify(cortadorRepository, never()).buscarCortadoresESuasQuantidadesDeCortesPorData(any(), any());
+        verifyNoInteractions(validacaoDatas);
     }
 
     @Test
@@ -165,6 +158,7 @@ class CortadorServiceTest {
 
         verify(cortadorRepository).buscarCortadoresESuasQuantidadesDeCortes();
         verify(cortadorRepository, never()).buscarCortadoresESuasQuantidadesDeCortesPorData(any(), any());
+        verifyNoInteractions(validacaoDatas);
     }
 
     @Test
@@ -182,6 +176,7 @@ class CortadorServiceTest {
 
         assertSame(overviews, response);
 
+        verify(validacaoDatas).validarDatas(dataInicial, dataFinal);
         verify(cortadorRepository).buscarCortadoresESuasQuantidadesDeCortesPorData(dataInicial, dataFinal);
         verify(cortadorRepository, never()).buscarCortadoresESuasQuantidadesDeCortes();
     }
@@ -200,6 +195,7 @@ class CortadorServiceTest {
 
         assertSame(overviews, response);
 
+        verify(validacaoDatas).validarDatas(data, data);
         verify(cortadorRepository).buscarCortadoresESuasQuantidadesDeCortesPorData(data, data);
     }
 
@@ -208,6 +204,9 @@ class CortadorServiceTest {
         LocalDate dataInicial = LocalDate.of(2025, 12, 31);
         LocalDate dataFinal = LocalDate.of(2025, 1, 1);
 
+        doThrow(new IllegalArgumentException("Data inicial não pode ser posterior a data final"))
+                .when(validacaoDatas).validarDatas(dataInicial, dataFinal);
+
         IllegalArgumentException exception = assertThrows(
                 IllegalArgumentException.class,
                 () -> cortadorService.buscarDetalhesDosCortadoresAtivos(dataInicial, dataFinal)
@@ -215,8 +214,150 @@ class CortadorServiceTest {
 
         assertEquals("Data inicial não pode ser posterior a data final", exception.getMessage());
 
+        verify(validacaoDatas).validarDatas(dataInicial, dataFinal);
         verifyNoInteractions(cortadorRepository);
     }
+
+    // ------------------------------------------------------------------
+    // buscarDetalhesDosCortadoresInativos
+    // ------------------------------------------------------------------
+
+    @Test
+    void deveBuscarDetalhesInativosSemFiltroQuandoAmbasAsDatasForemNulas() {
+        List<CortadorOverview> overviews = List.of(mock(CortadorOverview.class));
+
+        when(cortadorRepository.buscarCortadoresInativosESuasQuantidadesDeCortes())
+                .thenReturn(overviews);
+
+        List<CortadorOverview> response = cortadorService.buscarDetalhesDosCortadoresInativos(null, null);
+
+        assertSame(overviews, response);
+
+        verify(cortadorRepository).buscarCortadoresInativosESuasQuantidadesDeCortes();
+        verify(cortadorRepository, never()).buscarCortadoresInativosESuasQuantidadesDeCortesPorData(any(), any());
+        verifyNoInteractions(validacaoDatas);
+    }
+
+    @Test
+    void deveBuscarDetalhesInativosSemFiltroQuandoApenasDataInicialForNula() {
+        List<CortadorOverview> overviews = List.of(mock(CortadorOverview.class));
+
+        when(cortadorRepository.buscarCortadoresInativosESuasQuantidadesDeCortes())
+                .thenReturn(overviews);
+
+        List<CortadorOverview> response =
+                cortadorService.buscarDetalhesDosCortadoresInativos(null, LocalDate.of(2025, 12, 31));
+
+        assertSame(overviews, response);
+
+        verify(cortadorRepository).buscarCortadoresInativosESuasQuantidadesDeCortes();
+        verify(cortadorRepository, never()).buscarCortadoresInativosESuasQuantidadesDeCortesPorData(any(), any());
+        verifyNoInteractions(validacaoDatas);
+    }
+
+    @Test
+    void deveBuscarDetalhesInativosSemFiltroQuandoApenasDataFinalForNula() {
+        List<CortadorOverview> overviews = List.of(mock(CortadorOverview.class));
+
+        when(cortadorRepository.buscarCortadoresInativosESuasQuantidadesDeCortes())
+                .thenReturn(overviews);
+
+        List<CortadorOverview> response =
+                cortadorService.buscarDetalhesDosCortadoresInativos(LocalDate.of(2025, 1, 1), null);
+
+        assertSame(overviews, response);
+
+        verify(cortadorRepository).buscarCortadoresInativosESuasQuantidadesDeCortes();
+        verify(cortadorRepository, never()).buscarCortadoresInativosESuasQuantidadesDeCortesPorData(any(), any());
+        verifyNoInteractions(validacaoDatas);
+    }
+
+    @Test
+    void deveBuscarDetalhesInativosPorDataQuandoAmbasAsDatasForemInformadas() {
+        LocalDate dataInicial = LocalDate.of(2025, 1, 1);
+        LocalDate dataFinal = LocalDate.of(2025, 12, 31);
+
+        List<CortadorOverview> overviews = List.of(mock(CortadorOverview.class));
+
+        when(cortadorRepository.buscarCortadoresInativosESuasQuantidadesDeCortesPorData(dataInicial, dataFinal))
+                .thenReturn(overviews);
+
+        List<CortadorOverview> response =
+                cortadorService.buscarDetalhesDosCortadoresInativos(dataInicial, dataFinal);
+
+        assertSame(overviews, response);
+
+        verify(validacaoDatas).validarDatas(dataInicial, dataFinal);
+        verify(cortadorRepository).buscarCortadoresInativosESuasQuantidadesDeCortesPorData(dataInicial, dataFinal);
+        verify(cortadorRepository, never()).buscarCortadoresInativosESuasQuantidadesDeCortes();
+    }
+
+    @Test
+    void devePermitirBuscaDeInativosPorDataQuandoDataInicialForIgualADataFinal() {
+        LocalDate data = LocalDate.of(2025, 6, 15);
+
+        List<CortadorOverview> overviews = List.of(mock(CortadorOverview.class));
+
+        when(cortadorRepository.buscarCortadoresInativosESuasQuantidadesDeCortesPorData(data, data))
+                .thenReturn(overviews);
+
+        List<CortadorOverview> response =
+                cortadorService.buscarDetalhesDosCortadoresInativos(data, data);
+
+        assertSame(overviews, response);
+
+        verify(validacaoDatas).validarDatas(data, data);
+        verify(cortadorRepository).buscarCortadoresInativosESuasQuantidadesDeCortesPorData(data, data);
+    }
+
+    @Test
+    void deveLancarExcecaoAoBuscarInativosQuandoDataInicialForPosteriorADataFinal() {
+        LocalDate dataInicial = LocalDate.of(2025, 12, 31);
+        LocalDate dataFinal = LocalDate.of(2025, 1, 1);
+
+        doThrow(new IllegalArgumentException("Data inicial não pode ser posterior a data final"))
+                .when(validacaoDatas).validarDatas(dataInicial, dataFinal);
+
+        IllegalArgumentException exception = assertThrows(
+                IllegalArgumentException.class,
+                () -> cortadorService.buscarDetalhesDosCortadoresInativos(dataInicial, dataFinal)
+        );
+
+        assertEquals("Data inicial não pode ser posterior a data final", exception.getMessage());
+
+        verify(validacaoDatas).validarDatas(dataInicial, dataFinal);
+        verifyNoInteractions(cortadorRepository);
+    }
+
+    @Test
+    void deveRetornarListaVaziaQuandoNaoHouverCortadoresInativosSemFiltro() {
+        when(cortadorRepository.buscarCortadoresInativosESuasQuantidadesDeCortes())
+                .thenReturn(List.of());
+
+        List<CortadorOverview> response = cortadorService.buscarDetalhesDosCortadoresInativos(null, null);
+
+        assertNotNull(response);
+        assertTrue(response.isEmpty());
+    }
+
+    @Test
+    void deveRetornarListaVaziaQuandoNaoHouverCortadoresInativosNoPeriodo() {
+        LocalDate dataInicial = LocalDate.of(2025, 1, 1);
+        LocalDate dataFinal = LocalDate.of(2025, 12, 31);
+
+        when(cortadorRepository.buscarCortadoresInativosESuasQuantidadesDeCortesPorData(dataInicial, dataFinal))
+                .thenReturn(List.of());
+
+        List<CortadorOverview> response =
+                cortadorService.buscarDetalhesDosCortadoresInativos(dataInicial, dataFinal);
+
+        assertNotNull(response);
+        assertTrue(response.isEmpty());
+    }
+
+    // ------------------------------------------------------------------
+    // cadastrarCortador
+    // ------------------------------------------------------------------
 
     @Test
     void deveCadastrarCortadorComSucesso() {
@@ -260,6 +401,9 @@ class CortadorServiceTest {
         assertTrue(cortadorCapturado.getAtivo());
     }
 
+    // ------------------------------------------------------------------
+    // atualizarCortador
+    // ------------------------------------------------------------------
 
     @Test
     void deveAtualizarCortadorComSucesso() {
@@ -297,6 +441,9 @@ class CortadorServiceTest {
         verify(cortadorRepository, never()).save(any());
     }
 
+    // ------------------------------------------------------------------
+    // ativarCortador
+    // ------------------------------------------------------------------
 
     @Test
     void deveAtivarCortadorComSucesso() {
@@ -328,6 +475,9 @@ class CortadorServiceTest {
         verify(cortadorRepository, never()).save(any());
     }
 
+    // ------------------------------------------------------------------
+    // desativarCortador
+    // ------------------------------------------------------------------
 
     @Test
     void deveDesativarCortadorComSucesso() {
@@ -358,6 +508,10 @@ class CortadorServiceTest {
 
         verify(cortadorRepository, never()).save(any());
     }
+
+    // ------------------------------------------------------------------
+    // helpers
+    // ------------------------------------------------------------------
 
     private Cortador criarCortadorMockParaOverview(Long id, String nome, int quantidadeDeCortes, Boolean ativo) {
         Cortador cortador = mock(Cortador.class);

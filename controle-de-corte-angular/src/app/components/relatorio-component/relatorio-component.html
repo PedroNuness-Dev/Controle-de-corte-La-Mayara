@@ -1,0 +1,83 @@
+<div class="principal">
+
+    <div class="header-busca">
+        <div class="header-titulo">
+            <span class="material-icons-outlined icon-titulo">assessment</span>
+            <div>
+                <h1>Relatórios</h1>
+                <p>Gere o relatório de cortes por período</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="secao-resultados">
+        <span class="secao-label">Relatório de cortes</span>
+    </div>
+
+    <div class="card-filtro">
+        <div class="campo">
+            <label for="dataInicial">Data inicial</label>
+            <div class="input-wrapper">
+                <span class="material-icons-outlined icon-calendario">event</span>
+                <input id="dataInicial" type="date" class="input-date" [(ngModel)]="dataInicial" />
+            </div>
+        </div>
+
+        <div class="campo">
+            <label for="dataFinal">Data final</label>
+            <div class="input-wrapper">
+                <span class="material-icons-outlined icon-calendario">event</span>
+                <input id="dataFinal" type="date" class="input-date" [(ngModel)]="dataFinal" />
+            </div>
+        </div>
+
+        <div class="acoes">
+            <button class="btn-search" (click)="visualizar()" [disabled]="carregando()">
+                <span class="material-icons-outlined">visibility</span>
+                Visualizar
+            </button>
+            <button class="btn-download" (click)="baixar()" [disabled]="carregando()">
+                <span class="material-icons-outlined">download</span>
+                Baixar PDF
+            </button>
+        </div>
+    </div>
+
+    @if (erro()) {
+        <p class="mensagem-erro">
+            <span class="material-icons-outlined">error_outline</span>
+            {{ erro() }}
+        </p>
+    }
+
+    @if (previewUrl(); as url) {
+        <div class="preview">
+            <div class="preview-barra">
+                <span class="preview-titulo">
+                    <span class="material-icons-outlined">picture_as_pdf</span>
+                    Pré-visualização
+                </span>
+                <button class="btn-fechar" (click)="fecharPreview()">
+                    <span class="material-icons-outlined">close</span>
+                    Fechar
+                </button>
+            </div>
+            <iframe class="preview-frame" [src]="url" title="Pré-visualização do relatório de cortes"></iframe>
+        </div>
+    } @else if (!carregando() && !erro()) {
+        <div class="empty-message">
+            <span class="material-icons-outlined empty-icon">description</span>
+            <p>Escolha o período e clique em <strong>Visualizar</strong> ou <strong>Baixar PDF</strong>.</p>
+        </div>
+    }
+
+</div>
+
+@if (carregando()) {
+    <div class="loading-overlay">
+        <div class="spinner-container">
+            <div class="spinner"></div>
+            <p class="loading-text">Gerando relatório...</p>
+        </div>
+    </div>
+}
