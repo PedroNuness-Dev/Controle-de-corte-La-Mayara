@@ -66,9 +66,20 @@ public class CortadorController {
     }
 
     @GetMapping("/inativos/overview")
-    public ResponseEntity<List<CortadorOverview>> buscarDetalhesDosCortadoresInativos(){
+    public ResponseEntity<List<CortadorOverview>> buscarDetalhesDosCortadoresInativos(
+            @Parameter(
+                    description = "Data inicial para realizar a busca dos detalhes dos cortadores inativos",
+                    example = "2026-01-01"
+            )
+            @RequestParam(required = false) LocalDate dataInicial,
+            @Parameter(
+                    description = "Data final para realizar a busca dos detalhes dos cortadores inativos",
+                    example = "2026-01-01"
+            )
+            @RequestParam(required = false) LocalDate dataFinal
+    ){
 
-        List<CortadorOverview> responses = cortadorService.buscarDetalhesDosCortadoresInativos();
+        List<CortadorOverview> responses = cortadorService.buscarDetalhesDosCortadoresInativos(dataInicial,dataFinal);
 
         return ResponseEntity.ok(responses);
     }

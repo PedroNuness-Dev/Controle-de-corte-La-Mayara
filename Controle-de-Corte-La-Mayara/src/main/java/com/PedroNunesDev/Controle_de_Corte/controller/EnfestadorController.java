@@ -74,9 +74,20 @@ public class EnfestadorController {
     }
 
     @GetMapping("/inativos/overview")
-    public ResponseEntity<List<EnfestadorOverview>> buscarDetalhesDosEnfestadoresInativos(){
+    public ResponseEntity<List<EnfestadorOverview>> buscarDetalhesDosEnfestadoresInativos(
+            @Parameter(
+                    description = "Data inicial para realizar a busca dos detalhes dos enfestadores ativos",
+                    example = "2026-01-01"
+            )
+            @RequestParam(required = false) LocalDate dataInicial,
+            @Parameter(
+                    description = "Data final para realizar a busca dos detalhes dos enfestadores ativos",
+                    example = "2026-01-01"
+            )
+            @RequestParam(required = false) LocalDate dataFinal
+    ){
 
-        List<EnfestadorOverview> responses = enfestadorService.buscarDetalhesDosEnfestadoresInativos();
+        List<EnfestadorOverview> responses = enfestadorService.buscarDetalhesDosEnfestadoresInativos(dataInicial,dataFinal);
 
         return ResponseEntity.ok(responses);
     }
