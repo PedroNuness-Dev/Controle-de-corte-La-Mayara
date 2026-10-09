@@ -4,12 +4,14 @@ import com.PedroNunesDev.Controle_de_Corte.dto.request.EnfestadorDtoRequest;
 import com.PedroNunesDev.Controle_de_Corte.dto.response.EnfestadorDtoResponse;
 import com.PedroNunesDev.Controle_de_Corte.dto.response.EnfestadorOverview;
 import com.PedroNunesDev.Controle_de_Corte.service.EnfestadorService;
+import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -53,9 +55,20 @@ public class EnfestadorController {
      * @return Lista dos detalhes dos cortadores ativos
      */
     @GetMapping("/ativos/overview")
-    public ResponseEntity<List<EnfestadorOverview>> buscarDetalhesDosEnfestadoresAtivos(){
+    public ResponseEntity<List<EnfestadorOverview>> buscarDetalhesDosEnfestadoresAtivos(
+            @Parameter(
+                    description = "Data inicial para realizar a busca dos detalhes dos enfestadores ativos",
+                    example = "2026-01-01"
+            )
+            @RequestParam(required = false) LocalDate dataInicial,
+            @Parameter(
+                    description = "Data final para realizar a busca dos detalhes dos enfestadores ativos",
+                    example = "2026-01-01"
+            )
+            @RequestParam(required = false) LocalDate dataFinal
+            ){
 
-        List<EnfestadorOverview> responses = enfestadorService.buscarDetalhesDosEnfestadoresAtivos();
+        List<EnfestadorOverview> responses = enfestadorService.buscarDetalhesDosEnfestadoresAtivos(dataInicial, dataFinal);
 
         return ResponseEntity.ok(responses);
     }

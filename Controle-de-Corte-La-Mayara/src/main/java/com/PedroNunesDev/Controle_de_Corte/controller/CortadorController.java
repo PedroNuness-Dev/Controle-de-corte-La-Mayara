@@ -4,12 +4,14 @@ import com.PedroNunesDev.Controle_de_Corte.dto.request.CortadorDtoRequest;
 import com.PedroNunesDev.Controle_de_Corte.dto.response.CortadorDtoResponse;
 import com.PedroNunesDev.Controle_de_Corte.dto.response.CortadorOverview;
 import com.PedroNunesDev.Controle_de_Corte.service.CortadorService;
+import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -45,9 +47,20 @@ public class CortadorController {
     }
 
     @GetMapping("/ativos/overview")
-    public ResponseEntity<List<CortadorOverview>> buscarDetalhesDosCortadoresAtivos(){
+    public ResponseEntity<List<CortadorOverview>> buscarDetalhesDosCortadoresAtivos(
+            @Parameter(
+                    description = "Data inicial para realizar a busca dos detalhes dos cortadores ativos",
+                    example = "2026-01-01"
+            )
+            @RequestParam(required = false) LocalDate dataInicial,
+            @Parameter(
+                    description = "Data final para realizar a busca dos detalhes dos cortadores ativos",
+                    example = "2026-01-01"
+            )
+            @RequestParam(required = false) LocalDate dataFinal
+    ){
 
-        List<CortadorOverview> responses = cortadorService.buscarDetalhesDosCortadoresAtivos();
+        List<CortadorOverview> responses = cortadorService.buscarDetalhesDosCortadoresAtivos(dataInicial, dataFinal);
 
         return ResponseEntity.ok(responses);
     }

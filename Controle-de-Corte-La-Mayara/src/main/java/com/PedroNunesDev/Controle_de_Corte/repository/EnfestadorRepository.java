@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,6 +27,23 @@ public interface EnfestadorRepository extends JpaRepository<Enfestador,Long> {
     ORDER BY enfestador.nome
 """)
     List<EnfestadorOverview> buscarEnfestadoresESuasQuantidadesDeCortes();
+
+    @Query("""
+    SELECT new com.PedroNunesDev.Controle_de_Corte.dto.response.EnfestadorOverview(
+        enfestador.id,
+        enfestador.nome,
+        COUNT(c),
+        enfestador.ativo,
+        enfestador.dataDeCadastro
+    )
+    FROM Enfestador enfestador
+    LEFT JOIN enfestador.cortes c
+    WHERE enfestador.ativo = TRUE
+    AND c.dataDeRegistro BETWEEN :dataInicial AND :dataFinal
+    GROUP BY enfestador.id
+    ORDER BY enfestador.nome
+""")
+    List<EnfestadorOverview> buscarEnfestadoresESuasQuantidadesDeCortesPorData(@Param("dataInicial") LocalDate dataIncial, @Param("dataFinal") LocalDate dataFinal);
 
     @Query("""
     SELECT new com.PedroNunesDev.Controle_de_Corte.dto.response.EnfestadorOverview(
