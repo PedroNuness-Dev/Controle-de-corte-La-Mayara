@@ -83,9 +83,35 @@ public class CorteService {
         LocalDate diaPrimeiro = LocalDate.of(ano, mesParaBuscar, 1);
         LocalDate diaUltimo = diaPrimeiro.withDayOfMonth(diaPrimeiro.lengthOfMonth());
 
-        log.info("Buscando cortes no banco do dia [{}] ao dia [{}} do ano [{}] com o status [{}]", diaPrimeiro.getDayOfMonth(), diaUltimo.getDayOfMonth(), ano, status);
+        CorteStatus corteStatus = CorteStatus.from(status);
 
-        List<Corte> cortesBuscados = corteRepository.buscarPorMesEPorStatus(diaPrimeiro,diaUltimo,CorteStatus.from(status));
+        return (corteStatus == CorteStatus.CORTADO || corteStatus == CorteStatus.CANCELADO) ?
+                realizarBuscarDeCortesPorMesEStatus(diaPrimeiro,diaUltimo,corteStatus)
+                :
+                realizarBuscarDeCortesStatus(corteStatus);
+    }
+
+    private List<CorteDtoResponse> realizarBuscarDeCortesPorMesEStatus(LocalDate diaPrimeiro,LocalDate diaUltimo, CorteStatus corteStatus){
+
+        log.info("Buscando cortes no banco do dia [{}] ao dia [{}} do ano [{}] com o status [{}]",
+                diaPrimeiro.getDayOfMonth(), diaUltimo.getDayOfMonth(), diaPrimeiro.getYear(), corteStatus);
+
+        List<Corte> cortesBuscados = corteRepository.buscarPorMesEPorStatus(diaPrimeiro,diaUltimo,corteStatus);
+
+        if (cortesBuscados.isEmpty()) return List.of();
+
+        log.info("Busca efetuada com sucesso, com um total de [{}] cortes", cortesBuscados.size());
+
+        return cortesBuscados.stream()
+                .map(corteMapper::toDto)
+                .toList();
+    }
+
+    private List<CorteDtoResponse> realizarBuscarDeCortesStatus(CorteStatus corteStatus){
+
+        log.info("Buscando cortes no banco com o status [{}]", corteStatus);
+
+        List<Corte> cortesBuscados = corteRepository.buscarPorStatus(corteStatus);
 
         if (cortesBuscados.isEmpty()) return List.of();
 

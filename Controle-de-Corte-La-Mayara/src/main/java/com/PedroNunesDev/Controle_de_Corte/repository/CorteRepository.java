@@ -25,6 +25,11 @@ public interface CorteRepository extends JpaRepository<Corte,Long> {
     List<Corte> buscarPorMesEPorStatus(@Param("diaPrimeiro") LocalDate diaPrimeiro, @Param("diaUltimo") LocalDate diaUltimo, @Param("status") CorteStatus status);
 
     @Query("SELECT c FROM Corte c" +
+            " WHERE c.corteStatus = :status" +
+            " ORDER BY c.nomeModelo ASC")
+    List<Corte> buscarPorStatus(@Param("status") CorteStatus status);
+
+    @Query("SELECT c FROM Corte c" +
             " WHERE c.dataDeRegistro BETWEEN :diaPrimeiro AND :diaUltimo" +
             " AND (LOWER(c.nomeModelo) LIKE CONCAT(LOWER(:nome), '%') " +
             " OR LOWER(c.loteFormatado) LIKE CONCAT(LOWER(:nome), '%'))" +
