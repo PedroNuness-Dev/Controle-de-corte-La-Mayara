@@ -6,6 +6,7 @@ import com.PedroNunesDev.Controle_de_Corte.dto.response.EnfestadorOverview;
 import com.PedroNunesDev.Controle_de_Corte.exception.ResourceNotFoundException;
 import com.PedroNunesDev.Controle_de_Corte.model.Enfestador;
 import com.PedroNunesDev.Controle_de_Corte.repository.EnfestadorRepository;
+import com.PedroNunesDev.Controle_de_Corte.utils.ValidacaoDatas;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -26,8 +27,15 @@ class EnfestadorServiceTest {
     @Mock
     private EnfestadorRepository enfestadorRepository;
 
+    @Mock
+    private ValidacaoDatas validacaoDatas;
+
     @InjectMocks
     private EnfestadorService enfestadorService;
+
+    // ------------------------------------------------------------------
+    // buscarEnfestadorPorId
+    // ------------------------------------------------------------------
 
     @Test
     void deveBuscarEnfestadorPorIdComSucesso() {
@@ -59,6 +67,10 @@ class EnfestadorServiceTest {
 
         assertEquals("Enfestador com ID 99 não encontrado", exception.getMessage());
     }
+
+    // ------------------------------------------------------------------
+    // buscarEnfestadoresAtivos
+    // ------------------------------------------------------------------
 
     @Test
     void deveRetornarListaDeEnfestadoresAtivos() {
@@ -95,6 +107,10 @@ class EnfestadorServiceTest {
         assertTrue(response.isEmpty());
     }
 
+    // ------------------------------------------------------------------
+    // buscarDetalhesDosEnfestadoresAtivos
+    // ------------------------------------------------------------------
+
     @Test
     void deveBuscarDetalhesSemFiltroQuandoAmbasAsDatasForemNulas() {
         List<EnfestadorOverview> overviews = List.of(mock(EnfestadorOverview.class));
@@ -108,6 +124,7 @@ class EnfestadorServiceTest {
 
         verify(enfestadorRepository).buscarEnfestadoresESuasQuantidadesDeCortes();
         verify(enfestadorRepository, never()).buscarEnfestadoresESuasQuantidadesDeCortesPorData(any(), any());
+        verifyNoInteractions(validacaoDatas);
     }
 
     @Test
@@ -124,6 +141,7 @@ class EnfestadorServiceTest {
 
         verify(enfestadorRepository).buscarEnfestadoresESuasQuantidadesDeCortes();
         verify(enfestadorRepository, never()).buscarEnfestadoresESuasQuantidadesDeCortesPorData(any(), any());
+        verifyNoInteractions(validacaoDatas);
     }
 
     @Test
@@ -140,6 +158,7 @@ class EnfestadorServiceTest {
 
         verify(enfestadorRepository).buscarEnfestadoresESuasQuantidadesDeCortes();
         verify(enfestadorRepository, never()).buscarEnfestadoresESuasQuantidadesDeCortesPorData(any(), any());
+        verifyNoInteractions(validacaoDatas);
     }
 
     @Test
@@ -157,6 +176,7 @@ class EnfestadorServiceTest {
 
         assertSame(overviews, response);
 
+        verify(validacaoDatas).validarDatas(dataInicial, dataFinal);
         verify(enfestadorRepository).buscarEnfestadoresESuasQuantidadesDeCortesPorData(dataInicial, dataFinal);
         verify(enfestadorRepository, never()).buscarEnfestadoresESuasQuantidadesDeCortes();
     }
@@ -175,6 +195,7 @@ class EnfestadorServiceTest {
 
         assertSame(overviews, response);
 
+        verify(validacaoDatas).validarDatas(data, data);
         verify(enfestadorRepository).buscarEnfestadoresESuasQuantidadesDeCortesPorData(data, data);
     }
 
@@ -183,6 +204,9 @@ class EnfestadorServiceTest {
         LocalDate dataInicial = LocalDate.of(2025, 12, 31);
         LocalDate dataFinal = LocalDate.of(2025, 1, 1);
 
+        doThrow(new IllegalArgumentException("Data inicial não pode ser posterior a data final"))
+                .when(validacaoDatas).validarDatas(dataInicial, dataFinal);
+
         IllegalArgumentException exception = assertThrows(
                 IllegalArgumentException.class,
                 () -> enfestadorService.buscarDetalhesDosEnfestadoresAtivos(dataInicial, dataFinal)
@@ -190,33 +214,150 @@ class EnfestadorServiceTest {
 
         assertEquals("Data inicial não pode ser posterior a data final", exception.getMessage());
 
+        verify(validacaoDatas).validarDatas(dataInicial, dataFinal);
         verifyNoInteractions(enfestadorRepository);
     }
 
+    // ------------------------------------------------------------------
+    // buscarDetalhesDosEnfestadoresInativos
+    // ------------------------------------------------------------------
+
     @Test
-    void deveRetornarDetalhesDosEnfestadoresInativos() {
+    void deveBuscarDetalhesInativosSemFiltroQuandoAmbasAsDatasForemNulas() {
         List<EnfestadorOverview> overviews = List.of(mock(EnfestadorOverview.class));
 
         when(enfestadorRepository.buscarEnfestadoresInativosESuasQuantidadesDeCortes())
                 .thenReturn(overviews);
 
-        List<EnfestadorOverview> response = enfestadorService.buscarDetalhesDosEnfestadoresInativos();
+        List<EnfestadorOverview> response = enfestadorService.buscarDetalhesDosEnfestadoresInativos(null, null);
 
         assertSame(overviews, response);
 
         verify(enfestadorRepository).buscarEnfestadoresInativosESuasQuantidadesDeCortes();
+        verify(enfestadorRepository, never()).buscarEnfestadoresInativosESuasQuantidadesDeCortesPorData(any(), any());
+        verifyNoInteractions(validacaoDatas);
     }
 
     @Test
-    void deveRetornarListaVaziaQuandoNaoHouverEnfestadoresInativos() {
+    void deveBuscarDetalhesInativosSemFiltroQuandoApenasDataInicialForNula() {
+        List<EnfestadorOverview> overviews = List.of(mock(EnfestadorOverview.class));
+
+        when(enfestadorRepository.buscarEnfestadoresInativosESuasQuantidadesDeCortes())
+                .thenReturn(overviews);
+
+        List<EnfestadorOverview> response =
+                enfestadorService.buscarDetalhesDosEnfestadoresInativos(null, LocalDate.of(2025, 12, 31));
+
+        assertSame(overviews, response);
+
+        verify(enfestadorRepository).buscarEnfestadoresInativosESuasQuantidadesDeCortes();
+        verify(enfestadorRepository, never()).buscarEnfestadoresInativosESuasQuantidadesDeCortesPorData(any(), any());
+        verifyNoInteractions(validacaoDatas);
+    }
+
+    @Test
+    void deveBuscarDetalhesInativosSemFiltroQuandoApenasDataFinalForNula() {
+        List<EnfestadorOverview> overviews = List.of(mock(EnfestadorOverview.class));
+
+        when(enfestadorRepository.buscarEnfestadoresInativosESuasQuantidadesDeCortes())
+                .thenReturn(overviews);
+
+        List<EnfestadorOverview> response =
+                enfestadorService.buscarDetalhesDosEnfestadoresInativos(LocalDate.of(2025, 1, 1), null);
+
+        assertSame(overviews, response);
+
+        verify(enfestadorRepository).buscarEnfestadoresInativosESuasQuantidadesDeCortes();
+        verify(enfestadorRepository, never()).buscarEnfestadoresInativosESuasQuantidadesDeCortesPorData(any(), any());
+        verifyNoInteractions(validacaoDatas);
+    }
+
+    @Test
+    void deveBuscarDetalhesInativosPorDataQuandoAmbasAsDatasForemInformadas() {
+        LocalDate dataInicial = LocalDate.of(2025, 1, 1);
+        LocalDate dataFinal = LocalDate.of(2025, 12, 31);
+
+        List<EnfestadorOverview> overviews = List.of(mock(EnfestadorOverview.class));
+
+        when(enfestadorRepository.buscarEnfestadoresInativosESuasQuantidadesDeCortesPorData(dataInicial, dataFinal))
+                .thenReturn(overviews);
+
+        List<EnfestadorOverview> response =
+                enfestadorService.buscarDetalhesDosEnfestadoresInativos(dataInicial, dataFinal);
+
+        assertSame(overviews, response);
+
+        verify(validacaoDatas).validarDatas(dataInicial, dataFinal);
+        verify(enfestadorRepository).buscarEnfestadoresInativosESuasQuantidadesDeCortesPorData(dataInicial, dataFinal);
+        verify(enfestadorRepository, never()).buscarEnfestadoresInativosESuasQuantidadesDeCortes();
+    }
+
+    @Test
+    void devePermitirBuscaDeInativosPorDataQuandoDataInicialForIgualADataFinal() {
+        LocalDate data = LocalDate.of(2025, 6, 15);
+
+        List<EnfestadorOverview> overviews = List.of(mock(EnfestadorOverview.class));
+
+        when(enfestadorRepository.buscarEnfestadoresInativosESuasQuantidadesDeCortesPorData(data, data))
+                .thenReturn(overviews);
+
+        List<EnfestadorOverview> response =
+                enfestadorService.buscarDetalhesDosEnfestadoresInativos(data, data);
+
+        assertSame(overviews, response);
+
+        verify(validacaoDatas).validarDatas(data, data);
+        verify(enfestadorRepository).buscarEnfestadoresInativosESuasQuantidadesDeCortesPorData(data, data);
+    }
+
+    @Test
+    void deveLancarExcecaoAoBuscarInativosQuandoDataInicialForPosteriorADataFinal() {
+        LocalDate dataInicial = LocalDate.of(2025, 12, 31);
+        LocalDate dataFinal = LocalDate.of(2025, 1, 1);
+
+        doThrow(new IllegalArgumentException("Data inicial não pode ser posterior a data final"))
+                .when(validacaoDatas).validarDatas(dataInicial, dataFinal);
+
+        IllegalArgumentException exception = assertThrows(
+                IllegalArgumentException.class,
+                () -> enfestadorService.buscarDetalhesDosEnfestadoresInativos(dataInicial, dataFinal)
+        );
+
+        assertEquals("Data inicial não pode ser posterior a data final", exception.getMessage());
+
+        verify(validacaoDatas).validarDatas(dataInicial, dataFinal);
+        verifyNoInteractions(enfestadorRepository);
+    }
+
+    @Test
+    void deveRetornarListaVaziaQuandoNaoHouverEnfestadoresInativosSemFiltro() {
         when(enfestadorRepository.buscarEnfestadoresInativosESuasQuantidadesDeCortes())
                 .thenReturn(List.of());
 
-        List<EnfestadorOverview> response = enfestadorService.buscarDetalhesDosEnfestadoresInativos();
+        List<EnfestadorOverview> response = enfestadorService.buscarDetalhesDosEnfestadoresInativos(null, null);
 
         assertNotNull(response);
         assertTrue(response.isEmpty());
     }
+
+    @Test
+    void deveRetornarListaVaziaQuandoNaoHouverEnfestadoresInativosNoPeriodo() {
+        LocalDate dataInicial = LocalDate.of(2025, 1, 1);
+        LocalDate dataFinal = LocalDate.of(2025, 12, 31);
+
+        when(enfestadorRepository.buscarEnfestadoresInativosESuasQuantidadesDeCortesPorData(dataInicial, dataFinal))
+                .thenReturn(List.of());
+
+        List<EnfestadorOverview> response =
+                enfestadorService.buscarDetalhesDosEnfestadoresInativos(dataInicial, dataFinal);
+
+        assertNotNull(response);
+        assertTrue(response.isEmpty());
+    }
+
+    // ------------------------------------------------------------------
+    // cadastrarEnfestador
+    // ------------------------------------------------------------------
 
     @Test
     void deveCadastrarEnfestadorComSucesso() {
@@ -260,6 +401,10 @@ class EnfestadorServiceTest {
         assertTrue(enfestadorCapturado.getAtivo());
     }
 
+    // ------------------------------------------------------------------
+    // atualizarEnfestador
+    // ------------------------------------------------------------------
+
     @Test
     void deveAtualizarEnfestadorComSucesso() {
         EnfestadorDtoRequest request = new EnfestadorDtoRequest("João Atualizado");
@@ -296,6 +441,10 @@ class EnfestadorServiceTest {
         verify(enfestadorRepository, never()).save(any());
     }
 
+    // ------------------------------------------------------------------
+    // desativarEnfestador
+    // ------------------------------------------------------------------
+
     @Test
     void deveDesativarEnfestadorComSucesso() {
         Enfestador enfestador = criarEnfestadorMockParaOverview(1L, "João", 3, false);
@@ -326,6 +475,10 @@ class EnfestadorServiceTest {
         verify(enfestadorRepository, never()).save(any());
     }
 
+    // ------------------------------------------------------------------
+    // ativarEnfestador
+    // ------------------------------------------------------------------
+
     @Test
     void deveAtivarEnfestadorComSucesso() {
         Enfestador enfestador = criarEnfestadorMockParaOverview(1L, "João", 3, true);
@@ -355,6 +508,10 @@ class EnfestadorServiceTest {
 
         verify(enfestadorRepository, never()).save(any());
     }
+
+    // ------------------------------------------------------------------
+    // helpers
+    // ------------------------------------------------------------------
 
     private Enfestador criarEnfestadorMockParaOverview(Long id, String nome, int quantidadeDeCortesEnfestados, Boolean ativo) {
         Enfestador enfestador = mock(Enfestador.class);
