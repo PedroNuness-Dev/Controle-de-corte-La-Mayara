@@ -293,6 +293,53 @@
                 </li>
             </ol>
         </section>
+        <section>
+            <h2>7.0 Relatórios</h2>
+            <ol>
+                <li>
+                    <strong>7.1 O que é o relatório de cortes?</strong>
+                    <p>É um documento em PDF que resume a produção de um período escolhido por você. Ele reúne o total de peças, a quantidade de cortes em cada status e o desempenho de cada cortador e enfestador, sendo ideal para conferência, fechamento de período e impressão.</p>
+                </li>
+                <li>
+                    <strong>7.2 Como gerar um relatório?</strong>
+                    <p>Acesse a tela <u>Relatórios</u> no menu lateral, informe a <u>Data inicial</u> e a <u>Data final</u> e escolha uma das opções: <u>Visualizar</u> abre o PDF na própria tela, sem baixar nada, e <u>Baixar PDF</u> salva o arquivo no seu dispositivo. Ao abrir a tela, o período já vem preenchido do primeiro dia do mês atual até hoje.</p>
+                </li>
+                <li>
+                    <strong>7.3 Posso baixar o relatório depois de visualizá-lo?</strong>
+                    <p>Sim. Com a pré-visualização aberta, o botão <u>Baixar PDF</u> reaproveita o relatório que já foi gerado, sem precisar consultar o sistema novamente. Use <u>Fechar</u> para esconder a pré-visualização. O arquivo baixado leva o período no nome, por exemplo: <em>relatorio-cortes_2026-09-01_a_2026-10-08.pdf</em>.</p>
+                </li>
+                <li>
+                    <strong>7.4 O que aparece no relatório?</strong>
+                    <p>O PDF é organizado em blocos:</p>
+                    <ul class="legenda-status">
+                        <li>
+                            <span class="status-dot dot-cortado"></span>
+                            <span class="legenda-texto"><strong>Peças no período</strong> — soma da quantidade de peças dos cortes do período.</span>
+                        </li>
+                        <li>
+                            <span class="status-dot dot-enfestado"></span>
+                            <span class="legenda-texto"><strong>Resumo por status</strong> — total de cortes e quantos estão <u>Pendentes</u>, <u>Enfestados</u>, <u>Cortados</u> e <u>Cancelados</u>, cada um com seu percentual.</span>
+                        </li>
+                        <li>
+                            <span class="status-dot dot-pendente"></span>
+                            <span class="legenda-texto"><strong>Barra de distribuição</strong> — uma barra colorida que mostra, de forma visual, a proporção de cada status.</span>
+                        </li>
+                        <li>
+                            <span class="status-dot dot-cancelado"></span>
+                            <span class="legenda-texto"><strong>Cortadores e enfestadores</strong> — quantos cortes cada pessoa realizou e sua participação (%) no total, separados entre <u>ativos</u> e <u>inativos</u>.</span>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <strong>7.5 Por que a soma das participações pode ficar abaixo de 100%?</strong>
+                    <p>A participação de cada pessoa é calculada sobre o total de cortes do período. Cortes <u>pendentes</u> ainda não têm cortador, e cortes pendentes ou cancelados podem não ter enfestador. Esses cortes entram no total, mas não pertencem a nenhuma pessoa, por isso a soma pode ficar abaixo de 100%. Isso é esperado e não indica erro.</p>
+                </li>
+                <li>
+                    <strong>7.6 Quais períodos são aceitos?</strong>
+                    <p>Basta que as duas datas estejam preenchidas e que a <u>data inicial não seja maior que a final</u>. Caso contrário, o sistema avisa e não gera o relatório. Assim como no histórico, o período é baseado na data de registro dos cortes.</p>
+                </li>                
+            </ol>
+        </section>
     </div>
     @if (modalExclusao) {
         <div class="overlay-modal">
