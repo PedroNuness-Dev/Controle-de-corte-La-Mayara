@@ -3,6 +3,7 @@ package com.PedroNunesDev.Controle_de_Corte.utils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.time.Year;
 import java.time.YearMonth;
 
@@ -43,5 +44,9 @@ public class ValidacaoDatas {
                     year, Year.now().getValue());
             throw new IllegalArgumentException("Invalid year for search: the year cannot be in the future or before the user's creation date.");
         }
+    }
+
+    public void validarDatas(LocalDate dataInicial, LocalDate dataFinal){
+        if (dataInicial.isAfter(dataFinal)) throw new IllegalArgumentException("Data inicial não pode ser posterior a data final");
     }
 }
