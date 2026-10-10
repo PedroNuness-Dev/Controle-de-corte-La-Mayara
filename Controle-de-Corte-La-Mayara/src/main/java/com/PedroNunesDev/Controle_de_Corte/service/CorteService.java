@@ -136,6 +136,10 @@ public class CorteService {
 
         return cortesBuscados
                 .stream()
+                .filter(corte ->
+                        ((corte.getDataDeRegistro().isEqual(diaPrimeiro) || corte.getDataDeRegistro().isAfter(diaPrimeiro))
+                                && (corte.getDataDeRegistro().isEqual(diaUltimo) || corte.getDataDeRegistro().isBefore(diaUltimo))) ||
+                                (corte.getCorteStatus() == CorteStatus.PENDENTE || corte.getCorteStatus() == CorteStatus.ENFESTADO))
                 .map(corteMapper::toDto)
                 .toList();
     }
