@@ -14,14 +14,9 @@ export class CorteService {
 
   http = inject(HttpClient);
 
-  buscarCortesDoMes(mes : number | null, ano : number | null) : Observable<CorteResponse[]>{    
-    if(mes != null && ano != null){
+  buscarCortesDoMes(mes : number | null, ano : number | null, onlyMonth : boolean) : Observable<CorteResponse[]>{    
 
-      return this.http.get<CorteResponse[]>(`${this.url}/buscar/mes?mes=${mes}&ano=${ano}`)      
-    }
-    else{
-      return this.http.get<CorteResponse[]>(`${this.url}/buscar/mes`)
-    }
+    return this.http.get<CorteResponse[]>(`${this.url}/buscar/mes?mes=${mes}&ano=${ano}&onlyMonth=${onlyMonth}`)      
   }
 
   buscarCortesDoMesPorStatus(status:string, ano : number, mes : number) : Observable<CorteResponse[]>{

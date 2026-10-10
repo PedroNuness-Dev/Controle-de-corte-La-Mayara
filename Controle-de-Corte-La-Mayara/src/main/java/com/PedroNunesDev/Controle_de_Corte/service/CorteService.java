@@ -13,6 +13,7 @@ import com.PedroNunesDev.Controle_de_Corte.model.Lote;
 import com.PedroNunesDev.Controle_de_Corte.repository.CortadorRepository;
 import com.PedroNunesDev.Controle_de_Corte.repository.CorteRepository;
 import com.PedroNunesDev.Controle_de_Corte.repository.EnfestadorRepository;
+import com.PedroNunesDev.Controle_de_Corte.utils.ValidacaoDatas;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
@@ -34,6 +35,7 @@ public class CorteService {
     private final LoteService loteService;
     private final CorteRepository corteRepository;
     private final CorteMapper corteMapper;
+    private final ValidacaoDatas validacaoDatas;
 
     @Transactional(readOnly = true)
     public CorteDtoResponse findById(Long id){
@@ -52,13 +54,11 @@ public class CorteService {
 
     @Cacheable("cortesPorMes")
     @Transactional(readOnly = true)
-    public List<CorteDtoResponse> buscarPorMes(Integer mes, Integer ano){
+    public List<CorteDtoResponse> buscarPorMes(Integer mes, Integer ano, Boolean onlyMonth){
 
-        Assert.notNull(ano, "O ano para busca não pode ser nulo");
+        validacaoDatas.validarPeriodo(mes,ano);
 
-        Integer mesParaBuscar = verificarMes(mes);
-
-        LocalDate diaPrimeiro = LocalDate.of(ano, mesParaBuscar, 1);
+        LocalDate diaPrimeiro = LocalDate.of(ano, mes, 1);
         LocalDate diaUltimo = diaPrimeiro.withDayOfMonth(diaPrimeiro.lengthOfMonth());
 
         log.info("Buscando cortes no banco do dia [{}] ao dia [{}} do ano [{}]", diaPrimeiro.getDayOfMonth(), diaUltimo.getDayOfMonth(), ano);
@@ -67,9 +67,17 @@ public class CorteService {
 
         log.info("Busca efetuada com sucesso, com um total de [{}] cortes", cortesBuscados.size());
 
-        return cortesBuscados.stream()
-                .map(corteMapper::toDto)
-                .toList();
+        return onlyMonth == false ?
+                cortesBuscados.stream()
+                    .map(corteMapper::toDto)
+                    .toList() :
+                cortesBuscados.stream()
+                    .filter(corte ->
+                            (corte.getDataDeRegistro().isEqual(diaPrimeiro) || corte.getDataDeRegistro().isAfter(diaPrimeiro))
+                                    && (corte.getDataDeRegistro().isEqual(diaUltimo) || corte.getDataDeRegistro().isBefore(diaUltimo))
+                    )
+                    .map(corteMapper::toDto)
+                    .toList();
     }
 
     @Cacheable("cortesPorMesEStatus")
@@ -83,9 +91,35 @@ public class CorteService {
         LocalDate diaPrimeiro = LocalDate.of(ano, mesParaBuscar, 1);
         LocalDate diaUltimo = diaPrimeiro.withDayOfMonth(diaPrimeiro.lengthOfMonth());
 
-        log.info("Buscando cortes no banco do dia [{}] ao dia [{}} do ano [{}] com o status [{}]", diaPrimeiro.getDayOfMonth(), diaUltimo.getDayOfMonth(), ano, status);
+        CorteStatus corteStatus = CorteStatus.from(status);
 
-        List<Corte> cortesBuscados = corteRepository.buscarPorMesEPorStatus(diaPrimeiro,diaUltimo,CorteStatus.from(status));
+        return (corteStatus == CorteStatus.CORTADO || corteStatus == CorteStatus.CANCELADO) ?
+                realizarBuscarDeCortesPorMesEStatus(diaPrimeiro,diaUltimo,corteStatus)
+                :
+                realizarBuscarDeCortesStatus(corteStatus);
+    }
+
+    private List<CorteDtoResponse> realizarBuscarDeCortesPorMesEStatus(LocalDate diaPrimeiro,LocalDate diaUltimo, CorteStatus corteStatus){
+
+        log.info("Buscando cortes no banco do dia [{}] ao dia [{}} do ano [{}] com o status [{}]",
+                diaPrimeiro.getDayOfMonth(), diaUltimo.getDayOfMonth(), diaPrimeiro.getYear(), corteStatus);
+
+        List<Corte> cortesBuscados = corteRepository.buscarPorMesEPorStatus(diaPrimeiro,diaUltimo,corteStatus);
+
+        if (cortesBuscados.isEmpty()) return List.of();
+
+        log.info("Busca efetuada com sucesso, com um total de [{}] cortes", cortesBuscados.size());
+
+        return cortesBuscados.stream()
+                .map(corteMapper::toDto)
+                .toList();
+    }
+
+    private List<CorteDtoResponse> realizarBuscarDeCortesStatus(CorteStatus corteStatus){
+
+        log.info("Buscando cortes no banco com o status [{}]", corteStatus);
+
+        List<Corte> cortesBuscados = corteRepository.buscarPorStatus(corteStatus);
 
         if (cortesBuscados.isEmpty()) return List.of();
 
@@ -110,6 +144,10 @@ public class CorteService {
 
         return cortesBuscados
                 .stream()
+                .filter(corte ->
+                        ((corte.getDataDeRegistro().isEqual(diaPrimeiro) || corte.getDataDeRegistro().isAfter(diaPrimeiro))
+                                && (corte.getDataDeRegistro().isEqual(diaUltimo) || corte.getDataDeRegistro().isBefore(diaUltimo))) ||
+                                (corte.getCorteStatus() == CorteStatus.PENDENTE || corte.getCorteStatus() == CorteStatus.ENFESTADO))
                 .map(corteMapper::toDto)
                 .toList();
     }

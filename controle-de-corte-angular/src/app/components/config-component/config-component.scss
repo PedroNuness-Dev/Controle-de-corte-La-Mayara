@@ -1,4 +1,44 @@
-:host{    
+// =============================================================================
+// Tokens
+// =============================================================================
+
+$texto-forte:   #111827;
+$texto:         #374151;
+$texto-suave:   #4b5563;
+$texto-mudo:    #6b7280;
+$borda:         #e5e7eb;
+$borda-suave:   #eef0f3;
+$fundo-suave:   #f7f9fb;
+
+$rosa-marca:    #d63384;
+$rosa-fundo:    #ffe4f0;
+$rosa-claro:    #fff7fb;
+$rosa-borda:    #f7d3e4;
+
+$verde:         #1f9d55;
+$verde-escuro:  #17803f;
+$verde-fundo:   #e8f5ee;
+$verde-borda:   #a7dfc0;
+
+$laranja:       #d98324;
+$vermelho:      #cc3131;
+$vermelho-fundo:#fdeaea;
+$vinho:         #941111;
+
+$amber-fundo:   #fef3c7;
+$amber-borda:   #fcd34d;
+$amber-texto:   #92400e;
+
+// Raios de borda (ajuste aqui para deixar mais ou menos arredondado)
+$r-sm: 4px;
+$r-md: 6px;
+$r-lg: 8px;
+
+:host{
+
+    *, *::before, *::after{
+        box-sizing: border-box;
+    }
 
     // =======================================================================
     // Layout base
@@ -20,6 +60,13 @@
         gap: 20px;
     }
 
+    // Acessibilidade: foco visível em tudo que é clicável
+    button:focus-visible,
+    input:focus-visible{
+        outline: 2px solid #4338ca;
+        outline-offset: 2px;
+    }
+
     // =======================================================================
     // Cabeçalho
     // =======================================================================
@@ -31,26 +78,95 @@
         justify-content: center;
         gap: 8px;
         margin-bottom: 24px;
+        text-align: center;
     }
 
     .header h1{
         font-size: 2.85rem;
         letter-spacing: 0.02em;
         margin: 0;
+        color: $texto-forte;
     }
 
     .header h2{
         font-size: 1.5rem;
-        color: #4b5563;
+        color: $texto-suave;
         margin: 0;
     }
 
     .div-subtitle{
-        background-color: #ffe4f0;
-        border-radius: 8px;
+        background-color: $rosa-fundo;
+        border-radius: $r-md;
         box-shadow: 0 8px 20px rgba(149, 157, 165, 0.18);
         text-align: center;
         padding: 10px 24px;
+    }
+
+    .header-intro{
+        max-width: 620px;
+        margin: 6px 0 0;
+        font-size: 1rem;
+        line-height: 1.6;
+        color: $texto-mudo;
+    }
+
+    // =======================================================================
+    // Sumário (navegação entre seções)
+    // =======================================================================
+
+    .toc{
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+        gap: 10px;
+        padding: 16px;
+        background: $rosa-claro;
+        border: 1px solid $rosa-borda;
+        border-radius: $r-lg;
+    }
+
+    .toc-item{
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 12px;
+        background: #ffffff;
+        border: 1px solid #f3e0ea;
+        border-radius: $r-md;
+        color: $texto;
+        font-family: inherit;
+        font-size: 0.95rem;
+        font-weight: 600;
+        text-align: left;
+        cursor: pointer;
+        transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+
+        .material-icons-outlined{
+            font-size: 20px;
+            color: $rosa-marca;
+            flex-shrink: 0;
+            transition: color 0.15s ease;
+        }
+    }
+
+    .toc-item:hover{
+        background-color: $verde-fundo;
+        border-color: $verde-borda;
+        color: $verde-escuro;
+
+        .material-icons-outlined{
+            color: $verde;
+        }
+    }
+
+    .toc-item:active{
+        transform: scale(0.98);
+    }
+
+    .toc-num{
+        margin-right: 2px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: #9ca3af;
     }
 
     // =======================================================================
@@ -59,31 +175,61 @@
 
     section{
         background: #ffffff;
-        border: 1px solid #e5e7eb;
-        border-radius: 18px;
+        border: 1px solid $borda;
+        border-radius: $r-lg;
         padding: 24px;
         box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
+        scroll-margin-top: 16px;
     }
 
     section h2{
+        display: flex;
+        align-items: center;
+        gap: 10px;
         margin-top: 0;
         margin-bottom: 18px;
         font-size: 1.2rem;
-        color: #111827;
-        border-bottom: 1px solid #e5e7eb;
-        padding-bottom: 10px;
+        color: $texto-forte;
+        border-bottom: 1px solid $borda;
+        padding-bottom: 12px;
+    }
+
+    .sec-icone{
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        flex-shrink: 0;
+        border-radius: $r-md;
+        background-color: $rosa-fundo;
+        color: $rosa-marca;
+        font-size: 20px;
+    }
+
+    .sec-num{
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: #9ca3af;
     }
 
     ol{
-        padding-left: 20px;
+        padding-left: 0;
         margin: 0;
         display: grid;
-        gap: 16px;
+        gap: 18px;
         list-style: none;
     }
 
     ol > li{
         list-style: none;
+        padding-bottom: 18px;
+        border-bottom: 1px dashed $borda;
+    }
+
+    ol > li:last-child{
+        padding-bottom: 0;
+        border-bottom: none;
     }
 
     ol > li::marker{
@@ -98,24 +244,122 @@
 
     ul li{
         list-style: disc;
-        cursor: pointer;
     }
 
     li strong{
-        display: block;
+        display: flex;
+        align-items: center;
+        gap: 8px;
         font-size: 1rem;
-        color: #111827;
+        color: $texto-forte;
         margin-bottom: 8px;
     }
 
     li p{
         margin: 0;
-        color: #4b5563;
+        color: $texto-suave;
         line-height: 1.7;
     }
 
+    li p + p{
+        margin-top: 8px;
+    }
+
+    li p + .lista-info,
+    li p + .legenda-status{
+        margin-top: 12px;
+    }
+
+    // Número do item (1.1, 1.2...)
+    .item-num{
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 38px;
+        padding: 2px 8px;
+        border-radius: $r-sm;
+        background-color: $verde-fundo;
+        color: $verde-escuro;
+        font-size: 0.78rem;
+        font-weight: 700;
+        flex-shrink: 0;
+    }
+
+    // Texto auxiliar
+    u{
+        text-decoration-color: #f4a6c8;
+        text-decoration-thickness: 2px;
+        text-underline-offset: 3px;
+    }
+
+    em{
+        color: $texto;
+    }
+
+    kbd{
+        display: inline-block;
+        padding: 1px 7px;
+        border: 1px solid #d1d5db;
+        border-bottom-width: 2px;
+        border-radius: $r-sm;
+        background-color: #f3f4f6;
+        color: $texto;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        font-size: 0.8em;
+        line-height: 1.5;
+    }
+
+    .texto-apoio{
+        margin-top: 10px;
+        font-size: 0.9rem;
+        color: $texto-mudo;
+    }
+
     // =======================================================================
-    // Legenda dos status de um corte (usada na documentação)
+    // Lista com ícone (lista-info)
+    // =======================================================================
+
+    .lista-info{
+        margin-top: 12px;
+        padding-left: 0;
+        list-style: none;
+        display: grid;
+        gap: 8px;
+    }
+
+    .lista-info li{
+        list-style: none;
+        cursor: default;
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        font-size: 0.95rem;
+        line-height: 1.6;
+        color: $texto-suave;
+
+        > .material-icons-outlined{
+            flex-shrink: 0;
+            margin-top: 2px;
+            font-size: 18px;
+            color: $verde;
+        }
+    }
+
+    .legenda-texto{
+        flex: 1;
+        min-width: 0;
+        color: $texto-suave;
+
+        strong{
+            display: inline;
+            margin: 0;
+            font-size: inherit;
+            color: $texto-forte;
+        }
+    }
+
+    // =======================================================================
+    // Legenda dos status de um corte
     // =======================================================================
 
     .legenda-status{
@@ -131,17 +375,22 @@
         list-style: none;
         cursor: default;
         display: flex;
-        align-items: center;
-        gap: 8px;
+        align-items: flex-start;
+        gap: 10px;
         font-size: 0.95rem;
-        color: #4b5563;
+        line-height: 1.6;
+        color: $texto-suave;
     }
 
     .legenda-status li strong{
         display: inline;
         margin-bottom: 0;
         font-size: 0.95rem;
-        color: #111827;
+        color: $texto-forte;
+    }
+
+    .legenda-status li .status-dot{
+        margin-top: 7px;
     }
 
     .status-dot{
@@ -165,7 +414,298 @@
     }
 
     .dot-cancelado{
-        background-color: #941111;
+        background-color: $vinho;
+    }
+
+    // =======================================================================
+    // Fluxo de status (Pendente → Enfestado → Cortado | Cancelado)
+    // =======================================================================
+
+    .fluxo{
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 10px;
+        margin-top: 12px;
+        padding: 12px 14px;
+        background-color: $fundo-suave;
+        border: 1px solid $borda-suave;
+        border-radius: $r-md;
+    }
+
+    .fluxo-etapa{
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 12px;
+        background-color: #ffffff;
+        border: 1px solid $borda;
+        border-radius: $r-sm;
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: $texto;
+        white-space: nowrap;
+    }
+
+    .fluxo-seta{
+        font-size: 18px;
+        color: #9ca3af;
+    }
+
+    .fluxo-sep{
+        width: 1px;
+        height: 22px;
+        margin: 0 4px;
+        background-color: $borda;
+    }
+
+    .fluxo-cancelado{
+        background-color: #fdf2f2;
+        border-color: #f5caca;
+        color: $vinho;
+    }
+
+    // =======================================================================
+    // Notas (aviso / dica / perigo / info) — uma cor só, sem border-left
+    // =======================================================================
+
+    .nota{
+        display: grid;
+        grid-template-columns: auto 1fr;
+        align-items: start;
+        gap: 10px;
+        margin-top: 14px;
+        padding: 12px 14px;
+        border-radius: $r-md;
+        border: 1px solid;
+
+        .material-icons-outlined{
+            font-size: 20px;
+            margin-top: 1px;
+        }
+
+        p{
+            margin: 0;
+            font-size: 0.92rem;
+            line-height: 1.55;
+        }
+
+        strong{
+            display: inline;
+            margin: 0;
+            font-size: inherit;
+            color: inherit;
+        }
+    }
+
+    .nota-aviso{
+        background-color: #fffbeb;
+        border-color: #fde9b0;
+
+        .material-icons-outlined{ color: #d97706; }
+        p{ color: $amber-texto; }
+    }
+
+    .nota-dica{
+        background-color: #f0fdf4;
+        border-color: #c3f0d2;
+
+        .material-icons-outlined{ color: #16a34a; }
+        p{ color: #166534; }
+    }
+
+    .nota-perigo{
+        background-color: #fef2f2;
+        border-color: #fbd0d0;
+
+        .material-icons-outlined{ color: #dc2626; }
+        p{ color: #991b1b; }
+    }
+
+    .nota-info{
+        background-color: #eff6ff;
+        border-color: #cfe0fb;
+
+        .material-icons-outlined{ color: #2563eb; }
+        p{ color: #1e40af; }
+    }
+
+    // =======================================================================
+    // Demonstração: card de corte de outro mês
+    // =======================================================================
+
+    .demo-card{
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        max-width: 440px;
+        margin: 14px 0;
+        padding: 46px 16px 14px;
+        background-color: #ffffff;
+        border: 1px solid $borda;
+        border-left: 5px solid $laranja;
+        border-radius: $r-md;
+        box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06);
+        pointer-events: none;
+        user-select: none;
+    }
+
+    .demo-badge{
+        position: absolute;
+        top: 12px;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 3px 9px;
+        border-radius: $r-sm;
+        font-size: 0.68rem;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .demo-badge-registro{
+        left: 12px;
+        background-color: #ffffff;
+        border: 1px solid $borda;
+        color: $texto;
+    }
+
+    .demo-badge-outro-mes{
+        right: 12px;
+        background-color: $amber-fundo;
+        border: 1px solid $amber-borda;
+        color: $amber-texto;
+    }
+
+    .demo-card-titulo{
+        font-size: 0.78rem;
+        font-weight: 800;
+        letter-spacing: 0.06em;
+        color: $laranja;
+    }
+
+    .demo-linha{
+        font-size: 0.92rem;
+        color: $texto-suave;
+    }
+
+    // Selo de exemplo dentro de listas
+    .selo-exemplo{
+        display: inline-flex;
+        align-items: center;
+        flex-shrink: 0;
+        padding: 3px 10px;
+        background-color: $amber-fundo;
+        border: 1px solid $amber-borda;
+        border-radius: $r-sm;
+        color: $amber-texto;
+        font-size: 0.72rem;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    // =======================================================================
+    // Demonstração: filtros do histórico
+    // =======================================================================
+
+    .demo-chips{
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin: 12px 0;
+        pointer-events: none;
+        user-select: none;
+    }
+
+    .demo-chip{
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 12px;
+        background-color: #ffffff;
+        border: 1px solid;
+        border-radius: $r-sm;
+        font-size: 0.88rem;
+        font-weight: 600;
+    }
+
+    .demo-chip-n{
+        padding: 1px 7px;
+        border-radius: 3px;
+        background-color: rgba(0, 0, 0, 0.07);
+        font-size: 0.75rem;
+        font-weight: 700;
+    }
+
+    .demo-chip-todos{
+        border-color: #d1d5db;
+        color: $texto;
+    }
+
+    .demo-chip-pendente{
+        background-color: #f3f4f6;
+        border-color: #d1d5db;
+        color: $texto-suave;
+    }
+
+    .demo-chip-enfestado{
+        background-color: #fff4e5;
+        border-color: #f3c98b;
+        color: #a45d0f;
+    }
+
+    .demo-chip-cortado{
+        background-color: $verde-fundo;
+        border-color: $verde-borda;
+        color: $verde-escuro;
+    }
+
+    .demo-chip-cancelado{
+        background-color: $vermelho-fundo;
+        border-color: #f2b8b8;
+        color: $vinho;
+    }
+
+    .demo-chip.ativo{
+        background-color: $texto-forte;
+        border-color: $texto-forte;
+        color: #ffffff;
+
+        .demo-chip-n{
+            background-color: rgba(255, 255, 255, 0.22);
+        }
+    }
+
+    // =======================================================================
+    // Voltar ao topo
+    // =======================================================================
+
+    .voltar-sumario{
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin: 22px 0 0 auto;
+        padding: 7px 14px;
+        background-color: transparent;
+        border: 1px solid $borda;
+        border-radius: $r-md;
+        color: $texto-mudo;
+        font-family: inherit;
+        font-size: 0.8rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+
+        .material-icons-outlined{
+            font-size: 16px;
+        }
+    }
+
+    .voltar-sumario:hover{
+        background-color: $verde-fundo;
+        border-color: $verde-borda;
+        color: $verde-escuro;
     }
 
     // =======================================================================
@@ -188,7 +728,7 @@
         background-color: #f0f0f0;
         color: #333;
         border: none;
-        border-radius: 10px;
+        border-radius: $r-md;
         padding: 12px 20px;
         font-size: 15px;
         font-weight: 600;
@@ -204,13 +744,13 @@
     }
 
     .action-button:hover{
-        background-color: #e8f5ee;
-        color: #1f9d55;
+        background-color: $verde-fundo;
+        color: $verde;
     }
 
     .action-button.active{
-        background-color: #e8f5ee;
-        color: #1f9d55;
+        background-color: $verde-fundo;
+        color: $verde;
         font-weight: 600;
     }
 
@@ -220,7 +760,7 @@
         font-weight: 500;
         background: #eff6ff;
         border: 1px solid #bfdbfe;
-        border-radius: 12px;
+        border-radius: $r-md;
         padding: 10px 14px;
     }
 
@@ -228,7 +768,7 @@
         color: #065f46;
         background: #d1fae5;
         border: 1px solid #a7f3d0;
-        border-radius: 12px;
+        border-radius: $r-md;
         padding: 10px 14px;
         font-size: 0.95rem;
         font-weight: 600;
@@ -256,21 +796,21 @@
         min-width: 0;
         max-width: 520px;
         padding: 10px 12px;
-        border-radius: 8px;
+        border-radius: $r-md;
         border: 1px solid #e6e9ef;
         background: #ffffff;
         font-size: 0.95rem;
-        color: #111827;
+        color: $texto-forte;
         box-shadow: inset 0 1px 2px rgba(16,24,40,0.02);
     }
 
     section form textarea{
         padding: 10px 12px;
-        border-radius: 8px;
+        border-radius: $r-md;
         border: 1px solid #e6e9ef;
         background: #ffffff;
         font-size: 0.95rem;
-        color: #111827;
+        color: $texto-forte;
         box-shadow: inset 0 1px 2px rgba(16,24,40,0.02);
     }
 
@@ -292,10 +832,10 @@
         align-items: center;
         justify-content: center;
         gap: 10px;
-        background-color: #1f9d55;
+        background-color: $verde;
         color: #ffffff;
         border: none;
-        border-radius: 10px;
+        border-radius: $r-md;
         padding: 12px 20px;
         font-size: 15px;
         font-weight: 600;
@@ -311,7 +851,7 @@
     }
 
     .form-submit:hover{
-        background-color: #17803f;
+        background-color: $verde-escuro;
         box-shadow: 0 6px 16px rgba(31, 157, 85, 0.3);
         transform: none;
     }
@@ -340,15 +880,19 @@
         gap: 10px;
     }
 
+    .ul-list li{
+        list-style: none;
+    }
+
     .pessoa-card{
         display: flex;
         align-items: center;
         justify-content: space-between;
         gap: 12px;
         padding: 10px 14px;
-        border-radius: 10px;
-        background-color: #f7f9fb;
-        border: 1px solid #eef0f3;
+        border-radius: $r-md;
+        background-color: $fundo-suave;
+        border: 1px solid $borda-suave;
         list-style: none;
         cursor: default;
         transition: background-color 0.15s ease;
@@ -385,16 +929,17 @@
     .pessoa-nome{
         font-weight: 700;
         font-size: 15px;
-        color: #111827;
+        color: $texto-forte;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
     }
 
     .info-pessoa-detalhes{
+        margin: 0;
         font-weight: 500;
         font-size: 13px;
-        color: #6b7280;
+        color: $texto-mudo;
     }
 
     .btn-excluir-icon{
@@ -402,9 +947,9 @@
         align-items: center;
         justify-content: center;
         background-color: transparent;
-        color: #cc3131;
+        color: $vermelho;
         border: none;
-        border-radius: 6px;
+        border-radius: $r-sm;
         width: 34px;
         height: 34px;
         flex-shrink: 0;
@@ -417,7 +962,7 @@
     }
 
     .btn-excluir-icon:hover{
-        background-color: #fdeaea;
+        background-color: $vermelho-fundo;
     }
 
     .btn-excluir-icon:active{
@@ -430,6 +975,7 @@
 
     .btns-lote{
         display: flex;
+        flex-wrap: wrap;
         gap: 10px;
     }
 
@@ -440,13 +986,14 @@
         gap: 8px;
         background-color: transparent;
         border: none;
-        border-radius: 10px;
+        border-radius: $r-md;
         padding: 10px 18px;
         font-size: 14px;
         font-weight: 600;
         cursor: pointer;
         transition: background-color 0.15s ease, transform 0.1s ease;
         width: 23%;
+        min-width: 170px;
 
         .material-icons-outlined{
             font-size: 20px;
@@ -458,23 +1005,24 @@
     }
 
     .btn-incrementar-lote{
-        color: #1f9d55;
+        color: $verde;
     }
 
     .btn-incrementar-lote:hover{
-        background-color: #e8f5ee;
+        background-color: $verde-fundo;
     }
 
     .btn-desincrementar-lote{
-        color: #cc3131;
+        color: $vermelho;
     }
 
     .btn-desincrementar-lote:hover{
-        background-color: #fdeaea;
+        background-color: $vermelho-fundo;
     }
 
     .btn-incremento{
         background-color: rgb(52, 170, 52) !important;
+        box-shadow: 0 4px 12px rgba(52, 170, 52, 0.25) !important;
     }
 
     // =======================================================================
@@ -498,7 +1046,7 @@
         width: 400px;
         max-width: 90%;
         background: white;
-        border-radius: 16px;
+        border-radius: $r-lg;
         padding: 24px;
         box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
         animation: aparecerModal 0.2s ease;
@@ -507,12 +1055,12 @@
     .modal-excluir h2 {
         margin: 0 0 12px;
         font-size: 22px;
-        color: #111827;
+        color: $texto-forte;
     }
 
     .modal-excluir p {
         margin-bottom: 24px;
-        color: #4b5563;
+        color: $texto-suave;
         line-height: 1.5;
     }
 
@@ -541,7 +1089,7 @@
         justify-content: center;
         gap: 6px;
         border: none;
-        border-radius: 10px;
+        border-radius: $r-md;
         padding: 10px 18px;
         font-size: 14px;
         font-weight: 600;
@@ -552,7 +1100,6 @@
     .acoes-modal .btn-cancelar{
         background-color: #f0f0f0;
         color: #444;
-        border-radius: 6px !important;
     }
 
     .acoes-modal .btn-cancelar:hover{
@@ -560,10 +1107,9 @@
     }
 
     .acoes-modal .btn-excluir{
-        background-color: #cc3131;
+        background-color: $vermelho;
         color: #ffffff;
         box-shadow: 0 4px 12px rgba(204, 49, 49, 0.25);
-        border-radius: 6px !important;
     }
 
     .acoes-modal .btn-excluir:hover{
@@ -576,14 +1122,13 @@
     }
 
     .acoes-modal .btn-reativar{
-        background-color: #1f9d55;
+        background-color: $verde;
         color: #ffffff;
         box-shadow: 0 4px 12px rgba(31, 157, 85, 0.25);
-        border-radius: 6px !important;
     }
 
     .acoes-modal .btn-reativar:hover{
-        background-color: #17803f;
+        background-color: $verde-escuro;
         box-shadow: 0 6px 16px rgba(31, 157, 85, 0.3);
     }
 
@@ -599,7 +1144,7 @@
         width: 420px;
         max-width: 90%;
         background: white;
-        border-radius: 8px;
+        border-radius: $r-lg;
         padding: 28px;
         position: relative;
         box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
@@ -617,8 +1162,8 @@
         height: 32px;
         background-color: transparent;
         border: none;
-        border-radius: 6px;
-        color: #6b7280;
+        border-radius: $r-sm;
+        color: $texto-mudo;
         cursor: pointer;
         transition: background-color 0.15s ease;
 
@@ -629,7 +1174,7 @@
 
     .btn-fechar-modal:hover{
         background-color: #f3f4f6;
-        color: #111827;
+        color: $texto-forte;
     }
 
     .modal-pessoa-header{
@@ -665,7 +1210,7 @@
     .modal-pessoa-titulo h2{
         margin: 0;
         font-size: 19px;
-        color: #111827;
+        color: $texto-forte;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -674,7 +1219,7 @@
     .modal-pessoa-tipo{
         font-size: 13px;
         font-weight: 600;
-        color: #6b7280;
+        color: $texto-mudo;
     }
 
     // ---------------------------------------------------------------------
@@ -715,7 +1260,7 @@
         height: 26px;
         flex-shrink: 0;
         border: none;
-        border-radius: 6px;
+        border-radius: $r-sm;
         background-color: transparent;
         cursor: pointer;
         transition: background-color 0.15s ease;
@@ -726,28 +1271,28 @@
     }
 
     .btn-editar-nome{
-        color: #6b7280;
+        color: $texto-mudo;
     }
 
     .btn-editar-nome:hover{
         background-color: #f3f4f6;
-        color: #111827;
+        color: $texto-forte;
     }
 
     .btn-salvar-nome{
-        color: #1f9d55;
+        color: $verde;
     }
 
     .btn-salvar-nome:hover{
-        background-color: #e8f5ee;
+        background-color: $verde-fundo;
     }
 
     .btn-cancelar-nome{
-        color: #cc3131;
+        color: $vermelho;
     }
 
     .btn-cancelar-nome:hover{
-        background-color: #fdeaea;
+        background-color: $vermelho-fundo;
     }
 
     .status-badge{
@@ -756,17 +1301,17 @@
         gap: 6px;
         margin-left: auto;
         flex-shrink: 0;
-        background-color: #e8f5ee;
-        color: #1f9d55;
+        background-color: $verde-fundo;
+        color: $verde;
         font-size: 12px;
         font-weight: 700;
         padding: 6px 10px;
-        border-radius: 999px;
+        border-radius: $r-sm;
     }
 
     .status-badge.status-inativo{
         background-color: #f3f4f6;
-        color: #6b7280;
+        color: $texto-mudo;
     }
 
     .status-dot-badge{
@@ -787,14 +1332,14 @@
         display: flex;
         align-items: center;
         gap: 10px;
-        background-color: #f7f9fb;
-        border: 1px solid #eef0f3;
-        border-radius: 12px;
+        background-color: $fundo-suave;
+        border: 1px solid $borda-suave;
+        border-radius: $r-md;
         padding: 12px 14px;
 
         .material-icons-outlined{
             font-size: 20px;
-            color: #1f9d55;
+            color: $verde;
             flex-shrink: 0;
         }
     }
@@ -802,24 +1347,28 @@
     .info-label{
         margin: 0;
         font-size: 12px;
-        color: #6b7280;
+        color: $texto-mudo;
         font-weight: 500;
     }
 
     .info-valor{
         margin: 0;
         font-size: 15px;
-        color: #111827;
+        color: $texto-forte;
         font-weight: 700;
     }
 
     // =======================================================================
-    // Responsivo
+    // Responsivo — notebooks / telas até 1366px
     // =======================================================================
 
     @media(max-width: 1366px){
 
         // --- Layout geral ---
+        .main{
+            padding: 20px 0;
+        }
+
         .content{
             width: min(100%, 760px);
             gap: 12px;
@@ -842,19 +1391,69 @@
             padding: 6px 14px;
         }
 
+        .header-intro{
+            max-width: 520px;
+            font-size: 0.82rem;
+            line-height: 1.5;
+        }
+
+        // --- Sumário ---
+        .toc{
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 6px;
+            padding: 10px;
+            border-radius: $r-md;
+        }
+
+        .toc-item{
+            gap: 7px;
+            padding: 7px 9px;
+            font-size: 0.78rem;
+            border-radius: $r-sm;
+
+            .material-icons-outlined{
+                font-size: 16px;
+            }
+        }
+
+        .toc-num{
+            font-size: 0.7rem;
+        }
+
         // --- Cards de seção ---
         section{
             padding: 14px;
-            border-radius: 14px;
+            border-radius: $r-md;
         }
 
         section h2{
+            gap: 8px;
             font-size: 0.95rem;
             margin-bottom: 10px;
-            padding-bottom: 6px;
+            padding-bottom: 8px;
+        }
+
+        .sec-icone{
+            width: 28px;
+            height: 28px;
+            border-radius: $r-sm;
+            font-size: 16px;
+        }
+
+        .sec-num{
+            font-size: 0.72rem;
+        }
+
+        ol{
+            gap: 12px;
+        }
+
+        ol > li{
+            padding-bottom: 12px;
         }
 
         li strong{
+            gap: 6px;
             font-size: 0.82rem;
             margin-bottom: 4px;
         }
@@ -864,8 +1463,36 @@
             line-height: 1.5;
         }
 
-        ol{
-            gap: 9px;
+        .item-num{
+            min-width: 32px;
+            padding: 1px 6px;
+            font-size: 0.68rem;
+        }
+
+        kbd{
+            padding: 0 5px;
+            font-size: 0.75em;
+        }
+
+        .texto-apoio{
+            font-size: 0.76rem;
+        }
+
+        // --- Lista com ícone ---
+        .lista-info{
+            gap: 5px;
+            margin-top: 8px;
+
+            li{
+                gap: 7px;
+                font-size: 0.78rem;
+                line-height: 1.5;
+
+                > .material-icons-outlined{
+                    font-size: 15px;
+                    margin-top: 2px;
+                }
+            }
         }
 
         // --- Legenda de status ---
@@ -879,9 +1506,123 @@
             font-size: 0.78rem;
         }
 
+        .legenda-status li{
+            gap: 8px;
+            line-height: 1.5;
+        }
+
+        .legenda-status li .status-dot{
+            margin-top: 5px;
+        }
+
         .status-dot{
             width: 9px;
             height: 9px;
+        }
+
+        // --- Fluxo de status ---
+        .fluxo{
+            gap: 6px;
+            margin-top: 8px;
+            padding: 8px 10px;
+            border-radius: $r-sm;
+        }
+
+        .fluxo-etapa{
+            gap: 6px;
+            padding: 4px 9px;
+            font-size: 0.74rem;
+        }
+
+        .fluxo-seta{
+            font-size: 15px;
+        }
+
+        .fluxo-sep{
+            height: 18px;
+            margin: 0 2px;
+        }
+
+        // --- Notas ---
+        .nota{
+            gap: 8px;
+            margin-top: 10px;
+            padding: 8px 10px;
+            border-radius: $r-sm;
+
+            .material-icons-outlined{
+                font-size: 16px;
+            }
+
+            p{
+                font-size: 0.76rem;
+                line-height: 1.5;
+            }
+        }
+
+        // --- Demo: card de outro mês ---
+        .demo-card{
+            max-width: 340px;
+            margin: 10px 0;
+            padding: 36px 12px 10px;
+            border-radius: $r-sm;
+            border-left-width: 4px;
+        }
+
+        .demo-badge{
+            top: 9px;
+            padding: 2px 7px;
+            font-size: 0.6rem;
+        }
+
+        .demo-badge-registro{
+            left: 9px;
+        }
+
+        .demo-badge-outro-mes{
+            right: 9px;
+        }
+
+        .demo-card-titulo{
+            font-size: 0.68rem;
+        }
+
+        .demo-linha{
+            font-size: 0.78rem;
+        }
+
+        .selo-exemplo{
+            padding: 2px 8px;
+            font-size: 0.64rem;
+        }
+
+        // --- Demo: filtros ---
+        .demo-chips{
+            gap: 5px;
+            margin: 8px 0;
+        }
+
+        .demo-chip{
+            gap: 6px;
+            padding: 4px 9px;
+            font-size: 0.74rem;
+        }
+
+        .demo-chip-n{
+            padding: 0 6px;
+            font-size: 0.66rem;
+        }
+
+        // --- Voltar ao topo ---
+        .voltar-sumario{
+            margin-top: 14px;
+            padding: 5px 11px;
+            font-size: 0.7rem;
+            gap: 4px;
+
+            .material-icons-outlined{
+                font-size: 14px;
+            }
         }
 
         // --- Botões de ação principais ---
@@ -895,7 +1636,7 @@
             padding: 8px 14px;
             min-width: 170px;
             gap: 6px;
-            border-radius: 8px;
+            border-radius: $r-sm;
 
             .material-icons-outlined{
                 font-size: 16px;
@@ -906,7 +1647,7 @@
         .success-banner{
             font-size: 0.78rem;
             padding: 6px 10px;
-            border-radius: 8px;
+            border-radius: $r-sm;
         }
 
         // --- Formulários ---
@@ -926,7 +1667,7 @@
             padding: 8px 14px;
             min-width: 170px;
             gap: 6px;
-            border-radius: 8px;
+            border-radius: $r-sm;
 
             .material-icons-outlined{
                 font-size: 16px;
@@ -946,7 +1687,7 @@
         .pessoa-card{
             padding: 6px 10px;
             gap: 8px;
-            border-radius: 8px;
+            border-radius: $r-sm;
         }
 
         .pessoa-nome{
@@ -976,10 +1717,37 @@
             font-size: 11px;
             gap: 6px;
             width: 23%;
+            min-width: 140px;
+            border-radius: $r-sm;
 
             .material-icons-outlined{
                 font-size: 16px;
             }
+        }
+
+        // --- Modais ---
+        .modal-excluir{
+            width: 340px;
+            padding: 18px;
+        }
+
+        .modal-excluir h2{
+            font-size: 18px;
+        }
+
+        .modal-excluir p{
+            font-size: 0.85rem;
+            margin-bottom: 16px;
+        }
+
+        .acoes-modal button{
+            padding: 8px 14px;
+            font-size: 12px;
+        }
+
+        .modal-pessoa{
+            width: 380px;
+            padding: 22px;
         }
 
         // --- Edição de nome no modal de detalhes ---
@@ -999,6 +1767,151 @@
             .material-icons-outlined{
                 font-size: 14px;
             }
+        }
+    }
+
+    // =======================================================================
+    // Responsivo — tablets e celulares grandes (até 768px)
+    // =======================================================================
+
+    @media(max-width: 768px){
+
+        .main{
+            padding: 12px 10px;
+        }
+
+        .content{
+            width: 100%;
+        }
+
+        .toc{
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        section{
+            padding: 12px;
+        }
+
+        .demo-card{
+            max-width: 100%;
+        }
+
+        .btns-lote{
+            width: 100%;
+        }
+
+        .btn-lote{
+            flex: 1 1 140px;
+            width: auto;
+        }
+
+        .section-actions{
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .action-button,
+        .form-submit{
+            width: 100%;
+            min-width: 0;
+        }
+
+        .form-field{
+            max-width: 100%;
+            flex-basis: 0;
+        }
+    }
+
+    // =======================================================================
+    // Responsivo — celulares (até 480px)
+    // =======================================================================
+
+    @media(max-width: 480px){
+
+        .header h1{
+            font-size: 1.4rem;
+        }
+
+        .div-subtitle{
+            padding: 6px 10px;
+        }
+
+        .toc{
+            grid-template-columns: 1fr;
+        }
+
+        .sec-num{
+            display: none;
+        }
+
+        // Badges do demo-card passam a ficar empilhados, sem posição absoluta
+        .demo-card{
+            padding: 10px;
+            gap: 6px;
+        }
+
+        .demo-badge{
+            position: static;
+            align-self: flex-start;
+            white-space: normal;
+        }
+
+        .lista-info li{
+            flex-wrap: wrap;
+        }
+
+        .fluxo{
+            justify-content: center;
+        }
+
+        .fluxo-sep{
+            display: none;
+        }
+
+        .voltar-sumario{
+            margin-left: 0;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .btn-lote{
+            flex-basis: 100%;
+        }
+
+        section form .form-row{
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        section form .form-actions{
+            width: 100%;
+        }
+
+        .modal-excluir,
+        .modal-pessoa{
+            width: 92%;
+            padding: 16px;
+        }
+
+        .modal-pessoa-header{
+            flex-wrap: wrap;
+            padding-right: 28px;
+        }
+
+        .modal-pessoa-info-grid{
+            grid-template-columns: 1fr;
+        }
+
+        .acoes-modal{
+            flex-wrap: wrap;
+        }
+    }
+
+    // Respeita quem prefere menos movimento
+    @media (prefers-reduced-motion: reduce){
+        *{
+            animation: none !important;
+            transition: none !important;
         }
     }
 }

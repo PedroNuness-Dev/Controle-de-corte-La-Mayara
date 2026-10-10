@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" lang="pt-BR">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Relatório de Cortes</title>
+    <style type="text/css">
+        @page {
+            size: A4;
+            margin: 14mm 14mm 16mm 14mm;
+            @bottom-left {
+                content: "Relatório de Cortes";
+                font-family: Helvetica, Arial, sans-serif;
+                font-size: 9px;
+                color: #5a5757;
+            }
+            @bottom-right {
+                content: "Página " counter(page) " de " counter(pages);
+                font-family: Helvetica, Arial, sans-serif;
+                font-size: 9px;
+                color: #5a5757;
+            }
+        }
+
+        body {
+            font-family: Helvetica, Arial, sans-serif;
+            font-size: 11px;
+            color: #1f2a2e;
+            margin: 0;
+        }
+
+        table { border-collapse: collapse; width: 100%; }
+
+        /* ---------- Cabeçalho ---------- */
+        .cabecalho { border-top: 5px solid #36A615; border-bottom: 1px solid #d9dfdb; margin-bottom: 14px; }
+        .cabecalho td { vertical-align: middle; padding: 12px 0 10px 0; }
+        .logo { width: 90px; }
+        .titulo { font-size: 22px; font-weight: bold; margin: 0; }
+        .periodo { font-size: 11px; color: #4d4b4b; margin: 3px 0 0 0; }
+        .emissao { font-size: 10px; color: #4d4b4b; text-align: right; }
+
+        /* ---------- Resumo ---------- */
+        .resumo { margin-bottom: 12px; border-collapse: separate; border-spacing: 0; }
+        .resumo td { vertical-align: middle; text-align: center; }
+        .caixa-pecas {
+            width: 24%;
+            background-color: #36A615;
+            color: #ffffff;
+            padding: 12px 8px;
+            border: 1px solid #1f6b0b;
+            border-top: 3px solid #1f6b0b;
+        }
+        .caixa-pecas .numero { font-size: 28px; font-weight: bold; }
+        .caixa-pecas .rotulo { font-size: 10px; font-weight: bold; text-transform: uppercase; }
+        .espaco { width: 1.5%; }
+        .status {
+            width: 14%;
+            background-color: #fafbfa;
+            padding: 9px 4px;
+            border: 1px solid #d9dfdb;
+        }
+        .status .numero { font-size: 19px; font-weight: bold; }
+        .status .rotulo { font-size: 8px; font-weight: bold; text-transform: uppercase; color: #4d4b4b; }
+        .status .percentual { font-size: 8px; color: #5a5757; margin-top: 2px; }
+        /* Peças do status: aparece abaixo do percentual, separada por uma linha fina */
+        .status .pecas {
+            font-size: 9px;
+            font-weight: bold;
+            margin-top: 5px;
+            padding-top: 4px;
+            border-top: 1px solid #e3e8e5;
+        }
+        .st-total { border-top: 3px solid #1f2a2e; }
+        .st-pendente { border-top: 3px solid #7A7777; color: #7A7777; }
+        .st-enfestado { border-top: 3px solid #a3690b; color: #a3690b; }
+        .st-cortado { border-top: 3px solid #36A615; color: #2a8410; }
+        .st-cancelado { border-top: 3px solid #DE3636; color: #DE3636; }
+        .st-total .numero { color: #1f2a2e; }
+
+        /* ---------- Barra de distribuição por status ---------- */
+        .bloco-distribuicao { margin-top: 8px; }
+        .distribuicao-titulo { font-size: 9px; font-weight: bold; text-transform: uppercase; color: #4d4b4b; margin: 0 0 4px 0; }
+        table.distribuicao { margin-bottom: 6px; border: 1px solid #d9dfdb; border-collapse: separate; border-spacing: 0; }
+        table.distribuicao td { height: 10px; padding: 0; font-size: 1px; line-height: 1px; border-right: 2px solid #ffffff; }
+        .seg-pendente  { background-color: #7A7777; }
+        .seg-enfestado { background-color: #a3690b; }
+        .seg-cortado   { background-color: #36A615; }
+        .seg-cancelado { background-color: #DE3636; }
+
+        /* ---------- Colunas Cortadores | Enfestadores ---------- */
+        .colunas { margin-top: 12px; border-collapse: separate; border-spacing: 0; }
+        .colunas td.coluna { width: 48.5%; vertical-align: top; padding: 10px 12px 12px 12px; border: 1px solid #d9dfdb; border-top: 3px solid #36A615; }
+        .colunas td.vao { width: 3%; padding: 0; }
+
+        .secao {
+            font-size: 13px;
+            font-weight: bold;
+            color: #1f6b0b;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid #d9dfdb;
+            padding-bottom: 6px;
+            margin: 0 0 4px 0;
+        }
+        .subtitulo { font-size: 10px; font-weight: bold; color: #4d4b4b; text-transform: uppercase; letter-spacing: 0.5px; margin: 12px 0 4px 0; }
+
+        /* ---------- Tabelas de pessoas ---------- */
+        table.pessoas th {
+            background-color: #ecf6e8;
+            color: #1f6b0b;
+            font-size: 9px;
+            text-transform: uppercase;
+            text-align: left;
+            padding: 5px 6px;
+            border-top: 1px solid #cfe6c6;
+            border-bottom: 1px solid #9fd48c;
+        }
+        table.pessoas td {
+            padding: 5px 6px;
+            border-bottom: 1px solid #edf0ee;
+            vertical-align: middle;
+        }
+        table.pessoas { border-bottom: 1px solid #cfd6d1; }
+        table.pessoas tr.zebra td { background-color: #f8faf8; }
+        table.pessoas tr { page-break-inside: avoid; }
+
+        /* Larguras fixas das colunas numéricas (o Nome ocupa o que sobrar) */
+        table.pessoas .c-qtd { width: 62px; }
+        table.pessoas .c-pct { width: 34px; }
+        table.pessoas .c-bar { width: 74px; }
+
+        /* Alinhamento: precisa de "table.pessoas" para vencer o text-align do th acima */
+        table.pessoas .centro  { text-align: center; }
+        table.pessoas .direita { text-align: right; }
+
+        .barra { background-color: #dde3df; height: 7px; font-size: 1px; line-height: 1px; }
+        .barra-cheia { background-color: #36A615; height: 7px; font-size: 1px; line-height: 1px; }
+
+        .vazio { font-style: italic; color: #5a5757; padding: 6px; margin: 0; }
+        .nota { font-size: 10px; color: #5a5757; margin-top: 12px; padding: 6px 8px; border: 1px solid #d9dfdb; background-color: #f8faf8; }
+    </style>
+</head>
+<body th:with="total=${dados.quantidadesCortes.quantidadeTotal},
+               pctPendente=${dados.quantidadesCortes.quantidadeTotal > 0 ? dados.quantidadesCortes.quantidadePendentes * 100 / dados.quantidadesCortes.quantidadeTotal : 0},
+               pctEnfestado=${dados.quantidadesCortes.quantidadeTotal > 0 ? dados.quantidadesCortes.quantidadeEnfestados * 100 / dados.quantidadesCortes.quantidadeTotal : 0},
+               pctCortado=${dados.quantidadesCortes.quantidadeTotal > 0 ? dados.quantidadesCortes.quantidadeCortados * 100 / dados.quantidadesCortes.quantidadeTotal : 0},
+               pctCancelado=${dados.quantidadesCortes.quantidadeTotal > 0 ? dados.quantidadesCortes.quantidadeCancelados * 100 / dados.quantidadesCortes.quantidadeTotal : 0},
+               pcTotal=${dados.quantidadeDePecas?.quantidadeTotal ?: 0},
+               pcPendente=${dados.quantidadeDePecas?.quantidadePendente ?: 0},
+               pcEnfestado=${dados.quantidadeDePecas?.quantidadeEnfestaodo ?: 0},
+               pcCortado=${dados.quantidadeDePecas?.quantidadeCortado ?: 0},
+               pcCancelado=${dados.quantidadeDePecas?.quantidadeCancelado ?: 0},
+               pctPcPendente=${pcTotal > 0 ? pcPendente * 100 / pcTotal : 0},
+               pctPcEnfestado=${pcTotal > 0 ? pcEnfestado * 100 / pcTotal : 0},
+               pctPcCortado=${pcTotal > 0 ? pcCortado * 100 / pcTotal : 0},
+               pctPcCancelado=${pcTotal > 0 ? pcCancelado * 100 / pcTotal : 0}">
+
+<table class="cabecalho">
+    <tr>
+        <td style="width: 110px;">
+            <img class="logo" alt="Logo" th:src="'data:image/png;base64,' + ${logoBase64}"
+                 src=""/>
+        </td>
+        <td>
+            <p class="titulo">Relatório de Cortes</p>
+            <p class="periodo">
+                Período:
+                <span th:text="${#temporals.format(dados.dataInicial, 'dd/MM/yyyy')}">01/09/2026</span>
+                a
+                <span th:text="${#temporals.format(dados.dataFinal, 'dd/MM/yyyy')}">31/10/2026</span>
+            </p>
+        </td>
+        <td class="emissao">
+            Emitido em
+            <span th:text="${#temporals.format(dataEmissao, 'dd/MM/yyyy')}">08/10/2026</span>
+        </td>
+    </tr>
+</table>
+
+<table class="resumo">
+    <tr>
+        <td class="caixa-pecas">
+            <div class="numero" th:text="${#numbers.formatInteger(pcTotal, 1, 'POINT')}">4.000</div>
+            <div class="rotulo">peças no período</div>
+        </td>
+        <td class="espaco"></td>
+
+        <td class="status st-total">
+            <div class="numero" th:text="${total}">5</div>
+            <div class="rotulo">Total</div>
+            <div class="percentual">100%</div>
+            <div class="pecas" th:text="${#numbers.formatInteger(pcTotal, 1, 'POINT') + (pcTotal == 1 ? ' peça' : ' peças')}">4.000 peças</div>
+        </td>
+        <td class="espaco"></td>
+
+        <td class="status st-pendente">
+            <div class="numero" th:text="${dados.quantidadesCortes.quantidadePendentes}">1</div>
+            <div class="rotulo">Pendentes</div>
+            <div class="percentual" th:text="${pctPendente} + '%'">20%</div>
+            <div class="pecas" th:text="${#numbers.formatInteger(pcPendente, 1, 'POINT') + (pcPendente == 1 ? ' peça' : ' peças')}">800 peças</div>
+        </td>
+        <td class="espaco"></td>
+
+        <td class="status st-enfestado">
+            <div class="numero" th:text="${dados.quantidadesCortes.quantidadeEnfestados}">1</div>
+            <div class="rotulo">Enfestados</div>
+            <div class="percentual" th:text="${pctEnfestado} + '%'">20%</div>
+            <div class="pecas" th:text="${#numbers.formatInteger(pcEnfestado, 1, 'POINT') + (pcEnfestado == 1 ? ' peça' : ' peças')}">800 peças</div>
+        </td>
+        <td class="espaco"></td>
+
+        <td class="status st-cortado">
+            <div class="numero" th:text="${dados.quantidadesCortes.quantidadeCortados}">3</div>
+            <div class="rotulo">Cortados</div>
+            <div class="percentual" th:text="${pctCortado} + '%'">60%</div>
+            <div class="pecas" th:text="${#numbers.formatInteger(pcCortado, 1, 'POINT') + (pcCortado == 1 ? ' peça' : ' peças')}">2.400 peças</div>
+        </td>
+        <td class="espaco"></td>
+
+        <td class="status st-cancelado">
+            <div class="numero" th:text="${dados.quantidadesCortes.quantidadeCancelados}">0</div>
+            <div class="rotulo">Cancelados</div>
+            <div class="percentual" th:text="${pctCancelado} + '%'">0%</div>
+            <div class="pecas" th:text="${#numbers.formatInteger(pcCancelado, 1, 'POINT') + (pcCancelado == 1 ? ' peça' : ' peças')}">0 peças</div>
+        </td>
+    </tr>
+</table>
+
+<div th:if="${total > 0}">
+    <p class="distribuicao-titulo">Distribuição dos cortes por status</p>
+    <table class="distribuicao">
+        <tr>
+            <td th:if="${pctPendente > 0}"  class="seg-pendente"  th:style="'width:' + ${pctPendente} + '%'"></td>
+            <td th:if="${pctEnfestado > 0}" class="seg-enfestado" th:style="'width:' + ${pctEnfestado} + '%'"></td>
+            <td th:if="${pctCortado > 0}"   class="seg-cortado"   th:style="'width:' + ${pctCortado} + '%'"></td>
+            <td th:if="${pctCancelado > 0}" class="seg-cancelado" th:style="'width:' + ${pctCancelado} + '%'"></td>
+        </tr>
+    </table>
+</div>
+
+<div class="bloco-distribuicao" th:if="${pcTotal > 0}">
+    <p class="distribuicao-titulo">Distribuição das peças por status</p>
+    <table class="distribuicao">
+        <tr>
+            <td th:if="${pctPcPendente > 0}"  class="seg-pendente"  th:style="'width:' + ${pctPcPendente} + '%'"></td>
+            <td th:if="${pctPcEnfestado > 0}" class="seg-enfestado" th:style="'width:' + ${pctPcEnfestado} + '%'"></td>
+            <td th:if="${pctPcCortado > 0}"   class="seg-cortado"   th:style="'width:' + ${pctPcCortado} + '%'"></td>
+            <td th:if="${pctPcCancelado > 0}" class="seg-cancelado" th:style="'width:' + ${pctPcCancelado} + '%'"></td>
+        </tr>
+    </table>
+</div>
+
+<table class="colunas">
+    <tr>
+        <td class="coluna">
+            <p class="secao">Cortadores</p>
+
+            <p class="subtitulo">Ativos</p>
+            <div th:replace="~{this :: tabelaPessoas(${dados.cortadoresAtivos}, 'Cortados')}"></div>
+
+            <th:block th:if="${not #lists.isEmpty(dados.cortadoresInativos)}">
+                <p class="subtitulo">Inativos</p>
+                <div th:replace="~{this :: tabelaPessoas(${dados.cortadoresInativos}, 'Cortados')}"></div>
+            </th:block>
+        </td>
+
+        <td class="vao"></td>
+
+        <td class="coluna">
+            <p class="secao">Enfestadores</p>
+
+            <p class="subtitulo">Ativos</p>
+            <div th:replace="~{this :: tabelaPessoas(${dados.enfestadoresAtivos}, 'Enfestados')}"></div>
+
+            <th:block th:if="${not #lists.isEmpty(dados.enfestadoresInativos)}">
+                <p class="subtitulo">Inativos</p>
+                <div th:replace="~{this :: tabelaPessoas(${dados.enfestadoresInativos}, 'Enfestados')}"></div>
+            </th:block>
+        </td>
+    </tr>
+</table>
+
+<p class="nota">
+    A participação (%) de cada pessoa é calculada sobre o total de cortes do período.
+    Cortes pendentes não têm cortador, e cortes pendentes ou cancelados podem não ter enfestador,
+    por isso a soma das participações pode ficar abaixo de 100%.
+</p>
+
+<th:block th:remove="all">
+    <div th:fragment="tabelaPessoas(lista, rotulo)">
+        <table class="pessoas" th:if="${not #lists.isEmpty(lista)}">
+            <thead>
+            <tr>
+                <th>Nome</th>
+                <th class="centro c-qtd" th:text="${rotulo}">Cortes</th>
+                <th colspan="2">Participação</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="p, iter : ${lista}" th:classappend="${iter.odd} ? 'zebra'"
+                th:with="pct=${dados.quantidadesCortes.quantidadeTotal > 0 ? p.quantidadeDeCortes * 100 / dados.quantidadesCortes.quantidadeTotal : 0}">
+                <td th:text="${p.nome}">Nome</td>
+                <td class="centro c-qtd" th:text="${p.quantidadeDeCortes}">0</td>
+                <td class="direita c-pct" th:text="${pct} + '%'">20%</td>
+                <td class="c-bar">
+                    <div class="barra"><div class="barra-cheia" th:style="'width:' + ${pct} + '%'"></div></div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <p class="vazio" th:if="${#lists.isEmpty(lista)}">Nenhum registro.</p>
+    </div>
+</th:block>
+
+</body>
+</html>

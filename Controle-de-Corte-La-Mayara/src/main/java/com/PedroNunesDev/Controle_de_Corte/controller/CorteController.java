@@ -48,11 +48,11 @@ public class CorteController {
      * @return Lista de cortes do mês
      */
     @GetMapping("/buscar/mes")
-    public ResponseEntity<List<CorteDtoResponse>> buscarPorMes(@RequestParam(required = false) Integer mes, @RequestParam(required = false) Integer ano) {
+    public ResponseEntity<List<CorteDtoResponse>> buscarPorMes(@RequestParam Integer mes, @RequestParam Integer ano, @RequestParam Boolean onlyMonth) {
 
         logger.debug("Requisição recebida: GET /corte/mes");
 
-        List<CorteDtoResponse> cortes = corteService.buscarPorMes(mes, ano);
+        List<CorteDtoResponse> cortes = corteService.buscarPorMes(mes, ano, onlyMonth);
 
         return ResponseEntity.ok(cortes);
     }

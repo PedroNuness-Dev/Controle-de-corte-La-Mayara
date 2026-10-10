@@ -1,5 +1,6 @@
 package com.PedroNunesDev.Controle_de_Corte.repository;
 
+import com.PedroNunesDev.Controle_de_Corte.dto.response.AnaliseQuantidadePecasCorte;
 import com.PedroNunesDev.Controle_de_Corte.dto.response.QuantidadeCortesMesResponse;
 import com.PedroNunesDev.Controle_de_Corte.enums.CorteStatus;
 import com.PedroNunesDev.Controle_de_Corte.model.Corte;
@@ -14,6 +15,7 @@ public interface CorteRepository extends JpaRepository<Corte,Long> {
 
     @Query("SELECT c FROM Corte c" +
             " WHERE c.dataDeRegistro BETWEEN :diaPrimeiro AND :diaUltimo" +
+            " OR (c.corteStatus <> CORTADO AND c.corteStatus <> CANCELADO)" +
             " ORDER BY c.nomeModelo ASC")
     List<Corte> buscarPorMes(@Param("diaPrimeiro") LocalDate diaPrimeiro,@Param("diaUltimo") LocalDate diaUltimo);
 
@@ -24,25 +26,16 @@ public interface CorteRepository extends JpaRepository<Corte,Long> {
     List<Corte> buscarPorMesEPorStatus(@Param("diaPrimeiro") LocalDate diaPrimeiro, @Param("diaUltimo") LocalDate diaUltimo, @Param("status") CorteStatus status);
 
     @Query("SELECT c FROM Corte c" +
-            " WHERE c.dataDeRegistro BETWEEN :diaPrimeiro AND :diaUltimo" +
-            " AND (LOWER(c.nomeModelo) LIKE CONCAT(LOWER(:nome), '%') " +
+            " WHERE c.corteStatus = :status" +
+            " ORDER BY c.nomeModelo ASC")
+    List<Corte> buscarPorStatus(@Param("status") CorteStatus status);
+
+    @Query("SELECT c FROM Corte c" +
+            " WHERE (LOWER(c.nomeModelo) LIKE CONCAT(LOWER(:nome), '%') " +
             " OR LOWER(c.loteFormatado) LIKE CONCAT(LOWER(:nome), '%'))" +
             " ORDER BY c.nomeModelo ASC")
     List<Corte> buscarPorNomeOuLote(@Param("nome") String nome, @Param("diaPrimeiro") LocalDate diaPrimeiro, @Param("diaUltimo") LocalDate diaUltimo);
 
-    @Query("""
-    SELECT 
-       COALESCE(SUM(CASE WHEN LOWER(c.enfestador.nome) = LOWER(:nome) THEN 1 ELSE 0 END),0)
-    FROM Corte c
-""")
-    Long buscarQuantidadeDeCortesPorEnfestador(@Param("nome") String nome);
-
-    @Query("""
-    SELECT 
-       COALESCE(SUM(CASE WHEN LOWER(c.cortador.nome) = LOWER(:nome) THEN 1 ELSE 0 END),0)
-    FROM Corte c
-""")
-    Long buscarQuantidadeDeCortesPorCortador(@Param("nome") String nome);
 
     @Query("""
     SELECT
@@ -54,5 +47,17 @@ public interface CorteRepository extends JpaRepository<Corte,Long> {
      FROM Corte c
     WHERE c.dataDeRegistro BETWEEN :diaPrimeiro AND :diaUltimo
 """)
-    QuantidadeCortesMesResponse quantidadeCortesRegistradosNoMes(@Param("diaPrimeiro") LocalDate diaPrimeiro, @Param("diaUltimo") LocalDate diaUltimo);
+    QuantidadeCortesMesResponse quantidadeCortesRegistrados(@Param("diaPrimeiro") LocalDate diaPrimeiro, @Param("diaUltimo") LocalDate diaUltimo);
+
+    @Query("""
+    SELECT
+     COALESCE(SUM(c.quantidadeTotal),0),
+     COALESCE(SUM(CASE WHEN c.corteStatus = 'CORTADO' THEN c.quantidadeTotal ELSE 0 END),0),
+     COALESCE(SUM(CASE WHEN c.corteStatus = 'ENFESTADO' THEN c.quantidadeTotal ELSE 0 END),0),
+     COALESCE(SUM(CASE WHEN c.corteStatus = 'PENDENTE' THEN c.quantidadeTotal ELSE 0 END),0),
+     COALESCE(SUM(CASE WHEN c.corteStatus = 'CANCELADO' THEN c.quantidadeTotal ELSE 0 END),0)
+     FROM Corte c
+    WHERE c.dataDeRegistro BETWEEN :diaPrimeiro AND :diaUltimo
+""")
+    AnaliseQuantidadePecasCorte quantidadeDePecasRegistrados(@Param("diaPrimeiro") LocalDate diaPrimeiro, @Param("diaUltimo") LocalDate diaUltimo);
 }

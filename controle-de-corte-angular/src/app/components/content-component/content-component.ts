@@ -122,6 +122,7 @@ export class ContentComponent implements OnInit {
   @HostListener('document:keydown.escape')
   onEscape() {
     this.corteSelecionado = null;
+    this.opcoesCardVisiveis = false;
   }
 
   // ---------------------------------------------------------------------
@@ -194,7 +195,7 @@ export class ContentComponent implements OnInit {
     const { ano, mes } = this.obterAnoEMesAtual();
 
     const request$ = this.pageSelected === 'Geral'
-      ? this.corteService.buscarCortesDoMes(mes, ano)
+      ? this.corteService.buscarCortesDoMes(mes, ano, false)
       : this.corteService.buscarCortesDoMesPorStatus(
           STATUS_POR_PAGINA[this.pageSelected]!,
           ano,
@@ -204,7 +205,14 @@ export class ContentComponent implements OnInit {
     request$
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: (data) => { this.cortesDoMes = data; this.cdr.detectChanges(); },
+        next: (data) => {
+          // Cortes de outros meses (pendentes/enfestados que sobraram) vão para o topo.
+          // O sort do JS é estável, então a ordem original dentro de cada grupo é mantida.
+          this.cortesDoMes = [...data].sort(
+            (a, b) => Number(this.ehDeOutroMes(b)) - Number(this.ehDeOutroMes(a))
+          );
+          this.cdr.detectChanges();
+        },
         error: (err) => console.error('Erro ao buscar cortes do mês:', err)
       });
   }
@@ -232,6 +240,11 @@ export class ContentComponent implements OnInit {
         next: (data) => { this.cortesDoMes = data; this.cdr.detectChanges(); },
         error: (err) => console.error('Erro ao buscar corte por nome ou lote:', err)
       });
+  }
+
+  limparBusca(): void {
+    this.nomeParaBuscar = '';
+    this.buscarCortePorNomeOuLote(); // vazio: recarrega a lista normal do mês
   }
 
   // =======================================================================
@@ -445,12 +458,57 @@ export class ContentComponent implements OnInit {
   }
 
   // =======================================================================
+  // Corte de outro mês (pendente/enfestado que "sobrou" de meses anteriores)
+  // =======================================================================
+
+  ehDeOutroMes(corte: CorteResponse): boolean {
+    const ref = this.extrairAnoEMes(corte.dataDeRegistro);
+    if (!ref) return false;
+
+    const { ano, mes } = this.obterAnoEMesAtual();
+    return ref.ano !== ano || ref.mes !== mes;
+  }
+
+  rotuloOutroMes(corte: CorteResponse): string {
+    const ref = this.extrairAnoEMes(corte.dataDeRegistro);
+    if (!ref) return '';
+
+    const { ano, mes } = this.obterAnoEMesAtual();
+    const diff = (ano - ref.ano) * 12 + (mes - ref.mes);
+    const nomeMes = MESES[ref.mes - 1];
+
+    return diff === 1
+      ? `MÊS ANTERIOR · ${nomeMes}`
+      : `${nomeMes}/${ref.ano}`;
+  }
+
+  // =======================================================================
   // Utilitários privados
   // =======================================================================
 
   private obterAnoEMesAtual(): { ano: number; mes: number } {
     const agora = new Date();
     return { ano: agora.getFullYear(), mes: agora.getMonth() + 1 };
+  }
+
+  /**
+   * Extrai ano e mês de uma data em dd/MM/yyyy (formato do backend) ou yyyy-MM-dd (ISO).
+   * Retorna null se a data for vazia ou estiver em formato inesperado.
+   */
+  private extrairAnoEMes(data: string | null | undefined): { ano: number; mes: number } | null {
+    if (!data) return null;
+
+    if (/^\d{2}\/\d{2}\/\d{4}$/.test(data)) {
+      const [, mes, ano] = data.split('/');
+      return { ano: +ano, mes: +mes };
+    }
+
+    if (/^\d{4}-\d{2}-\d{2}$/.test(data)) {
+      const [ano, mes] = data.split('-');
+      return { ano: +ano, mes: +mes };
+    }
+
+    return null;
   }
 
   /**

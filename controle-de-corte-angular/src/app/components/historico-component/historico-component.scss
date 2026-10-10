@@ -142,12 +142,16 @@
         border-radius: 12px;
         padding: 18px 20px;
         color: black;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        transition: all 0.2s ease;        
+        box-shadow:
+            inset 8px 0 0 rgba(0, 0, 0, 0.28),
+            0 4px 12px rgba(0, 0, 0, 0.15);
+        transition: all 0.2s ease;
 
         &:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+            box-shadow:
+                inset 8px 0 0 rgba(0, 0, 0, 0.28),
+                0 6px 18px rgba(0, 0, 0, 0.2);
         }
     }
 
@@ -615,7 +619,12 @@
         font-weight: 500;
     }
 
+    /* Linha de resultados: texto + link "Limpar filtros" ao lado */
     .secao-resultados{
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 12px;
         width: 100%;
         max-width: 900px;
         margin-bottom: 16px;
@@ -627,6 +636,200 @@
         text-transform: uppercase;
         letter-spacing: 0.06em;
         color: #9aa3b8;
+    }
+
+    .link-limpar{
+        border: none;
+        background: transparent;
+        padding: 0;
+        color: #627dcb;
+        font-size: 0.8rem;
+        font-weight: 700;
+        text-decoration: underline;
+        cursor: pointer;
+    }
+
+    .link-limpar:hover{
+        color: #5269b0;
+    }
+
+    .erro-busca{
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: #c53030;
+    }
+
+    .btn-search:disabled{
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    /* --- Barra de filtros: busca por nome/lote + chips de status --- */
+    .barra-filtros{
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+        width: 100%;
+        max-width: 900px;
+        margin-bottom: 24px;
+    }
+
+    .filtro-busca{
+        position: relative;
+        display: flex;
+        align-items: center;
+        flex: 1 1 260px;
+        max-width: 340px;
+        background: #f8fafd;
+        border: 1px solid #d7dde9;
+        border-radius: 12px;
+    }
+
+    .filtro-busca-icon{
+        position: absolute;
+        left: 12px;
+        font-size: 20px;
+        color: #627dcb;
+        pointer-events: none;
+    }
+
+    .filtro-busca-input{
+        background: transparent;
+        border-radius: 6px;
+        color: #1a2438;
+        font-size: 0.95rem;
+        height: 42px;
+        padding: 8px 38px 8px 40px;
+    }
+
+    .filtro-busca-input:focus{
+        background: transparent;
+        box-shadow: none;
+    }
+
+    .filtro-busca-input::placeholder{
+        color: #9aa3b8;
+    }
+
+    .filtro-busca-limpar{
+        position: absolute;
+        right: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: none;
+        background: transparent;
+        padding: 4px;
+        border-radius: 6px;
+        color: #7a8499;
+        cursor: pointer;
+
+        .material-icons-outlined{
+            font-size: 18px;
+        }
+    }
+
+    .filtro-busca-limpar:hover{
+        background: rgba(0, 0, 0, 0.06);
+    }
+
+    .chips-status{
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .chip{
+        --chip-cor: #627dcb;
+
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 7px 12px;
+        border-radius: 8px;
+        border: 1px solid #d7dde9;
+        background: #ffffff;
+        color: #47506b;
+        font-size: 0.85rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.15s ease;
+
+        &::before{
+            content: '';
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: var(--chip-cor);
+        }
+
+        &:hover{
+            border-color: var(--chip-cor);
+        }
+
+        &.ativo{
+            background: var(--chip-cor);
+            border-color: var(--chip-cor);
+            color: #ffffff;
+
+            &::before{
+                background: #ffffff;
+            }
+        }
+
+        &.vazio{
+            opacity: 0.55;
+        }
+    }
+
+    .chip-contagem{
+        min-width: 20px;
+        padding: 1px 7px;
+        border-radius: 999px;
+        background: rgba(0, 0, 0, 0.07);
+        font-size: 0.75rem;
+        font-weight: 800;
+        text-align: center;
+    }
+
+    .chip.ativo .chip-contagem{
+        background: rgba(255, 255, 255, 0.25);
+    }
+
+    .chip-todos{ --chip-cor: #627dcb; }
+    .chip-pendente{ --chip-cor: var(--gray-primary-color); }
+    .chip-enfestado{ --chip-cor: var(--orange-primary-color); }
+    .chip-cortado{ --chip-cor: var(--green-primary-color); }
+    .chip-cancelado{ --chip-cor: rgb(148, 17, 17); }
+
+    /* --- Estado vazio quando os filtros não retornam nada --- */
+    .empty-filtros{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+
+        p{
+            margin: 0;
+        }
+    }
+
+    .btn-limpar-filtros{
+        border: none;
+        padding: 8px 16px;
+        border-radius: 8px;
+        background: #627dcb;
+        color: #ffffff;
+        font-weight: 700;
+        cursor: pointer;
+        transition: background 0.15s ease;
+    }
+
+    .btn-limpar-filtros:hover{
+        background: #5269b0;
     }
 
     @media (max-width: 1366px) {
@@ -749,6 +952,21 @@
             font-size: 10px;
             padding: 2px 8px;
             top: -8px;
+        }
+
+        .filtro-busca-input{
+            font-size: 0.85rem;
+            height: 36px;
+            padding: 6px 34px 6px 36px;
+        }
+
+        .filtro-busca-icon{
+            font-size: 18px;
+        }
+
+        .chip{
+            font-size: 0.8rem;
+            padding: 6px 10px;
         }
     }
 }

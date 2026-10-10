@@ -13,18 +13,52 @@
             <div class="busca-mes-controles">
                 <div class="input-wrapper">
                     <span class="material-icons-outlined icon-calendario">calendar_month</span>
-                    <input type="month" id="mesSelecionado" class="input-month" aria-label="Selecionar mês" [(ngModel)]="mesSelecionado" />
+                    <input type="month" id="mesSelecionado" class="input-month" aria-label="Selecionar mês" [(ngModel)]="mesSelecionado" [max]="mesMaximo" />
                 </div>
-                <button type="button" class="btn-search" (click)="buscarCortes()">
+                <button type="button" class="btn-search" (click)="buscarCortes()" [disabled]="mesSelecionado > mesMaximo">
                     <span class="material-icons-outlined">search</span>
                     Buscar
                 </button>
             </div>
+            @if (erroBusca) {
+                <span class="erro-busca">⚠ {{ erroBusca }}</span>
+            }
         </div>
     </div>
     @if (infoResult) {
         <div class="secao-resultados">
-            <span class="secao-label">Resultados de {{getNomeMesFormatado(mesBuscado)}} — {{ getquantidadeDeCortes() }} corte(s) encontrado(s)</span>
+            <span class="secao-label">Resultados de {{getNomeMesFormatado(mesBuscado)}} — {{ getquantidadeDeCortes() }}{{ filtrosAtivos ? ' de ' + cortesBuscados.length : '' }} corte(s) encontrado(s)</span>
+            @if (filtrosAtivos) {
+                <button type="button" class="link-limpar" (click)="limparFiltros()">Limpar filtros</button>
+            }
+        </div>
+    }
+
+    @if (cortesBuscados.length > 0) {
+        <div class="barra-filtros">
+            <div class="filtro-busca">
+                <span class="material-icons-outlined filtro-busca-icon">filter_list</span>
+                <input type="text" class="filtro-busca-input" placeholder="Filtrar por nome ou lote"
+                       aria-label="Filtrar por nome ou lote"
+                       [ngModel]="termoBusca" (ngModelChange)="onTermoBuscaChange($event)" />
+                @if (termoBusca) {
+                    <button type="button" class="filtro-busca-limpar" aria-label="Limpar busca" (click)="onTermoBuscaChange('')">
+                        <span class="material-icons-outlined">close</span>
+                    </button>
+                }
+            </div>
+
+            <div class="chips-status">
+                @for (f of filtrosStatus; track f.valor) {
+                    <button type="button" class="chip" [ngClass]="'chip-' + f.valor.toLowerCase()"
+                            [class.ativo]="filtroStatus === f.valor"
+                            [class.vazio]="contagens[f.valor] === 0 && filtroStatus !== f.valor"
+                            (click)="selecionarFiltroStatus(f.valor)">
+                        {{ f.rotulo }}
+                        <span class="chip-contagem">{{ contagens[f.valor] }}</span>
+                    </button>
+                }
+            </div>
         </div>
     }
 
@@ -37,9 +71,9 @@
       </div>
     }
 
-    @if (cortesBuscados.length > 0) {
+    @if (cortesFiltrados.length > 0) {
         <div class="lista-cortes">
-            @for (corte of cortesBuscados; track corte.id) {
+            @for (corte of cortesFiltrados; track corte.id) {
                 <div class="card-corte" [ngClass]="pegarStatusParaEstilo(corte.corteStatus)">
                     <span class="badge-registro">📅 {{ corte.dataDeRegistro }}</span>
                     <div class="header-card">
@@ -47,7 +81,7 @@
                         <button class="btn-menu" (click)="abrirModalOpcao(corte)">
                         <img src="three.png" alt="">
                         </button>
-                        @if (opcoesCard && corteAbertoOpcao.id === corte.id) {
+                        @if (opcoesCard && corteAbertoOpcao!.id === corte.id) {
                         <div class="opcoes-btn">
                             <button type="button" class="btn-opcao" (click)="selecionarCorte(corte)">
                             <img src="pencils.png" alt="">
@@ -158,9 +192,15 @@
             }
         </div>
     }
-    @else {
+    @else if (cortesBuscados.length === 0) {
         <p class="empty-message">
             Nenhum corte registrado ou encontrado neste mês.
         </p>
+    }
+    @else {
+        <div class="empty-message empty-filtros">
+            <p>Nenhum corte corresponde aos filtros aplicados.</p>
+            <button type="button" class="btn-limpar-filtros" (click)="limparFiltros()">Limpar filtros</button>
+        </div>
     }
 </div>

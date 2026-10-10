@@ -127,35 +127,112 @@
         min-width: 0;
     }
 
-    .input-nome {
+    /* --- Busca por nome ou lote (consulta o banco ao pressionar Enter) --- */
+    .busca-nome{
         position: relative;
+        display: flex;
+        align-items: center;
+        gap: 6px;
         width: 100%;
         max-width: 320px;
+        padding-right: 6px;
+
+        background: #f8fafd;
+        border: 1px solid #d7dde9;
+        border-radius: 12px;
+
+        transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+
+        &:hover{
+            border-color: #bfc8d8;
+        }
+
+        &:focus-within{
+            background: #ffffff;
+            border-color: #1ca859;
+            box-shadow: 0 0 0 3px rgba(28, 168, 89, 0.15);
+        }
     }
 
-    .input-nome input {
-        width: 100%;
-        padding: 10px 35px 10px 40px;
-        border-radius: 6px;
-        border: none;
-        background-color: #E8E8E8;
-        font-size: 16px;
-        box-sizing: border-box;
-    }
-
-    .input-busca{
-        width: 100% !important;
-        background-color: transparent !important;
-        border: 1px rgba(0, 0, 0, 0.11) solid !important;
-    }
-
-    .icon-search {
+    .busca-nome-icon{
         position: absolute;
-        left: 10px;
+        left: 12px;
         top: 50%;
         transform: translateY(-50%);
-        font-size: 18px;
-        opacity: 0.6;
+        font-size: 20px;
+        color: #9aa3b8;
+        pointer-events: none;
+        transition: color 0.15s ease;
+    }
+
+    .busca-nome:focus-within .busca-nome-icon{
+        color: #1ca859;
+    }
+
+    .busca-nome-input{
+        flex: 1;
+        min-width: 0;
+        width: auto;
+        height: 42px;
+        padding: 8px 4px 8px 40px;
+        background: transparent;
+        border-radius: 12px;
+        font-size: 16px;
+        color: #1a2438;
+    }
+
+    .busca-nome-input:focus{
+        background: transparent;
+        box-shadow: none;
+    }
+
+    .busca-nome-input::placeholder{
+        color: #9aa3b8;
+        font-weight: 500;
+    }
+
+    /* Dica "Enter": só aparece com o campo focado e com texto digitado */
+    .busca-nome-dica{
+        flex-shrink: 0;
+        padding: 2px 7px;
+        border-radius: 6px;
+        background: rgba(28, 168, 89, 0.12);
+        color: #1ca859;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.3px;
+        opacity: 0;
+        transform: translateX(4px);
+        transition: all 0.15s ease;
+        pointer-events: none;
+    }
+
+    .busca-nome:focus-within .busca-nome-dica{
+        opacity: 1;
+        transform: none;
+    }
+
+    .busca-nome-limpar{
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: none;
+        background: transparent;
+        padding: 4px;
+        border-radius: 50%;
+        color: #7a8499;
+        cursor: pointer;
+        transition: background 0.15s ease;
+
+        .material-icons-outlined{
+            font-size: 18px;
+        }
+    }
+
+    .busca-nome-limpar:hover{
+        background: rgba(0, 0, 0, 0.07);
+        color: #333;
     }
 
     .btn-header{
@@ -274,12 +351,16 @@
         border-radius: 12px;
         padding: 18px 20px;
         color: black;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        transition: all 0.2s ease;        
+        box-shadow:
+            inset 8px 0 0 rgba(0, 0, 0, 0.28),
+            0 4px 12px rgba(0, 0, 0, 0.15);
+        transition: all 0.2s ease;
 
         &:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+            box-shadow:
+                inset 8px 0 0 rgba(0, 0, 0, 0.28),
+                0 6px 18px rgba(0, 0, 0, 0.2);
         }
     }
 
@@ -302,6 +383,41 @@
 
         box-shadow: 0 2px 6px rgba(0,0,0,0.2);
         white-space: nowrap;
+    }
+
+    /* Selo de corte que veio de outro mês, no canto superior direito */
+    .badge-outro-mes{
+        position: absolute;
+        top: -10px;
+        right: 16px;
+        z-index: 2;
+
+        background-color: #fff3cd;
+        color: #8a5a00;
+        border: 1px solid #f0c36d;
+
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.4px;
+
+        padding: 3px 10px;
+        border-radius: 0 0 8px 8px;
+
+        box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        white-space: nowrap;
+    }
+
+    /* Faixa lateral escura para destacar de longe os cortes de outros meses */
+    .card-corte.outro-mes{
+        box-shadow:
+            inset 8px 0 0 rgba(0, 0, 0, 0.28),
+            0 4px 12px rgba(0, 0, 0, 0.15);
+
+        &:hover{
+            box-shadow:
+                inset 8px 0 0 rgba(0, 0, 0, 0.28),
+                0 6px 18px rgba(0, 0, 0, 0.2);
+        }
     }
 
     .linha {
@@ -963,13 +1079,19 @@
             font-size: 8px;
         }
 
-        .input-nome input{
-            padding: 8px 30px 8px 34px;
+        .busca-nome-input{
+            height: 36px;
             font-size: 14px;
+            padding: 6px 4px 6px 36px;
         }
 
-        .icon-search{
-            font-size: 15px;
+        .busca-nome-icon{
+            font-size: 17px;
+            left: 10px;
+        }
+
+        .busca-nome-dica{
+            font-size: 10px;
         }
 
         .btn-header{
@@ -1076,6 +1198,12 @@
         }
 
         .badge-registro{
+            font-size: 10px;
+            padding: 2px 8px;
+            top: -8px;
+        }
+
+        .badge-outro-mes{
             font-size: 10px;
             padding: 2px 8px;
             top: -8px;

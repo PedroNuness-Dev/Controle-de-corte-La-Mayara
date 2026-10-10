@@ -1,13 +1,14 @@
 package com.PedroNunesDev.Controle_de_Corte.service;
 
-import com.PedroNunesDev.Controle_de_Corte.dto.response.QuantidadeCortesMesResponse;
+import com.PedroNunesDev.Controle_de_Corte.dto.response.*;
 import com.PedroNunesDev.Controle_de_Corte.repository.CorteRepository;
+import com.PedroNunesDev.Controle_de_Corte.utils.ValidacaoDatas;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -15,26 +16,45 @@ import java.time.LocalDate;
 public class RelatorioService {
 
     private final CorteRepository corteRepository;
+    private final ValidacaoDatas validacaoDatas;
+    private final CortadorService cortadorService;
+    private final EnfestadorService enfestadorService;
 
     public QuantidadeCortesMesResponse buscarCortesRegistradosNoMes(Integer mes, Integer ano){
 
-        Assert.notNull(ano, "O ano para busca não pode ser nulo");
+        validacaoDatas.validarPeriodo(mes,ano);
 
-        Integer mesParaBuscar = verificarMes(mes);
-
-        LocalDate diaPrimeiro = LocalDate.of(ano, mesParaBuscar, 1);
+        LocalDate diaPrimeiro = LocalDate.of(ano, mes, 1);
         LocalDate diaUltimo = diaPrimeiro.withDayOfMonth(diaPrimeiro.lengthOfMonth());
 
-        QuantidadeCortesMesResponse quantidadeCortesRegistrados = corteRepository.quantidadeCortesRegistradosNoMes(diaPrimeiro,diaUltimo);
-
-        return quantidadeCortesRegistrados;
+        return corteRepository.quantidadeCortesRegistrados(diaPrimeiro,diaUltimo);
     }
 
-    private Integer verificarMes(Integer mes){
+    public AnaliseCortesResponse buscarAnaliseDeCortesEColaboradores(LocalDate dataInicial, LocalDate dataFinal){
 
-        if (mes < 1 || mes > 12) {
-            throw new IllegalArgumentException("Mês inválido. O valor deve estar entre 1 e 12.");
-        }
-        return mes;
+        if (dataInicial.isAfter(dataFinal)) throw new IllegalArgumentException("Data inicial não pode ser posterior a data final");
+
+        return construirAnaliseDeCortes(dataInicial,dataFinal);
+    }
+    
+    public AnaliseCortesResponse construirAnaliseDeCortes(LocalDate dataInicial, LocalDate dataFinal){
+        
+        QuantidadeCortesMesResponse quantidadeCortesMes = corteRepository.quantidadeCortesRegistrados(dataInicial, dataFinal);
+        AnaliseQuantidadePecasCorte quantidadeDePecas = corteRepository.quantidadeDePecasRegistrados(dataInicial,dataFinal);
+        List<CortadorOverview> cortadoresAtivos = cortadorService.buscarDetalhesDosCortadoresAtivos(dataInicial,dataFinal);
+        List<EnfestadorOverview> enfestadoresAtivos = enfestadorService.buscarDetalhesDosEnfestadoresAtivos(dataInicial,dataFinal);
+        List<CortadorOverview> cortadoresInativos = cortadorService.buscarDetalhesDosCortadoresInativos(dataInicial,dataFinal);
+        List<EnfestadorOverview> enfestadoresInativos = enfestadorService.buscarDetalhesDosEnfestadoresInativos(dataInicial,dataFinal);
+
+        return new AnaliseCortesResponse(
+                dataInicial,
+                dataFinal,
+                quantidadeCortesMes,
+                quantidadeDePecas,
+                cortadoresAtivos,
+                cortadoresInativos,
+                enfestadoresAtivos,
+                enfestadoresInativos
+        );
     }
 }
