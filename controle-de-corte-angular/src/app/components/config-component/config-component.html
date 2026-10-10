@@ -1,65 +1,184 @@
 <div class="main">
-    <div class="header">
+    <div class="header" #topo>
         <h1>Configurações</h1>
         <div class="div-subtitle">
             <h2>Controle de corte La Mayara Baby</h2>
         </div>
+        <p class="header-intro">Guia de uso do sistema de controle de cortes e área de gerenciamento de cortadores, enfestadores e lotes.</p>
     </div>
     <div class="content">
-        <section>
-            <h2>1.0 Cortes</h2>
+
+        <nav class="toc" aria-label="Sumário">
+            <button type="button" class="toc-item" (click)="secCortes.scrollIntoView({ behavior: 'smooth', block: 'start' })">
+                <span class="material-icons-outlined">content_cut</span>
+                <span><span class="toc-num">1</span> Cortes</span>
+            </button>
+            <button type="button" class="toc-item" (click)="secCortadores.scrollIntoView({ behavior: 'smooth', block: 'start' })">
+                <span class="material-icons-outlined">person</span>
+                <span><span class="toc-num">2</span> Cortadores</span>
+            </button>
+            <button type="button" class="toc-item" (click)="secEnfestadores.scrollIntoView({ behavior: 'smooth', block: 'start' })">
+                <span class="material-icons-outlined">layers</span>
+                <span><span class="toc-num">3</span> Enfestadores</span>
+            </button>
+            <button type="button" class="toc-item" (click)="secLotes.scrollIntoView({ behavior: 'smooth', block: 'start' })">
+                <span class="material-icons-outlined">inventory_2</span>
+                <span><span class="toc-num">4</span> Lotes</span>
+            </button>
+            <button type="button" class="toc-item" (click)="secDuvidas.scrollIntoView({ behavior: 'smooth', block: 'start' })">
+                <span class="material-icons-outlined">help_outline</span>
+                <span><span class="toc-num">5</span> Dúvidas</span>
+            </button>
+            <button type="button" class="toc-item" (click)="secHistorico.scrollIntoView({ behavior: 'smooth', block: 'start' })">
+                <span class="material-icons-outlined">history</span>
+                <span><span class="toc-num">6</span> Histórico</span>
+            </button>
+            <button type="button" class="toc-item" (click)="secRelatorios.scrollIntoView({ behavior: 'smooth', block: 'start' })">
+                <span class="material-icons-outlined">description</span>
+                <span><span class="toc-num">7</span> Relatórios</span>
+            </button>
+        </nav>
+
+        <section #secCortes>
+            <h2>
+                <span class="sec-icone material-icons-outlined">content_cut</span>
+                <span class="sec-num">1.0</span> Cortes
+            </h2>
             <ol>
                 <li>
-                    <strong>1.1 O que é um corte?</strong>
+                    <strong><span class="item-num">1.1</span> O que é um corte?</strong>
                     <p>O corte é o registro central do sistema: representa a peça ou conjunto que será processado. Cada corte guarda nome do modelo, quantidade total, lote, data de registro, data de corte, cortador, enfestador e observações. É a partir dele que todo o acompanhamento de produção é feito.</p>
                 </li>
                 <li>
-                    <strong>1.2 Como cadastrar um corte?</strong>
-                    <p>Utilize o botão <u>Adicionar corte</u> em qualquer tela de cortes atuais. No cadastro, informe o nome do modelo, a quantidade total e a data de registro (obrigatória). Você também escolhe se o corte usa o <u>lote atual</u> ou se deve <u>incrementar um novo lote</u> antes de ser salvo. A data de registro não pode ser alterada depois e é o que o sistema usa para localizar o corte no mês correto.</p>
+                    <strong><span class="item-num">1.2</span> Como cadastrar um corte?</strong>
+                    <p>Utilize o botão <u>Adicionar corte</u> em qualquer tela de cortes atuais. No cadastro, informe o nome do modelo, a quantidade total e a data de registro (obrigatória). Você também escolhe se o corte usa o <u>lote atual</u> ou se deve <u>incrementar um novo lote</u> antes de ser salvo.</p>
+                    <div class="nota nota-aviso">
+                        <span class="material-icons-outlined">warning_amber</span>
+                        <p>A data de registro não pode ser alterada depois. É ela que o sistema usa para localizar o corte no mês correto.</p>
+                    </div>
                 </li>
                 <li>
-                    <strong>1.3 Como editar um corte existente?</strong>
-                    <p>Selecione o corte na lista e ajuste os campos necessários. Algumas regras de validação se aplicam: o lote deve conter apenas números e uma barra "/", o nome do modelo e a quantidade (maior que zero) são obrigatórios. Para vincular um <u>cortador</u>, é necessário já ter um <u>enfestador</u> selecionado e informar a data de corte — isso garante que o fluxo de produção seja respeitado.</p>
+                    <strong><span class="item-num">1.3</span> Como editar um corte existente?</strong>
+                    <p>Abra o menu de opções do card (ícone de três pontinhos), escolha <u>Editar</u> e ajuste os campos necessários. As regras de validação são:</p>
+                    <ul class="lista-info">
+                        <li><span class="material-icons-outlined">check_circle</span><span class="legenda-texto">O <strong>lote</strong> deve conter apenas números e uma barra "/".</span></li>
+                        <li><span class="material-icons-outlined">check_circle</span><span class="legenda-texto">O <strong>nome do modelo</strong> é obrigatório.</span></li>
+                        <li><span class="material-icons-outlined">check_circle</span><span class="legenda-texto">A <strong>quantidade</strong> é obrigatória e deve ser maior que zero.</span></li>
+                        <li><span class="material-icons-outlined">check_circle</span><span class="legenda-texto">Para vincular um <strong>cortador</strong>, é necessário já ter um <u>enfestador</u> selecionado e informar a <u>data de corte</u>.</span></li>
+                    </ul>
+                    <div class="nota nota-dica">
+                        <span class="material-icons-outlined">lightbulb</span>
+                        <p>Essa última regra garante que o fluxo de produção seja respeitado: primeiro o enfestador, depois o cortador.</p>
+                    </div>
                 </li>
                 <li>
-                    <strong>1.4 O que significam os status de um corte?</strong>
+                    <strong><span class="item-num">1.4</span> O que significam os status de um corte?</strong>
                     <p>Cada corte percorre um fluxo de status, indicado tanto no texto quanto na cor do card:</p>
+                    <div class="fluxo" aria-label="Fluxo de status de um corte">
+                        <span class="fluxo-etapa"><span class="status-dot dot-pendente"></span>Pendente</span>
+                        <span class="material-icons-outlined fluxo-seta">arrow_forward</span>
+                        <span class="fluxo-etapa"><span class="status-dot dot-enfestado"></span>Enfestado</span>
+                        <span class="material-icons-outlined fluxo-seta">arrow_forward</span>
+                        <span class="fluxo-etapa"><span class="status-dot dot-cortado"></span>Cortado</span>
+                        <span class="fluxo-sep"></span>
+                        <span class="fluxo-etapa fluxo-cancelado"><span class="status-dot dot-cancelado"></span>Cancelado</span>
+                    </div>
                     <ul class="legenda-status">
-                        <li><span class="status-dot dot-pendente"></span><strong>Pendente</strong> — corte recém-cadastrado, ainda sem enfestador ou cortador vinculado.</li>
-                        <li><span class="status-dot dot-enfestado"></span><strong>Enfestado</strong> — já possui um enfestador responsável vinculado.</li>
-                        <li><span class="status-dot dot-cortado"></span><strong>Cortado</strong> — possui cortador e data de corte definidos; etapa concluída.</li>
-                        <li><span class="status-dot dot-cancelado"></span><strong>Cancelado</strong> — corte cancelado. Pode ser reativado a qualquer momento pelo menu de opções do card.</li>
+                        <li><span class="status-dot dot-pendente"></span><span class="legenda-texto"><strong>Pendente</strong> — corte recém-cadastrado, ainda sem enfestador ou cortador vinculado.</span></li>
+                        <li><span class="status-dot dot-enfestado"></span><span class="legenda-texto"><strong>Enfestado</strong> — já possui um enfestador responsável vinculado.</span></li>
+                        <li><span class="status-dot dot-cortado"></span><span class="legenda-texto"><strong>Cortado</strong> — possui cortador e data de corte definidos; etapa concluída.</span></li>
+                        <li><span class="status-dot dot-cancelado"></span><span class="legenda-texto"><strong>Cancelado</strong> — corte cancelado. Pode ser reativado a qualquer momento pelo menu de opções do card.</span></li>
                     </ul>
                 </li>
                 <li>
-                    <strong>1.5 Como cancelar, reativar ou excluir um corte?</strong>
-                    <p>No menu de opções do card (ícone de três pontinhos) você encontra as ações disponíveis. <u>Cancelar corte</u> apenas muda o status para "Cancelado", mantendo o registro e permitindo reativação posterior através da opção <u>Ativar corte</u>. Já <u>Excluir corte</u> remove o registro permanentemente e não pode ser desfeito — use com cautela.</p>
+                    <strong><span class="item-num">1.5</span> Como cancelar, reativar ou excluir um corte?</strong>
+                    <p>No menu de opções do card (ícone de três pontinhos) você encontra as ações disponíveis. <u>Cancelar corte</u> apenas muda o status para "Cancelado", mantendo o registro e permitindo reativação posterior através da opção <u>Ativar corte</u>. Já <u>Excluir corte</u> remove o registro permanentemente.</p>
+                    <div class="nota nota-perigo">
+                        <span class="material-icons-outlined">report_problem</span>
+                        <p>Excluir um corte não pode ser desfeito. Se houver dúvida, prefira cancelar: o registro é mantido e pode ser reativado.</p>
+                    </div>
                 </li>
                 <li>
-                    <strong>1.6 Como buscar um corte específico?</strong>
-                    <p>Utilize o campo de busca no topo da tela de cortes, digitando o nome do modelo ou o número do lote e pressionando Enter. A busca considera apenas o mês selecionado no momento.</p>
+                    <strong><span class="item-num">1.6</span> Como buscar um corte específico?</strong>
+                    <p>Digite o nome do modelo ou o número do lote no campo de busca no topo da tela de cortes e pressione <kbd>Enter</kbd>. Enquanto você digita, o campo mostra a dica "Enter ↵" lembrando que a busca só é feita ao confirmar.</p>
+                    <ul class="lista-info">
+                        <li><span class="material-icons-outlined">check_circle</span><span class="legenda-texto">Para voltar à lista completa, clique no <strong>X</strong> dentro do campo (ou apague o texto e pressione <kbd>Enter</kbd>).</span></li>
+                        <li><span class="material-icons-outlined">check_circle</span><span class="legenda-texto">A busca considera apenas o mês atual. Para consultar outros meses, use o <u>Histórico</u> (seção 6.0).</span></li>
+                    </ul>
+                </li>
+                <li>
+                    <strong><span class="item-num">1.7</span> Quais são as telas de cortes?</strong>
+                    <p>A área de cortes atuais é dividida em quatro visões:</p>
+                    <ul class="lista-info">
+                        <li><span class="material-icons-outlined">check_circle</span><span class="legenda-texto"><strong>Geral</strong> — visão completa, com cortes de todos os status.</span></li>
+                        <li><span class="material-icons-outlined">check_circle</span><span class="legenda-texto"><strong>Pendentes</strong>, <strong>Enfestados</strong> e <strong>Cortados</strong> — mostram apenas os cortes daquele status.</span></li>
+                    </ul>
+                    <p class="texto-apoio">Todas elas têm o mesmo cabeçalho, a mesma busca e o mesmo botão <u>Adicionar corte</u>.</p>
+                </li>
+                <li>
+                    <strong><span class="item-num">1.8</span> Por que aparecem cortes de outros meses na lista?</strong>
+                    <p>As telas de cortes atuais mostram o mês corrente, mas cortes ainda <u>Pendentes</u> ou <u>Enfestados</u> continuam na lista mesmo depois de virar o mês, até serem cortados ou cancelados. Assim nenhuma produção em andamento é esquecida.</p>
+                    <p>Para diferenciá-los, o card ganha um selo âmbar no canto superior direito indicando o mês de origem. O selo branco, no canto esquerdo, continua mostrando a data de registro.</p>
+                    <div class="demo-card" aria-hidden="true">
+                        <span class="demo-badge demo-badge-registro">📅 15/09/2026</span>
+                        <span class="demo-badge demo-badge-outro-mes">⏳ MÊS ANTERIOR · SETEMBRO</span>
+                        <span class="demo-card-titulo">ENFESTADO</span>
+                        <span class="demo-linha">Modelo: Blusa Cropped</span>
+                        <span class="demo-linha">Lote: 01/2026</span>
+                    </div>
+                    <ul class="lista-info">
+                        <li><span class="selo-exemplo">⏳ MÊS ANTERIOR · SETEMBRO</span><span class="legenda-texto">o corte foi registrado no mês imediatamente anterior ao atual.</span></li>
+                        <li><span class="selo-exemplo">⏳ JULHO/2026</span><span class="legenda-texto">o corte é mais antigo; o selo mostra o mês e o ano de origem.</span></li>
+                    </ul>
+                    <div class="nota nota-info">
+                        <span class="material-icons-outlined">info</span>
+                        <p>Ao carregar a lista, esses cortes de outros meses aparecem primeiro, por serem os mais antigos e, provavelmente, os mais urgentes. Cortes já <u>Cortados</u> ou <u>Cancelados</u> ficam apenas no mês em que foram registrados e podem ser consultados no Histórico.</p>
+                    </div>
+                </li>
+                <li>
+                    <strong><span class="item-num">1.9</span> O que é o card "Adicionado recentemente"?</strong>
+                    <p>Logo depois de cadastrar um corte, ele aparece em destaque no topo da lista, sob o título "Adicionado recentemente", com todas as opções do card (editar, cancelar, excluir). Serve para você conferir rapidamente o que acabou de registrar e corrigir algo, se preciso. Ele permanece ali até você trocar de tela ou cadastrar outro corte.</p>
+                </li>
+                <li>
+                    <strong><span class="item-num">1.10</span> O que mostra o cabeçalho da tela de cortes?</strong>
+                    <ul class="lista-info">
+                        <li><span class="material-icons-outlined">check_circle</span><span class="legenda-texto"><strong>Título</strong> — o nome da visão atual (Geral, Pendentes, Enfestados ou Cortados).</span></li>
+                        <li><span class="material-icons-outlined">check_circle</span><span class="legenda-texto"><strong>Lote atual</strong> — o lote vigente, usado quando você escolhe "Usar lote atual" ao cadastrar um corte.</span></li>
+                        <li><span class="material-icons-outlined">check_circle</span><span class="legenda-texto"><strong>Data de hoje</strong> — dia, mês, dia da semana e ano.</span></li>
+                        <li><span class="material-icons-outlined">check_circle</span><span class="legenda-texto"><strong>Estatísticas do mês</strong> — o total de cortes e a quantidade em cada status (Pendentes, Enfestados, Cortados e Cancelados). Os números se atualizam sempre que você adiciona, edita, cancela ou exclui um corte.</span></li>
+                    </ul>
                 </li>
             </ol>
+            <button type="button" class="voltar-sumario" (click)="topo.scrollIntoView({ behavior: 'smooth', block: 'start' })">
+                <span class="material-icons-outlined">arrow_upward</span> Voltar ao topo
+            </button>
         </section>
 
-        <section>
-            <h2>2.0 Cortadores</h2>
+        <section #secCortadores>
+            <h2>
+                <span class="sec-icone material-icons-outlined">person</span>
+                <span class="sec-num">2.0</span> Cortadores
+            </h2>
             <ol>
                 <li>
-                    <strong>2.1 O que é um cortador?</strong>
+                    <strong><span class="item-num">2.1</span> O que é um cortador?</strong>
                     <p>O cortador representa o operador responsável por executar o corte do material, sendo a última etapa antes da conclusão de um corte.</p>
                 </li>
                 <li>
-                    <strong>2.2 Como cadastrar um cortador?</strong>
+                    <strong><span class="item-num">2.2</span> Como cadastrar um cortador?</strong>
                     <p>Acesse o cadastro logo abaixo, no botão <u>Cadastrar novo cortador</u>, e informe o nome. O novo cortador passa a aparecer imediatamente na lista de seleção ao editar um corte.</p>
                 </li>
                 <li>
-                    <strong>2.3 Como vincular um cortador a um corte?</strong>
-                    <p>Ao editar um corte, selecione o cortador disponível no campo correspondente. Lembre-se: é necessário que um enfestador já esteja vinculado e que a data de corte seja informada para que a vinculação seja salva com sucesso.</p>
+                    <strong><span class="item-num">2.3</span> Como vincular um cortador a um corte?</strong>
+                    <p>Ao editar um corte, selecione o cortador disponível no campo correspondente.</p>
+                    <div class="nota nota-aviso">
+                        <span class="material-icons-outlined">warning_amber</span>
+                        <p>É necessário que um enfestador já esteja vinculado e que a data de corte seja informada para que a vinculação seja salva com sucesso.</p>
+                    </div>
                 </li>
                 <li>
-                    <strong>2.4 Cortadores cadastrados</strong>
-                    <p>A lista abaixo mostra todos os cortadores ativos e a quantidade de cortes já finalizados por cada um, atualizada automaticamente conforme novos cortes são concluídos.</p>
+                    <strong><span class="item-num">2.4</span> Cortadores cadastrados</strong>
+                    <p>A lista abaixo mostra todos os cortadores ativos e a quantidade de cortes já finalizados por cada um, atualizada automaticamente conforme novos cortes são concluídos. Clique no nome para abrir os detalhes.</p>
                     <ul class="ul-list">
                         @for (cortador of cortadores; track cortador.idCortador) {
                             <li class="pessoa-card">
@@ -77,12 +196,12 @@
                     </ul>
                 </li>
                 <li>
-                    <strong>2.5 Como excluir um cortador?</strong>
+                    <strong><span class="item-num">2.5</span> Como excluir um cortador?</strong>
                     <p>Clique no ícone de lixeira ao lado do nome do cortador e confirme a exclusão no modal exibido. A exclusão remove apenas o cadastro da lista; os cortes já registrados mantêm seu histórico normalmente.</p>
                 </li>
                 <li>
-                    <strong>2.6 Cortadores inativos</strong>
-                    <p>Cortadores excluídos ficam disponíveis aqui apenas para consulta. Clique em um deles para ver os detalhes.</p>
+                    <strong><span class="item-num">2.6</span> Cortadores inativos</strong>
+                    <p>Cortadores excluídos ficam listados aqui. Clique em um deles para ver os detalhes ou para reativá-lo.</p>
                     @if (cortadoresInativos.length === 0) {
                         <p class="info-pessoa-detalhes">Nenhum cortador inativo no momento.</p>
                     } @else {
@@ -99,6 +218,15 @@
                             }
                         </ul>
                     }
+                </li>
+                <li>
+                    <strong><span class="item-num">2.7</span> Como ver os detalhes ou editar o nome de um cortador?</strong>
+                    <p>Clique no nome do cortador (ativo ou inativo) para abrir a janela de detalhes. Nela você vê o nome, o status (Ativo ou Inativo), a quantidade de cortes cortados e a data de cadastro.</p>
+                    <ul class="lista-info">
+                        <li><span class="material-icons-outlined">check_circle</span><span class="legenda-texto"><strong>Editar o nome:</strong> clique no ícone de lápis, digite o novo nome e confirme no ✓ (ou pressione <kbd>Enter</kbd>). O ✕ cancela a edição.</span></li>
+                        <li><span class="material-icons-outlined">check_circle</span><span class="legenda-texto"><strong>Excluir:</strong> disponível para cortadores ativos, com confirmação.</span></li>
+                        <li><span class="material-icons-outlined">check_circle</span><span class="legenda-texto"><strong>Reativar:</strong> disponível para cortadores inativos; ao reativar, ele volta para a lista de cortadores ativos.</span></li>
+                    </ul>
                 </li>
             </ol>
             <div class="section-actions">
@@ -130,26 +258,32 @@
                     </div>                    
                 </form>
             }
+            <button type="button" class="voltar-sumario" (click)="topo.scrollIntoView({ behavior: 'smooth', block: 'start' })">
+                <span class="material-icons-outlined">arrow_upward</span> Voltar ao topo
+            </button>
         </section>
 
-        <section>
-            <h2>3.0 Enfestadores</h2>
+        <section #secEnfestadores>
+            <h2>
+                <span class="sec-icone material-icons-outlined">layers</span>
+                <span class="sec-num">3.0</span> Enfestadores
+            </h2>
             <ol>
                 <li>
-                    <strong>3.1 O que é um enfestador?</strong>
+                    <strong><span class="item-num">3.1</span> O que é um enfestador?</strong>
                     <p>O enfestador é o operador que organiza o material antes do corte, preparando camadas, cores e produções. Ele representa a etapa intermediária do processo, entre o cadastro do corte e a vinculação de um cortador.</p>
                 </li>
                 <li>
-                    <strong>3.2 Como cadastrar um enfestador?</strong>
+                    <strong><span class="item-num">3.2</span> Como cadastrar um enfestador?</strong>
                     <p>Acesse o cadastro logo abaixo, no botão <u>Cadastrar novo enfestador</u>, e informe o nome. Assim como o cortador, ele passa a aparecer imediatamente na lista de seleção ao editar um corte.</p>
                 </li>
                 <li>
-                    <strong>3.3 Como vincular um enfestador a um corte?</strong>
+                    <strong><span class="item-num">3.3</span> Como vincular um enfestador a um corte?</strong>
                     <p>Ao editar um corte, selecione o enfestador disponível no campo correspondente. Um corte muda para o status "Enfestado" assim que um enfestador é vinculado a ele.</p>
                 </li>
                 <li>
-                    <strong>3.4 Enfestadores cadastrados</strong>
-                    <p>A lista abaixo mostra todos os enfestadores ativos e a quantidade de cortes já enfestados por cada um.</p>
+                    <strong><span class="item-num">3.4</span> Enfestadores cadastrados</strong>
+                    <p>A lista abaixo mostra todos os enfestadores ativos e a quantidade de cortes já enfestados por cada um. Clique no nome para abrir os detalhes.</p>
                     <ul class="ul-list">
                         @for (enfestador of enfestadores; track enfestador.idEnfestador) {
                             <li class="pessoa-card">
@@ -167,12 +301,12 @@
                     </ul>
                 </li>
                 <li>
-                    <strong>3.5 Como excluir um enfestador?</strong>
+                    <strong><span class="item-num">3.5</span> Como excluir um enfestador?</strong>
                     <p>Clique no ícone de lixeira ao lado do nome do enfestador e confirme a exclusão no modal exibido. Assim como os cortadores, a exclusão remove apenas o cadastro; os cortes já registrados não são afetados.</p>
                 </li>
                 <li>
-                    <strong>3.6 Enfestadores inativos</strong>
-                    <p>Enfestadores excluídos ficam disponíveis aqui apenas para consulta. Clique em um deles para ver os detalhes.</p>
+                    <strong><span class="item-num">3.6</span> Enfestadores inativos</strong>
+                    <p>Enfestadores excluídos ficam listados aqui. Clique em um deles para ver os detalhes ou para reativá-lo.</p>
                     @if (enfestadoresInativos.length === 0) {
                         <p class="info-pessoa-detalhes">Nenhum enfestador inativo no momento.</p>
                     } @else {
@@ -189,6 +323,15 @@
                             }
                         </ul>
                     }
+                </li>
+                <li>
+                    <strong><span class="item-num">3.7</span> Como ver os detalhes ou editar o nome de um enfestador?</strong>
+                    <p>Clique no nome do enfestador (ativo ou inativo) para abrir a janela de detalhes. Nela você vê o nome, o status (Ativo ou Inativo), a quantidade de cortes enfestados e a data de cadastro.</p>
+                    <ul class="lista-info">
+                        <li><span class="material-icons-outlined">check_circle</span><span class="legenda-texto"><strong>Editar o nome:</strong> clique no ícone de lápis, digite o novo nome e confirme no ✓ (ou pressione <kbd>Enter</kbd>). O ✕ cancela a edição.</span></li>
+                        <li><span class="material-icons-outlined">check_circle</span><span class="legenda-texto"><strong>Excluir:</strong> disponível para enfestadores ativos, com confirmação.</span></li>
+                        <li><span class="material-icons-outlined">check_circle</span><span class="legenda-texto"><strong>Reativar:</strong> disponível para enfestadores inativos; ao reativar, ele volta para a lista de enfestadores ativos.</span></li>
+                    </ul>
                 </li>
             </ol>
             <div class="section-actions">
@@ -220,26 +363,39 @@
                     </div>                    
                 </form>
             }
+            <button type="button" class="voltar-sumario" (click)="topo.scrollIntoView({ behavior: 'smooth', block: 'start' })">
+                <span class="material-icons-outlined">arrow_upward</span> Voltar ao topo
+            </button>
         </section>
 
-        <section>
-            <h2>4.0 Lotes</h2>
+        <section #secLotes>
+            <h2>
+                <span class="sec-icone material-icons-outlined">inventory_2</span>
+                <span class="sec-num">4.0</span> Lotes
+            </h2>
             <ol>
                 <li>
-                    <strong>4.1 O que é um lote?</strong>
+                    <strong><span class="item-num">4.1</span> O que é um lote?</strong>
                     <p>Um lote agrupa cortes relacionados que serão produzidos juntos, no formato "número/ano" (por exemplo, 12/2026), facilitando o controle e a rastreabilidade da produção.</p>
                 </li>
                 <li>
-                    <strong>4.2 Como criar e gerenciar lotes?</strong>
+                    <strong><span class="item-num">4.2</span> Como criar e gerenciar lotes?</strong>
                     <p>O lote é gerenciado automaticamente pelo sistema através do "lote atual", exibido no topo da tela de cortes. Ao cadastrar um novo corte, você escolhe entre reutilizar esse lote ou incrementá-lo para iniciar um novo grupo de produção.</p>
                 </li>
                 <li>
-                    <strong>4.3 Ajustes no lote:</strong>
+                    <strong><span class="item-num">4.3</span> Ajustes no lote:</strong>
                     <p>Use os botões abaixo para ajustar manualmente o lote atual. <u>Incrementar Lote</u> avança o número em um, útil ao iniciar um novo grupo de produção fora do fluxo normal de cadastro. <u>Decrementar Lote</u> reverte um incremento feito por engano. Ambas as ações pedem confirmação antes de serem aplicadas.</p>
+                    <div class="nota nota-aviso">
+                        <span class="material-icons-outlined">warning_amber</span>
+                        <p>Os próximos cortes cadastrados com "Usar lote atual" passam a receber o novo valor do lote.</p>
+                    </div>
                 </li>
                 <li>
-                    <strong>4.4 Qual a diferença entre "usar lote atual" e "incrementar novo lote" ao cadastrar um corte?</strong>
-                    <p>Ao marcar <u>Usar lote atual</u>, o corte é salvo com o valor do lote vigente, sem alterá-lo — ideal para agrupar vários cortes no mesmo lote. Ao marcar <u>Incrementar novo lote</u>, o sistema avança o lote atual automaticamente antes de salvar, e o novo corte já é registrado com esse novo valor.</p>
+                    <strong><span class="item-num">4.4</span> Qual a diferença entre "usar lote atual" e "incrementar novo lote" ao cadastrar um corte?</strong>
+                    <ul class="lista-info">
+                        <li><span class="material-icons-outlined">repeat</span><span class="legenda-texto"><strong>Usar lote atual</strong> — o corte é salvo com o valor do lote vigente, sem alterá-lo. Ideal para agrupar vários cortes no mesmo lote.</span></li>
+                        <li><span class="material-icons-outlined">library_add</span><span class="legenda-texto"><strong>Incrementar novo lote</strong> — o sistema avança o lote atual automaticamente antes de salvar, e o novo corte já é registrado com esse novo valor.</span></li>
+                    </ul>
                 </li>
                 <div class="btns-lote">
                     <button class="btn-lote btn-incrementar-lote" (click)="abrirModalIncrementoLote()">
@@ -252,64 +408,124 @@
                     </button>
                 </div>
             </ol>
+            <button type="button" class="voltar-sumario" (click)="topo.scrollIntoView({ behavior: 'smooth', block: 'start' })">
+                <span class="material-icons-outlined">arrow_upward</span> Voltar ao topo
+            </button>
         </section>
 
-        <section>
-            <h2>5.0 Dúvidas gerais</h2>
+        <section #secDuvidas>
+            <h2>
+                <span class="sec-icone material-icons-outlined">help_outline</span>
+                <span class="sec-num">5.0</span> Dúvidas gerais
+            </h2>
             <ol>
                 <li>
-                    <strong>5.1 Como funciona o sistema?</strong>
+                    <strong><span class="item-num">5.1</span> Como funciona o sistema?</strong>
                     <p>O sistema controla corte, cortadores, enfestadores e lotes para melhorar a eficiência e o rastreamento da produção, do cadastro do corte até sua conclusão.</p>
                 </li>
                 <li>
-                    <strong>5.2 Onde posso ver o histórico?</strong>
+                    <strong><span class="item-num">5.2</span> Onde posso ver o histórico?</strong>
                     <p>Confira a seção de histórico para ver registros anteriores e o status de processos concluídos, organizados por mês.</p>
                 </li>
                 <li>
-                    <strong>5.3 O que significa o contador "Cortes registrados" no topo da tela?</strong>
-                    <p>Esse número mostra a quantidade total de cortes cadastrados no mês atualmente exibido, atualizando automaticamente sempre que um corte é adicionado ou excluído.</p>
+                    <strong><span class="item-num">5.3</span> O que significam os números no topo da tela de cortes?</strong>
+                    <p>São as estatísticas do mês atual: o total de cortes e a quantidade em cada status (Pendentes, Enfestados, Cortados e Cancelados). Eles se atualizam automaticamente sempre que um corte é adicionado, editado, cancelado ou excluído. Veja mais detalhes no item 1.10.</p>
+                </li>
+                <li>
+                    <strong><span class="item-num">5.4</span> Existem atalhos de teclado?</strong>
+                    <ul class="lista-info">
+                        <li><span class="material-icons-outlined">keyboard</span><span class="legenda-texto"><kbd>Enter</kbd> no campo de busca da tela de cortes — realiza a busca por nome ou lote.</span></li>
+                        <li><span class="material-icons-outlined">keyboard</span><span class="legenda-texto"><kbd>Enter</kbd> ao editar o nome de um cortador ou enfestador — salva o novo nome.</span></li>
+                        <li><span class="material-icons-outlined">keyboard</span><span class="legenda-texto"><kbd>Esc</kbd> — fecha a janela aberta (detalhes ou confirmações) e sai do modo de edição de um card.</span></li>
+                    </ul>
+                </li>
+                <li>
+                    <strong><span class="item-num">5.5</span> Posso desfazer uma exclusão?</strong>
+                    <p>Depende do que foi excluído. <u>Cortadores e enfestadores</u> excluídos ficam inativos e podem ser reativados (itens 2.6 e 3.6). Já um <u>corte excluído</u> é removido permanentemente e não pode ser recuperado. Na dúvida, use <u>Cancelar corte</u>, que mantém o registro.</p>
                 </li>
             </ol>
+            <button type="button" class="voltar-sumario" (click)="topo.scrollIntoView({ behavior: 'smooth', block: 'start' })">
+                <span class="material-icons-outlined">arrow_upward</span> Voltar ao topo
+            </button>
         </section>
-        <section>
-            <h2>6.0 Histórico</h2>
+
+        <section #secHistorico>
+            <h2>
+                <span class="sec-icone material-icons-outlined">history</span>
+                <span class="sec-num">6.0</span> Histórico
+            </h2>
             <ol>
                 <li>
-                    <strong>6.1 Como funciona o histórico?</strong>
+                    <strong><span class="item-num">6.1</span> Como funciona o histórico?</strong>
                     <p>O sistema se baseia na data de registro dos cortes, definida no momento do cadastro, para organizar e exibir os resultados por mês.</p>
                 </li>
                 <li>
-                    <strong>6.2 Como pesquisar?</strong>
-                    <p>Na tela de histórico, você pode selecionar o mês desejado para buscar os cortes.</p>
-                    <p style="font-weight: 700;">obs: se caso o mês não for selecionado, o sistema irá buscar pelo mês atual!</p>
+                    <strong><span class="item-num">6.2</span> Como pesquisar?</strong>
+                    <p>Na tela de histórico, selecione o mês desejado e clique em <u>Buscar</u>.</p>
+                    <div class="nota nota-aviso">
+                        <span class="material-icons-outlined">warning_amber</span>
+                        <p><strong>Obs:</strong> se o mês não for selecionado, o sistema irá buscar pelo mês atual!</p>
+                    </div>
                 </li>
                 <li>
-                    <strong>6.3 O que posso fazer na tela de histórico?</strong>
+                    <strong><span class="item-num">6.3</span> O que posso fazer na tela de histórico?</strong>
                     <p>As funcionalidades principais do sistema também estão disponíveis na tela de histórico, podendo editar, cancelar, reativar e excluir um corte selecionado, da mesma forma que na tela de cortes atuais.</p>
                 </li>
                 <li>
-                    <strong>6.4 Como identifico rapidamente quando um corte foi registrado?</strong>
+                    <strong><span class="item-num">6.4</span> Como identifico rapidamente quando um corte foi registrado?</strong>
                     <p>Cada card de corte exibe uma pequena etiqueta no canto superior com a data de registro, permitindo identificá-la de forma imediata sem precisar abrir o modo de edição.</p>
                 </li>
+                <li>
+                    <strong><span class="item-num">6.5</span> Como filtrar os cortes de um mês?</strong>
+                    <p>Depois de buscar um mês, aparece uma barra de filtros acima da lista:</p>
+                    <div class="demo-chips" aria-hidden="true">
+                        <span class="demo-chip demo-chip-todos ativo">Todos <span class="demo-chip-n">12</span></span>
+                        <span class="demo-chip demo-chip-pendente">Pendentes <span class="demo-chip-n">3</span></span>
+                        <span class="demo-chip demo-chip-enfestado">Enfestados <span class="demo-chip-n">2</span></span>
+                        <span class="demo-chip demo-chip-cortado">Cortados <span class="demo-chip-n">6</span></span>
+                        <span class="demo-chip demo-chip-cancelado">Cancelados <span class="demo-chip-n">1</span></span>
+                    </div>
+                    <ul class="lista-info">
+                        <li><span class="material-icons-outlined">check_circle</span><span class="legenda-texto"><strong>Botões de status</strong> — Todos, Pendentes, Enfestados, Cortados e Cancelados. Cada um mostra quantos cortes aparecerão ao clicar nele.</span></li>
+                        <li><span class="material-icons-outlined">check_circle</span><span class="legenda-texto"><strong>Campo "Filtrar por nome ou lote"</strong> — filtra enquanto você digita, ignorando maiúsculas e acentos. Digitar <em>1/2026</em> já encontra o lote <em>01/2026</em>. O X limpa o campo.</span></li>
+                        <li><span class="material-icons-outlined">check_circle</span><span class="legenda-texto"><strong>Combinação</strong> — o status e o texto funcionam juntos, e os números dos botões acompanham o texto digitado.</span></li>
+                        <li><span class="material-icons-outlined">check_circle</span><span class="legenda-texto"><strong>Contagem e limpeza</strong> — com filtro ativo, o título dos resultados mostra algo como "3 de 12 corte(s)" e aparece o link <u>Limpar filtros</u>. Se nada corresponder, uma mensagem avisa e oferece o mesmo botão.</span></li>
+                    </ul>
+                    <div class="nota nota-info">
+                        <span class="material-icons-outlined">info</span>
+                        <p>Os filtros são aplicados na hora, sobre os cortes já carregados, sem nova consulta ao sistema. Ao buscar outro mês eles são zerados; ao editar, cancelar ou excluir um corte, são mantidos.</p>
+                    </div>
+                </li>
+                <li>
+                    <strong><span class="item-num">6.6</span> Por que não consigo escolher um mês futuro?</strong>
+                    <p>O histórico consulta apenas até o mês atual. O seletor de mês não permite escolher meses futuros e, se um mês futuro for digitado manualmente, o botão <u>Buscar</u> fica desabilitado.</p>
+                </li>
             </ol>
+            <button type="button" class="voltar-sumario" (click)="topo.scrollIntoView({ behavior: 'smooth', block: 'start' })">
+                <span class="material-icons-outlined">arrow_upward</span> Voltar ao topo
+            </button>
         </section>
-        <section>
-            <h2>7.0 Relatórios</h2>
+
+        <section #secRelatorios>
+            <h2>
+                <span class="sec-icone material-icons-outlined">description</span>
+                <span class="sec-num">7.0</span> Relatórios
+            </h2>
             <ol>
                 <li>
-                    <strong>7.1 O que é o relatório de cortes?</strong>
+                    <strong><span class="item-num">7.1</span> O que é o relatório de cortes?</strong>
                     <p>É um documento em PDF que resume a produção de um período escolhido por você. Ele reúne o total de peças, a quantidade de cortes em cada status e o desempenho de cada cortador e enfestador, sendo ideal para conferência, fechamento de período e impressão.</p>
                 </li>
                 <li>
-                    <strong>7.2 Como gerar um relatório?</strong>
+                    <strong><span class="item-num">7.2</span> Como gerar um relatório?</strong>
                     <p>Acesse a tela <u>Relatórios</u> no menu lateral, informe a <u>Data inicial</u> e a <u>Data final</u> e escolha uma das opções: <u>Visualizar</u> abre o PDF na própria tela, sem baixar nada, e <u>Baixar PDF</u> salva o arquivo no seu dispositivo. Ao abrir a tela, o período já vem preenchido do primeiro dia do mês atual até hoje.</p>
                 </li>
                 <li>
-                    <strong>7.3 Posso baixar o relatório depois de visualizá-lo?</strong>
+                    <strong><span class="item-num">7.3</span> Posso baixar o relatório depois de visualizá-lo?</strong>
                     <p>Sim. Com a pré-visualização aberta, o botão <u>Baixar PDF</u> reaproveita o relatório que já foi gerado, sem precisar consultar o sistema novamente. Use <u>Fechar</u> para esconder a pré-visualização. O arquivo baixado leva o período no nome, por exemplo: <em>relatorio-cortes_2026-09-01_a_2026-10-08.pdf</em>.</p>
                 </li>
                 <li>
-                    <strong>7.4 O que aparece no relatório?</strong>
+                    <strong><span class="item-num">7.4</span> O que aparece no relatório?</strong>
                     <p>O PDF é organizado em blocos:</p>
                     <ul class="legenda-status">
                         <li>
@@ -331,14 +547,21 @@
                     </ul>
                 </li>
                 <li>
-                    <strong>7.5 Por que a soma das participações pode ficar abaixo de 100%?</strong>
-                    <p>A participação de cada pessoa é calculada sobre o total de cortes do período. Cortes <u>pendentes</u> ainda não têm cortador, e cortes pendentes ou cancelados podem não ter enfestador. Esses cortes entram no total, mas não pertencem a nenhuma pessoa, por isso a soma pode ficar abaixo de 100%. Isso é esperado e não indica erro.</p>
+                    <strong><span class="item-num">7.5</span> Por que a soma das participações pode ficar abaixo de 100%?</strong>
+                    <p>A participação de cada pessoa é calculada sobre o total de cortes do período. Cortes <u>pendentes</u> ainda não têm cortador, e cortes pendentes ou cancelados podem não ter enfestador. Esses cortes entram no total, mas não pertencem a nenhuma pessoa, por isso a soma pode ficar abaixo de 100%.</p>
+                    <div class="nota nota-info">
+                        <span class="material-icons-outlined">info</span>
+                        <p>Isso é esperado e não indica erro.</p>
+                    </div>
                 </li>
                 <li>
-                    <strong>7.6 Quais períodos são aceitos?</strong>
+                    <strong><span class="item-num">7.6</span> Quais períodos são aceitos?</strong>
                     <p>Basta que as duas datas estejam preenchidas e que a <u>data inicial não seja maior que a final</u>. Caso contrário, o sistema avisa e não gera o relatório. Assim como no histórico, o período é baseado na data de registro dos cortes.</p>
                 </li>                
             </ol>
+            <button type="button" class="voltar-sumario" (click)="topo.scrollIntoView({ behavior: 'smooth', block: 'start' })">
+                <span class="material-icons-outlined">arrow_upward</span> Voltar ao topo
+            </button>
         </section>
     </div>
     @if (modalExclusao) {
