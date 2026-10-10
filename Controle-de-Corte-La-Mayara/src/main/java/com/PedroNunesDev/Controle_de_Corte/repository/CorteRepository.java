@@ -36,19 +36,6 @@ public interface CorteRepository extends JpaRepository<Corte,Long> {
             " ORDER BY c.nomeModelo ASC")
     List<Corte> buscarPorNomeOuLote(@Param("nome") String nome, @Param("diaPrimeiro") LocalDate diaPrimeiro, @Param("diaUltimo") LocalDate diaUltimo);
 
-    @Query("""
-    SELECT 
-       COALESCE(SUM(CASE WHEN LOWER(c.enfestador.nome) = LOWER(:nome) THEN 1 ELSE 0 END),0)
-    FROM Corte c
-""")
-    Long buscarQuantidadeDeCortesPorEnfestador(@Param("nome") String nome);
-
-    @Query("""
-    SELECT 
-       COALESCE(SUM(CASE WHEN LOWER(c.cortador.nome) = LOWER(:nome) THEN 1 ELSE 0 END),0)
-    FROM Corte c
-""")
-    Long buscarQuantidadeDeCortesPorCortador(@Param("nome") String nome);
 
     @Query("""
     SELECT
