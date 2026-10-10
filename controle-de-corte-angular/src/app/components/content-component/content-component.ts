@@ -122,6 +122,7 @@ export class ContentComponent implements OnInit {
   @HostListener('document:keydown.escape')
   onEscape() {
     this.corteSelecionado = null;
+    this.opcoesCardVisiveis = false;
   }
 
   // ---------------------------------------------------------------------
@@ -194,7 +195,7 @@ export class ContentComponent implements OnInit {
     const { ano, mes } = this.obterAnoEMesAtual();
 
     const request$ = this.pageSelected === 'Geral'
-      ? this.corteService.buscarCortesDoMes(mes, ano)
+      ? this.corteService.buscarCortesDoMes(mes, ano, false)
       : this.corteService.buscarCortesDoMesPorStatus(
           STATUS_POR_PAGINA[this.pageSelected]!,
           ano,
@@ -239,6 +240,11 @@ export class ContentComponent implements OnInit {
         next: (data) => { this.cortesDoMes = data; this.cdr.detectChanges(); },
         error: (err) => console.error('Erro ao buscar corte por nome ou lote:', err)
       });
+  }
+
+  limparBusca(): void {
+    this.nomeParaBuscar = '';
+    this.buscarCortePorNomeOuLote(); // vazio: recarrega a lista normal do mês
   }
 
   // =======================================================================

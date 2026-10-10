@@ -11,9 +11,22 @@
         </div>
       </div>
       <form>
-        <div class="input-nome">
-          <span class="material-icons-outlined icon-search">search</span>
-          <input type="text" placeholder="Digite nome ou lote" class="input-busca" name="nome" [(ngModel)]="nomeParaBuscar" (keydown.enter)="buscarCortePorNomeOuLote()" required>
+        <div class="busca-nome">
+          <span class="material-icons-outlined busca-nome-icon">search</span>
+          <input #campoBusca type="text" class="busca-nome-input" name="nome"
+                placeholder="Buscar por nome ou lote"
+                aria-label="Buscar por nome ou lote"
+                autocomplete="off"
+                [(ngModel)]="nomeParaBuscar"
+                (keydown.enter)="buscarCortePorNomeOuLote()">
+
+          @if (nomeParaBuscar) {
+            <span class="busca-nome-dica">Enter ↵</span>
+            <button type="button" class="busca-nome-limpar" aria-label="Limpar busca"
+                    (click)="limparBusca(); campoBusca.focus()">
+              <span class="material-icons-outlined">close</span>
+            </button>
+          }
         </div>
       </form>
     </div>
