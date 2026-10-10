@@ -1,9 +1,6 @@
 package com.PedroNunesDev.Controle_de_Corte.service;
 
-import com.PedroNunesDev.Controle_de_Corte.dto.response.AnaliseCortesResponse;
-import com.PedroNunesDev.Controle_de_Corte.dto.response.CortadorOverview;
-import com.PedroNunesDev.Controle_de_Corte.dto.response.EnfestadorOverview;
-import com.PedroNunesDev.Controle_de_Corte.dto.response.QuantidadeCortesMesResponse;
+import com.PedroNunesDev.Controle_de_Corte.dto.response.*;
 import com.PedroNunesDev.Controle_de_Corte.repository.CorteRepository;
 import com.PedroNunesDev.Controle_de_Corte.utils.ValidacaoDatas;
 import lombok.RequiredArgsConstructor;
@@ -43,7 +40,7 @@ public class RelatorioService {
     public AnaliseCortesResponse construirAnaliseDeCortes(LocalDate dataInicial, LocalDate dataFinal){
         
         QuantidadeCortesMesResponse quantidadeCortesMes = corteRepository.quantidadeCortesRegistrados(dataInicial, dataFinal);
-        Long quantidadeDePecas = corteRepository.quantidadeDePecasRegistrados(dataInicial,dataFinal);
+        AnaliseQuantidadePecasCorte quantidadeDePecas = corteRepository.quantidadeDePecasRegistrados(dataInicial,dataFinal);
         List<CortadorOverview> cortadoresAtivos = cortadorService.buscarDetalhesDosCortadoresAtivos(dataInicial,dataFinal);
         List<EnfestadorOverview> enfestadoresAtivos = enfestadorService.buscarDetalhesDosEnfestadoresAtivos(dataInicial,dataFinal);
         List<CortadorOverview> cortadoresInativos = cortadorService.buscarDetalhesDosCortadoresInativos(dataInicial,dataFinal);
