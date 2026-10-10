@@ -274,12 +274,16 @@
         border-radius: 12px;
         padding: 18px 20px;
         color: black;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        transition: all 0.2s ease;        
+        box-shadow:
+            inset 8px 0 0 rgba(0, 0, 0, 0.28),
+            0 4px 12px rgba(0, 0, 0, 0.15);
+        transition: all 0.2s ease;
 
         &:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+            box-shadow:
+                inset 8px 0 0 rgba(0, 0, 0, 0.28),
+                0 6px 18px rgba(0, 0, 0, 0.2);
         }
     }
 
@@ -302,6 +306,41 @@
 
         box-shadow: 0 2px 6px rgba(0,0,0,0.2);
         white-space: nowrap;
+    }
+
+    /* Selo de corte que veio de outro mês, no canto superior direito */
+    .badge-outro-mes{
+        position: absolute;
+        top: -10px;
+        right: 16px;
+        z-index: 2;
+
+        background-color: #fff3cd;
+        color: #8a5a00;
+        border: 1px solid #f0c36d;
+
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.4px;
+
+        padding: 3px 10px;
+        border-radius: 0 0 8px 8px;
+
+        box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        white-space: nowrap;
+    }
+
+    /* Faixa lateral escura para destacar de longe os cortes de outros meses */
+    .card-corte.outro-mes{
+        box-shadow:
+            inset 8px 0 0 rgba(0, 0, 0, 0.28),
+            0 4px 12px rgba(0, 0, 0, 0.15);
+
+        &:hover{
+            box-shadow:
+                inset 8px 0 0 rgba(0, 0, 0, 0.28),
+                0 6px 18px rgba(0, 0, 0, 0.2);
+        }
     }
 
     .linha {
@@ -1076,6 +1115,12 @@
         }
 
         .badge-registro{
+            font-size: 10px;
+            padding: 2px 8px;
+            top: -8px;
+        }
+
+        .badge-outro-mes{
             font-size: 10px;
             padding: 2px 8px;
             top: -8px;

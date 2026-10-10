@@ -262,8 +262,16 @@
     }
 
     @for (corte of cortesDoMes; track corte.id) {
-      <div class="card-corte" [ngClass]="pegarStatusParaEstilo(corte.corteStatus)">
+      <div class="card-corte"
+           [ngClass]="pegarStatusParaEstilo(corte.corteStatus)"
+           [class.outro-mes]="ehDeOutroMes(corte)">
+
         <span class="badge-registro">📅 {{ corte.dataDeRegistro }}</span>
+
+        @if (ehDeOutroMes(corte)) {
+          <span class="badge-outro-mes">⏳ {{ rotuloOutroMes(corte) }}</span>
+        }
+
         <div class="header-card">
           <h3 class="title-card">{{corte.corteStatus}}</h3>
             <button class="btn-menu" (click)="abrirModalOpcao(corte)">
