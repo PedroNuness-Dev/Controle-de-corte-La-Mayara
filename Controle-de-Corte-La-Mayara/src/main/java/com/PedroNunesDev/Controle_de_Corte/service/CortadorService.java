@@ -48,11 +48,19 @@ public class CortadorService {
     }
 
     @Transactional(readOnly = true)
-    public List<CortadorOverview> buscarDetalhesDosCortadoresInativos(){
+    public List<CortadorOverview> buscarDetalhesDosCortadoresInativos(LocalDate dataInicial, LocalDate dataFinal){
 
-        log.info("iniciando busca de todos os detalhes dos cortadores inativos cadastrados no sistema");
+        if (dataInicial == null || dataFinal == null){
+            log.info("iniciando busca de todos os detalhes dos cortadores inativos cadastrados no sistema");
 
-        return cortadorRepository.buscarCortadoresInativosESuasQuantidadesDeCortes();
+            return cortadorRepository.buscarCortadoresInativosESuasQuantidadesDeCortes();
+        }else{
+            log.info("iniciando busca de todos os detalhes dos cortadores inativos cadastrados no sistema por data");
+
+            validacaoDatas.validarDatas(dataInicial,dataFinal);
+
+            return cortadorRepository.buscarCortadoresInativosESuasQuantidadesDeCortesPorData(dataInicial,dataFinal);
+        }
     }
 
     @Transactional(readOnly = true)
@@ -65,7 +73,7 @@ public class CortadorService {
         }else{
             log.info("iniciando busca de todos os detalhes dos cortadores ativos cadastrados no sistema por data");
 
-            if (dataInicial.isAfter(dataFinal)) throw new IllegalArgumentException("Data inicial não pode ser posterior a data final");
+            validacaoDatas.validarDatas(dataInicial,dataFinal);
 
             return cortadorRepository.buscarCortadoresESuasQuantidadesDeCortesPorData(dataInicial,dataFinal);
         }

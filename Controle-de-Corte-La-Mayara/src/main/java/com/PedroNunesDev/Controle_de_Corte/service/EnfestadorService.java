@@ -6,6 +6,7 @@ import com.PedroNunesDev.Controle_de_Corte.dto.response.EnfestadorOverview;
 import com.PedroNunesDev.Controle_de_Corte.exception.ResourceNotFoundException;
 import com.PedroNunesDev.Controle_de_Corte.model.Enfestador;
 import com.PedroNunesDev.Controle_de_Corte.repository.EnfestadorRepository;
+import com.PedroNunesDev.Controle_de_Corte.utils.ValidacaoDatas;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,7 @@ import java.util.List;
 public class EnfestadorService {
 
     private final EnfestadorRepository enfestadorRepository;
+    private final ValidacaoDatas validacaoDatas;
 
     @Transactional(readOnly = true)
     public EnfestadorDtoResponse buscarEnfestadorPorId(Long id){
@@ -62,20 +64,26 @@ public class EnfestadorService {
         }else{
             log.info("iniciando busca de todos os detalhes dos enfestadores ativos cadastrados no sistema por data");
 
-            if (dataInicial.isAfter(dataFinal)) throw new IllegalArgumentException("Data inicial não pode ser posterior a data final");
+            validacaoDatas.validarDatas(dataInicial,dataFinal);
 
             return enfestadorRepository.buscarEnfestadoresESuasQuantidadesDeCortesPorData(dataInicial,dataFinal);
         }
     }
 
     @Transactional(readOnly = true)
-    public List<EnfestadorOverview> buscarDetalhesDosEnfestadoresInativos(){
+    public List<EnfestadorOverview> buscarDetalhesDosEnfestadoresInativos(LocalDate dataInicial, LocalDate dataFinal){
 
-        log.info("Iniciando busca dos detalhes de todos os enfestadores inativos cadastrados no sistema");
+        if (dataInicial == null || dataFinal == null){
+            log.info("Iniciando busca dos detalhes de todos os enfestadores inativos cadastrados no sistema");
 
-        List<EnfestadorOverview> enfestadores = enfestadorRepository.buscarEnfestadoresInativosESuasQuantidadesDeCortes();
+            return enfestadorRepository.buscarEnfestadoresInativosESuasQuantidadesDeCortes();
+        }else{
+            log.info("iniciando busca de todos os detalhes dos enfestadores inativos cadastrados no sistema por data");
 
-        return enfestadores;
+            validacaoDatas.validarDatas(dataInicial,dataFinal);
+
+            return enfestadorRepository.buscarEnfestadoresInativosESuasQuantidadesDeCortesPorData(dataInicial,dataFinal);
+        }
     }
 
     @Transactional

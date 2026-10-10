@@ -47,5 +47,13 @@ public interface CorteRepository extends JpaRepository<Corte,Long> {
      FROM Corte c
     WHERE c.dataDeRegistro BETWEEN :diaPrimeiro AND :diaUltimo
 """)
-    QuantidadeCortesMesResponse quantidadeCortesRegistradosNoMes(@Param("diaPrimeiro") LocalDate diaPrimeiro, @Param("diaUltimo") LocalDate diaUltimo);
+    QuantidadeCortesMesResponse quantidadeCortesRegistrados(@Param("diaPrimeiro") LocalDate diaPrimeiro, @Param("diaUltimo") LocalDate diaUltimo);
+
+    @Query("""
+    SELECT
+     COALESCE(SUM(c.quantidadeTotal),0)
+     FROM Corte c
+    WHERE c.dataDeRegistro BETWEEN :diaPrimeiro AND :diaUltimo
+""")
+    Long quantidadeDePecasRegistrados(@Param("diaPrimeiro") LocalDate diaPrimeiro, @Param("diaUltimo") LocalDate diaUltimo);
 }

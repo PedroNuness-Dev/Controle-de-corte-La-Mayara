@@ -6,6 +6,7 @@ import { HomeComponent } from './components/home-component/home-component';
 import { SuporteComponent } from './components/suporte-component/suporte-component';
 import { NotaComponent } from './components/nota-component/nota-component';
 import { MainLayoutComponent } from './components/main-layout-component/main-layout-component';
+import { RelatorioComponent } from './components/relatorio-component/relatorio-component';
 
 export const routes: Routes = [
   {
@@ -35,6 +36,10 @@ export const routes: Routes = [
         { 
             path: "nota", 
             component: NotaComponent 
+        },
+        {
+            path:"relatorios",
+            component: RelatorioComponent
         }
     ]
   }

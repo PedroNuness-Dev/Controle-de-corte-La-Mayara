@@ -11,8 +11,11 @@ public record AnaliseCortesResponse(
         @JsonFormat(pattern = "dd/MM/yyyy")
         LocalDate dataFinal,
         QuantidadeCortesMesResponse quantidadesCortes,
-        List<CortadorOverview> cortadores,
-        List<EnfestadorOverview> enfestadores
+        Long quantidadeDePecas,
+        List<CortadorOverview> cortadoresAtivos,
+        List<CortadorOverview> cortadoresInativos,
+        List<EnfestadorOverview> enfestadoresAtivos,
+        List<EnfestadorOverview> enfestadoresInativos
 
 ) {
 }
