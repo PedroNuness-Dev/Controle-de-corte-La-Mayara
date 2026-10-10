@@ -62,6 +62,14 @@
         .status .numero { font-size: 19px; font-weight: bold; }
         .status .rotulo { font-size: 8px; font-weight: bold; text-transform: uppercase; color: #4d4b4b; }
         .status .percentual { font-size: 8px; color: #5a5757; margin-top: 2px; }
+        /* Peças do status: aparece abaixo do percentual, separada por uma linha fina */
+        .status .pecas {
+            font-size: 9px;
+            font-weight: bold;
+            margin-top: 5px;
+            padding-top: 4px;
+            border-top: 1px solid #e3e8e5;
+        }
         .st-total { border-top: 3px solid #1f2a2e; }
         .st-pendente { border-top: 3px solid #7A7777; color: #7A7777; }
         .st-enfestado { border-top: 3px solid #a3690b; color: #a3690b; }
@@ -70,6 +78,7 @@
         .st-total .numero { color: #1f2a2e; }
 
         /* ---------- Barra de distribuição por status ---------- */
+        .bloco-distribuicao { margin-top: 8px; }
         .distribuicao-titulo { font-size: 9px; font-weight: bold; text-transform: uppercase; color: #4d4b4b; margin: 0 0 4px 0; }
         table.distribuicao { margin-bottom: 6px; border: 1px solid #d9dfdb; border-collapse: separate; border-spacing: 0; }
         table.distribuicao td { height: 10px; padding: 0; font-size: 1px; line-height: 1px; border-right: 2px solid #ffffff; }
@@ -135,7 +144,16 @@
                pctPendente=${dados.quantidadesCortes.quantidadeTotal > 0 ? dados.quantidadesCortes.quantidadePendentes * 100 / dados.quantidadesCortes.quantidadeTotal : 0},
                pctEnfestado=${dados.quantidadesCortes.quantidadeTotal > 0 ? dados.quantidadesCortes.quantidadeEnfestados * 100 / dados.quantidadesCortes.quantidadeTotal : 0},
                pctCortado=${dados.quantidadesCortes.quantidadeTotal > 0 ? dados.quantidadesCortes.quantidadeCortados * 100 / dados.quantidadesCortes.quantidadeTotal : 0},
-               pctCancelado=${dados.quantidadesCortes.quantidadeTotal > 0 ? dados.quantidadesCortes.quantidadeCancelados * 100 / dados.quantidadesCortes.quantidadeTotal : 0}">
+               pctCancelado=${dados.quantidadesCortes.quantidadeTotal > 0 ? dados.quantidadesCortes.quantidadeCancelados * 100 / dados.quantidadesCortes.quantidadeTotal : 0},
+               pcTotal=${dados.quantidadeDePecas?.quantidadeTotal ?: 0},
+               pcPendente=${dados.quantidadeDePecas?.quantidadePendente ?: 0},
+               pcEnfestado=${dados.quantidadeDePecas?.quantidadeEnfestaodo ?: 0},
+               pcCortado=${dados.quantidadeDePecas?.quantidadeCortado ?: 0},
+               pcCancelado=${dados.quantidadeDePecas?.quantidadeCancelado ?: 0},
+               pctPcPendente=${pcTotal > 0 ? pcPendente * 100 / pcTotal : 0},
+               pctPcEnfestado=${pcTotal > 0 ? pcEnfestado * 100 / pcTotal : 0},
+               pctPcCortado=${pcTotal > 0 ? pcCortado * 100 / pcTotal : 0},
+               pctPcCancelado=${pcTotal > 0 ? pcCancelado * 100 / pcTotal : 0}">
 
 <table class="cabecalho">
     <tr>
@@ -162,7 +180,7 @@
 <table class="resumo">
     <tr>
         <td class="caixa-pecas">
-            <div class="numero" th:text="${#numbers.formatInteger(dados.quantidadeDePecas, 1, 'POINT')}">4.000</div>
+            <div class="numero" th:text="${#numbers.formatInteger(pcTotal, 1, 'POINT')}">4.000</div>
             <div class="rotulo">peças no período</div>
         </td>
         <td class="espaco"></td>
@@ -171,6 +189,7 @@
             <div class="numero" th:text="${total}">5</div>
             <div class="rotulo">Total</div>
             <div class="percentual">100%</div>
+            <div class="pecas" th:text="${#numbers.formatInteger(pcTotal, 1, 'POINT') + (pcTotal == 1 ? ' peça' : ' peças')}">4.000 peças</div>
         </td>
         <td class="espaco"></td>
 
@@ -178,6 +197,7 @@
             <div class="numero" th:text="${dados.quantidadesCortes.quantidadePendentes}">1</div>
             <div class="rotulo">Pendentes</div>
             <div class="percentual" th:text="${pctPendente} + '%'">20%</div>
+            <div class="pecas" th:text="${#numbers.formatInteger(pcPendente, 1, 'POINT') + (pcPendente == 1 ? ' peça' : ' peças')}">800 peças</div>
         </td>
         <td class="espaco"></td>
 
@@ -185,6 +205,7 @@
             <div class="numero" th:text="${dados.quantidadesCortes.quantidadeEnfestados}">1</div>
             <div class="rotulo">Enfestados</div>
             <div class="percentual" th:text="${pctEnfestado} + '%'">20%</div>
+            <div class="pecas" th:text="${#numbers.formatInteger(pcEnfestado, 1, 'POINT') + (pcEnfestado == 1 ? ' peça' : ' peças')}">800 peças</div>
         </td>
         <td class="espaco"></td>
 
@@ -192,6 +213,7 @@
             <div class="numero" th:text="${dados.quantidadesCortes.quantidadeCortados}">3</div>
             <div class="rotulo">Cortados</div>
             <div class="percentual" th:text="${pctCortado} + '%'">60%</div>
+            <div class="pecas" th:text="${#numbers.formatInteger(pcCortado, 1, 'POINT') + (pcCortado == 1 ? ' peça' : ' peças')}">2.400 peças</div>
         </td>
         <td class="espaco"></td>
 
@@ -199,6 +221,7 @@
             <div class="numero" th:text="${dados.quantidadesCortes.quantidadeCancelados}">0</div>
             <div class="rotulo">Cancelados</div>
             <div class="percentual" th:text="${pctCancelado} + '%'">0%</div>
+            <div class="pecas" th:text="${#numbers.formatInteger(pcCancelado, 1, 'POINT') + (pcCancelado == 1 ? ' peça' : ' peças')}">0 peças</div>
         </td>
     </tr>
 </table>
@@ -211,6 +234,18 @@
             <td th:if="${pctEnfestado > 0}" class="seg-enfestado" th:style="'width:' + ${pctEnfestado} + '%'"></td>
             <td th:if="${pctCortado > 0}"   class="seg-cortado"   th:style="'width:' + ${pctCortado} + '%'"></td>
             <td th:if="${pctCancelado > 0}" class="seg-cancelado" th:style="'width:' + ${pctCancelado} + '%'"></td>
+        </tr>
+    </table>
+</div>
+
+<div class="bloco-distribuicao" th:if="${pcTotal > 0}">
+    <p class="distribuicao-titulo">Distribuição das peças por status</p>
+    <table class="distribuicao">
+        <tr>
+            <td th:if="${pctPcPendente > 0}"  class="seg-pendente"  th:style="'width:' + ${pctPcPendente} + '%'"></td>
+            <td th:if="${pctPcEnfestado > 0}" class="seg-enfestado" th:style="'width:' + ${pctPcEnfestado} + '%'"></td>
+            <td th:if="${pctPcCortado > 0}"   class="seg-cortado"   th:style="'width:' + ${pctPcCortado} + '%'"></td>
+            <td th:if="${pctPcCancelado > 0}" class="seg-cancelado" th:style="'width:' + ${pctPcCancelado} + '%'"></td>
         </tr>
     </table>
 </div>
